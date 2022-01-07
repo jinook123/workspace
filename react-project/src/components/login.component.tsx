@@ -53,7 +53,6 @@ export default class Login extends Component<Props, State> {
     AuthService.login(username, password).then(
       () => {
         return <Link to= "/home" />
-        window.location.reload();
       },
       error => {
         const resMessage =
