@@ -79,6 +79,12 @@ class App extends Component<Props, State> {
               </Link>
             </li>
 
+            <li className="nav-item">
+              <Link to={"/canvas"} className="nav-link">
+                Canvas
+              </Link>
+            </li>
+
             {showModeratorBoard && (
               <li className="nav-item">
                 <Link to={"/mod"} className="nav-link">
