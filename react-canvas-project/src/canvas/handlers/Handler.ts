@@ -208,6 +208,14 @@ export interface HandlerOption {
 	fabricObjects?: FabricObjects;
 	handlers?: { [key: string]: CustomHandler };
 	[key: string]: any;
+
+	// wlsdnr
+	/**
+	 * Persist properties for object
+	 * @type {FabricObjectOption}
+	 */
+	 // property?: FabricObjectOption;
+
 }
 
 export type HandlerOptions = HandlerOption & HandlerCallback;
@@ -238,7 +246,6 @@ class Handler implements HandlerOptions {
 	public zoomEnabled?: boolean;
 	public width?: number;
 	public height?: number;
-
 
 	public onAdd?: (object: FabricObject) => void;
 	public onContext?: (el: HTMLDivElement, e: React.MouseEvent, target?: FabricObject) => Promise<any>;
@@ -295,6 +302,8 @@ class Handler implements HandlerOptions {
 	 * @type {*}
 	 */
 	private clipboard: any;
+
+	private m_property: any;
 
 
 	constructor(options: HandlerOptions) {
@@ -736,10 +745,8 @@ class Handler implements HandlerOptions {
 		// Create canvas object
 		if (obj.type === 'image') {
 			createdObj = this.addImage(newOption);
-			// const defaultUserProperty = this.defaultUserProp.userProperty;
-			// console.log("defaultUserProperty");
-			// console.log(defaultUserProperty);
-			// createdObj.set('userProperty', defaultUserProperty);
+			console.log("createdObj");
+			console.log(createdObj);
 		} else if (obj.type === 'group') {
 			// TODO...
 			// Group add function needs to be fixed
@@ -822,8 +829,7 @@ class Handler implements HandlerOptions {
 		}
 		const createdObj = new fabric.Image(image, {
 			...objectOption,
-			...otherOption,
-			...defaults.defaultProps
+			...otherOption
 		}) as FabricImage;
 		createdObj.set({
 			filters: this.imageHandler.createFilters(filters),
@@ -964,6 +970,7 @@ class Handler implements HandlerOptions {
 		if (typeof activeObject.cloneable !== 'undefined' && !activeObject.cloneable) {
 			return;
 		}
+
 		activeObject.clone((clonedObj: FabricObject) => {
 			this.canvas.discardActiveObject();
 			clonedObj.set({
@@ -971,9 +978,11 @@ class Handler implements HandlerOptions {
 				top: clonedObj.top + grid,
 				evented: true,
 			});
+
 			if (clonedObj.type === 'activeSelection') {
 				const activeSelection = clonedObj as fabric.ActiveSelection;
 				activeSelection.canvas = this.canvas;
+
 				activeSelection.forEachObject((obj: any) => {
 					obj.set('id', uuid());
 					if (obj.superType === 'node') {
@@ -1282,6 +1291,7 @@ class Handler implements HandlerOptions {
 				id: isCut ? clipboard.id : uuid(),
 				evented: true,
 			});
+
 			if (clonedObj.type === 'activeSelection') {
 				clonedObj.canvas = this.canvas;
 				clonedObj.forEachObject((obj: any) => {
@@ -1945,6 +1955,9 @@ class Handler implements HandlerOptions {
 	 */
 	public setObjectOption = (objectOption: FabricObjectOption) => {
 		this.objectOption = Object.assign({}, this.objectOption, objectOption);
+
+		console.log("setObjectOption");
+		console.log(this.objectOption);
 	};
 
 	/**

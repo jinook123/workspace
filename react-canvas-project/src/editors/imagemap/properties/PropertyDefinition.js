@@ -1,5 +1,6 @@
 import MarkerProperty from './MarkerProperty';
-import GeneralProperty from './GeneralProperty';
+import DBProperty from './DBProperty';
+import ShowProperty from './ShowProperty';
 import StyleProperty from './StyleProperty';
 import TooltipProperty from './TooltipProperty';
 import ImageProperty from './ImageProperty';
@@ -28,20 +29,12 @@ export default {
 		},
 	},
 	group: {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
-		},
 		shadow: {
 			title: 'Shadow',
 			component: ShadowProperty,
 		},
 	},
 	'i-text': {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
-		},
 		marker: {
 			title: 'Marker',
 			component: MarkerProperty,
@@ -76,10 +69,6 @@ export default {
 		},
 	},
 	textbox: {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
-		},
 		text: {
 			title: 'Text',
 			component: TextProperty,
@@ -114,52 +103,52 @@ export default {
 		},
 	},
 	image: {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
+		dbInfo: {
+			title: 'DB Info',
+			component: DBProperty,
 		},
-		image: {
-			title: 'Image',
-			component: ImageProperty,
+		showProperty: {
+			title: 'Show Property',
+			component: ShowProperty
 		},
-		filter: {
-			title: 'Filter',
-			component: ImageFilterProperty,
-		},
-		link: {
-			title: 'Link',
-			component: LinkProperty,
-		},
-		tooltip: {
-			title: 'Tooltip',
-			component: TooltipProperty,
-		},
-		style: {
-			title: 'Style',
-			component: StyleProperty,
-		},
-		shadow: {
-			title: 'Shadow',
-			component: ShadowProperty,
-		},
-		animation: {
-			title: 'Animation',
-			component: AnimationProperty,
-		},
-		trigger: {
-			title: 'Trigger',
-			component: TriggerProperty,
-		},
+		// image: {
+		// 	title: 'Image',
+		// 	component: ImageProperty,
+		// },
+		// filter: {
+		// 	title: 'Filter',
+		// 	component: ImageFilterProperty,
+		// },
+		// link: {
+		// 	title: 'Link',
+		// 	component: LinkProperty,
+		// },
+		// tooltip: {
+		// 	title: 'Tooltip',
+		// 	component: TooltipProperty,
+		// },
+		// style: {
+		// 	title: 'Style',
+		// 	component: StyleProperty,
+		// },
+		// shadow: {
+		// 	title: 'Shadow',
+		// 	component: ShadowProperty,
+		// },
+		// animation: {
+		// 	title: 'Animation',
+		// 	component: AnimationProperty,
+		// },
+		// trigger: {
+		// 	title: 'Trigger',
+		// 	component: TriggerProperty,
+		// },
 		userProperty: {
 			title: 'User Property',
 			component: UserProperty,
 		},
 	},
 	triangle: {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
-		},
 		link: {
 			title: 'Link',
 			component: LinkProperty,
@@ -190,10 +179,6 @@ export default {
 		},
 	},
 	rect: {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
-		},
 		link: {
 			title: 'Link',
 			component: LinkProperty,
@@ -224,10 +209,6 @@ export default {
 		},
 	},
 	circle: {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
-		},
 		link: {
 			title: 'Link',
 			component: LinkProperty,
@@ -258,10 +239,6 @@ export default {
 		},
 	},
 	polygon: {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
-		},
 		link: {
 			title: 'Link',
 			component: LinkProperty,
@@ -292,10 +269,6 @@ export default {
 		},
 	},
 	line: {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
-		},
 		link: {
 			title: 'Link',
 			component: LinkProperty,
@@ -326,10 +299,6 @@ export default {
 		},
 	},
 	arrow: {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
-		},
 		link: {
 			title: 'Link',
 			component: LinkProperty,
@@ -360,40 +329,24 @@ export default {
 		},
 	},
 	video: {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
-		},
 		video: {
 			title: 'Video',
 			component: VideoProperty,
 		},
 	},
 	element: {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
-		},
 		video: {
 			title: 'Element',
 			component: ElementProperty,
 		},
 	},
 	iframe: {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
-		},
 		video: {
 			title: 'Iframe',
 			component: IframeProperty,
 		},
 	},
 	svg: {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
-		},
 		link: {
 			title: 'Link',
 			component: LinkProperty,
@@ -424,9 +377,9 @@ export default {
 		},
 	},
 	chart: {
-		general: {
-			title: 'General',
-			component: GeneralProperty,
+		dbInfo: {
+			title: 'DB Info',
+			component: DBProperty,
 		},
 		chartOption: {
 			title: 'Chart Option',

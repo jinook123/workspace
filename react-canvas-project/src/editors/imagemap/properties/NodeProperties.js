@@ -25,6 +25,11 @@ class NodeProperties extends Component {
 	render() {
 		const { canvasRef, selectedItem, form } = this.props;
 		const showArrow = false;
+
+		console.log("selectedItem");
+		console.log(selectedItem);
+		console.log(this.props);
+
 		return (
 			<Scrollbar>
 				<Form layout="horizontal" colon={false}>

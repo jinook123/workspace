@@ -220,5 +220,13 @@
 	},
 	"fiber": {
 		"fiber": "FiberCable"
+	},
+	"dbInfo": {
+		"dbInfo": "DB Info",
+		"dbHost": "DB Host",
+		"dbPort": "DB Port",
+		"dbId": "DB ID",
+		"dbPw": "DB PW",
+		"dbQuery": "DB Query"
 	}
 }

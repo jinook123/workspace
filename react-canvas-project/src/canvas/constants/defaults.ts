@@ -62,6 +62,19 @@ export const objectOption: Partial<FabricObjectOption> = {
 	rotation: 0,
 	centeredRotation: true,
 	strokeUniform: true,
+	property: {
+		dbInfo: {
+			dbHost: '',
+			dbPort: 21,
+			dbId: '',
+			dbPw: '',
+			dbQuery: ''
+		},
+		showProperty:{
+			showDelay: 100
+		},
+		bConnectDB: false
+	}
 };
 
 export const guidelineOption = {
@@ -73,15 +86,3 @@ export const activeSelectionOption = {
 };
 
 export const propertiesToInclude = ['id', 'name', 'locked', 'editable'];
-
-
-// wlsdnr
-export const defaultProps = {
-	userProperty: {
-		dbHost: '0.0.0.0',
-		dbPort: 21,
-		dbId: '',
-		dbPw: '',
-		dbTableName: ''
-	}
-};
