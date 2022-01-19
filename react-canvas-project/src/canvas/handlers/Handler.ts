@@ -709,6 +709,7 @@ class Handler implements HandlerOptions {
 	 * @returns
 	 */
 	public add = (obj: FabricObjectOption, centered = true, loaded = false) => {
+		// const { editable, onAdd, gridOption, objectOption, properties } = this;
 		const { editable, onAdd, gridOption, objectOption } = this;
 		const option: any = {
 			hasControls: editable,
@@ -727,9 +728,11 @@ class Handler implements HandlerOptions {
 			option.scaleX = this.workarea.scaleX;
 			option.scaleY = this.workarea.scaleY;
 		}
+
 		const newOption = Object.assign(
 			{},
 			objectOption,
+			// ...properties,
 			obj,
 			{
 				container: this.container.id,
@@ -970,7 +973,6 @@ class Handler implements HandlerOptions {
 		if (typeof activeObject.cloneable !== 'undefined' && !activeObject.cloneable) {
 			return;
 		}
-
 		activeObject.clone((clonedObj: FabricObject) => {
 			this.canvas.discardActiveObject();
 			clonedObj.set({
@@ -1176,6 +1178,10 @@ class Handler implements HandlerOptions {
 						this.copyToClipboard(JSON.stringify(cloned.toObject(propertiesToInclude), null, '\t'));
 					}
 				} else {
+					// DB Info Copy
+					const cloneProperty = {...activeObject.property};
+					this.m_property = cloneProperty;
+
 					this.clipboard = cloned;
 				}
 			}, propertiesToInclude);
@@ -1291,6 +1297,12 @@ class Handler implements HandlerOptions {
 				id: isCut ? clipboard.id : uuid(),
 				evented: true,
 			});
+
+			if(typeof this.m_property !== 'undefined'){
+				const cloneProperty = {...this.m_property};
+				clonedObj.property = cloneProperty;
+			}
+			
 
 			if (clonedObj.type === 'activeSelection') {
 				clonedObj.canvas = this.canvas;

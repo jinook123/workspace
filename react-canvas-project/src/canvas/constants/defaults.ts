@@ -71,7 +71,7 @@ export const objectOption: Partial<FabricObjectOption> = {
 			dbQuery: ''
 		},
 		showProperty:{
-			showDelay: 100
+			showDelay: 1000
 		},
 		bConnectDB: false
 	}

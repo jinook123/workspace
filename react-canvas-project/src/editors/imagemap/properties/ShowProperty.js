@@ -6,7 +6,9 @@ export default {
 	render(canvasRef, form, data) {
 		const { getFieldDecorator } = form;
 
-		const bConnectDB = data.property.bConnectDB;
+		let bConnectDB = data.property.bConnectDB;
+
+		bConnectDB = true;
 
 		return (
 			<React.Fragment>
