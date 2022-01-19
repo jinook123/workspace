@@ -169,6 +169,40 @@ class ImageMapEditor extends Component {
 			}
 			const changedKey = Object.keys(changedValues)[0];
 			const changedValue = changedValues[changedKey];
+
+			if(changedKey === 'property'){
+				let dbInfo = {};
+				let showProperty = {};
+				let bConnectDB = false;
+				if(typeof changedValues[changedKey].dbInfo === 'undefined'){
+					dbInfo = selectedItem.property.dbInfo;
+				} else {
+					dbInfo = allValues.property.dbInfo;
+				}
+				if(typeof changedValues[changedKey].showProperty === 'undefined'){
+					showProperty = selectedItem.property.showProperty;
+				} else {
+					showProperty = allValues.property.showProperty;
+				}
+				if(typeof changedValues[changedKey].bConnectDB === 'undefined'){
+					bConnectDB = selectedItem.property.bConnectDB;
+				} else {
+					bConnectDB = allValues.property.bConnectDB;
+				}
+
+				const property = {
+					dbInfo: dbInfo,
+					showProperty: showProperty,
+					bConnectDB: bConnectDB
+				};
+
+				console.log("property");
+				console.log(property);
+				
+				this.canvasRef.handler.set(changedKey, property);
+				return;
+			}
+
 			if (allValues.workarea) {
 				this.canvasHandlers.onChangeWokarea(changedKey, changedValue, allValues.workarea);
 				return;
