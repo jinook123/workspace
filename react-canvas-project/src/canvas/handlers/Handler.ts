@@ -1,6 +1,6 @@
 import { fabric } from 'fabric';
 import { union } from 'lodash';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import warning from 'warning';
 import {
 	AlignmentHandler,
@@ -984,7 +984,7 @@ class Handler implements HandlerOptions {
 				activeSelection.canvas = this.canvas;
 
 				activeSelection.forEachObject((obj: any) => {
-					obj.set('id', uuid());
+					obj.set('id', v4());
 					if (obj.superType === 'node') {
 						obj.set('shadow', {
 							color: obj.stroke,
@@ -1002,7 +1002,7 @@ class Handler implements HandlerOptions {
 				activeSelection.setCoords();
 			} else {
 				if (activeObject.id === clonedObj.id) {
-					clonedObj.set('id', uuid());
+					clonedObj.set('id', v4());
 				}
 				if (clonedObj.superType === 'node') {
 					clonedObj.set('shadow', {
@@ -1044,7 +1044,7 @@ class Handler implements HandlerOptions {
 				cloned.set({
 					left: cloned.left + grid,
 					top: cloned.top + grid,
-					id: uuid(),
+					id: v4(),
 					evented: true,
 				});
 				this.canvas.add(cloned);
@@ -1292,7 +1292,7 @@ class Handler implements HandlerOptions {
 			clonedObj.set({
 				left: clonedObj.left + padding,
 				top: clonedObj.top + padding,
-				id: isCut ? clipboard.id : uuid(),
+				id: isCut ? clipboard.id : v4(),
 				evented: true,
 			});
 
@@ -1305,7 +1305,7 @@ class Handler implements HandlerOptions {
 			if (clonedObj.type === 'activeSelection') {
 				clonedObj.canvas = this.canvas;
 				clonedObj.forEachObject((obj: any) => {
-					obj.set('id', isCut ? obj.id : uuid());
+					obj.set('id', isCut ? obj.id : v4());
 					this.canvas.add(obj);
 					if (obj.dblclick) {
 						obj.on('mousedblclick', this.eventHandler.object.mousedblclick);
@@ -1605,7 +1605,7 @@ class Handler implements HandlerOptions {
 				obj.top += diffTop;
 			}
 			if (obj.superType === 'element') {
-				obj.id = uuid();
+				obj.id = v4();
 			}
 			this.add(obj, false, true);
 			this.canvas.renderAll();
@@ -1636,7 +1636,7 @@ class Handler implements HandlerOptions {
 		}
 		const group = activeObject.toGroup() as FabricObject<fabric.Group>;
 		group.set({
-			id: uuid(),
+			id: v4(),
 			name: 'New group',
 			type: 'group',
 			...this.objectOption,

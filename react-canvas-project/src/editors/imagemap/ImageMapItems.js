@@ -9,7 +9,7 @@ import Icon from '../../components/icon/Icon';
 import Scrollbar from '../../components/common/Scrollbar';
 import CommonButton from '../../components/common/CommonButton';
 import { SVGModal } from '../../components/common';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 
 notification.config({
 	top: 80,
@@ -102,7 +102,7 @@ class ImageMapItems extends Component {
 				message.info('Already drawing');
 				return;
 			}
-			const id = uuid();
+			const id = v4();
 			const option = Object.assign({}, item.option, { id });
 			if (item.option.superType === 'svg' && item.type === 'default') {
 				this.handlers.onSVGModalVisible(item.option);
@@ -194,7 +194,7 @@ class ImageMapItems extends Component {
 			if (dt.types.length && dt.types[0] === 'Files') {
 				const { files } = dt;
 				Array.from(files).forEach(file => {
-					file.uid = uuid();
+					file.uid = v4();
 					const { type } = file;
 					if (type === 'image/png' || type === 'image/jpeg' || type === 'image/jpg') {
 						const item = {

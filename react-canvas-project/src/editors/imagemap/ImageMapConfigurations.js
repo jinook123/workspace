@@ -58,6 +58,9 @@ class ImageMapConfigurations extends Component {
 		const className = classnames('rde-editor-configurations', {
 			minimize: collapse,
 		});
+		console.log("pannel");
+		console.log(selectedItem);
+
 		return (
 			<div className={className}>
 				<CommonButton
@@ -77,9 +80,13 @@ class ImageMapConfigurations extends Component {
 					<Tabs.TabPane tab={<Icon name="cog" />} key="map">
 						<MapProperties onChange={onChange} canvasRef={canvasRef} />
 					</Tabs.TabPane>
-					<Tabs.TabPane tab={<Icon name="cogs" />} key="node">
-						<NodeProperties onChange={onChange} selectedItem={selectedItem} canvasRef={canvasRef} />
-					</Tabs.TabPane>
+					{selectedItem ? (
+						<Tabs.TabPane tab={<Icon name="cogs" />} key="node">
+							<NodeProperties onChange={onChange} selectedItem={selectedItem} canvasRef={canvasRef} />
+						</Tabs.TabPane>
+					) : null
+					}
+					
 					{/* <Tabs.TabPane tab={<Icon name="vine" prefix="fab" />} key="animations">
 						<Animations animations={animations} onChangeAnimations={onChangeAnimations} />
 					</Tabs.TabPane>

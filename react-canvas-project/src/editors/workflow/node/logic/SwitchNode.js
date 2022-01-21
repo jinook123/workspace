@@ -117,7 +117,7 @@ const SwitchNode = fabric.util.createClass(LogicNode, {
 	},
 	duplicate() {
 		const options = this.toObject();
-		options.id = uuid();
+		options.id = v4();
 		options.name = `${options.name}_clone`;
 		const clonedObj = new SwitchNode(options);
 		return clonedObj;

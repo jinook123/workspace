@@ -5,7 +5,7 @@ import Descriptors from '../workflow/Descriptors.json';
 import { getNode } from '../workflow/configuration/NodeConfiguration';
 import { NODE_COLORS } from '../../canvas/objects/Node';
 import Icon from '../../components/icon/Icon';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 
 interface IProps {
 	canvas: Canvas;
@@ -72,7 +72,7 @@ class FlowItems extends Component<IProps> {
 	handleAddNode = (descriptor: any, centered = true) => {
 		this.props.canvas.handler.add(
 			Object.assign({}, descriptor, {
-				id: uuid(),
+				id: v4(),
 				subType: descriptor.type,
 				type: getNode(descriptor.nodeClazz),
 				configuration: descriptor.defaultConfiguration,

@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { fabric } from 'fabric';
 import { extendHex, defineGrid } from 'honeycomb-grid';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import { Canvas, Handler } from '../../canvas';
 import { Content } from '../../components/layout';
 import { CanvasInstance } from '../../canvas/Canvas';
@@ -32,7 +32,7 @@ const HexGridEditor = () => {
 			return corners;
 		});
 		const group = {
-			id: uuid(),
+			id: v4(),
 			type: 'group',
 			objects: corners.map(
 				cs =>

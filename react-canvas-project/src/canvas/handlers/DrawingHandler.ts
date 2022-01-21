@@ -1,5 +1,5 @@
 import { fabric } from 'fabric';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import { Arrow, Line } from '../objects';
 import { FabricEvent, FabricObject } from '../utils';
 import Handler from './Handler';
@@ -52,7 +52,7 @@ class DrawingHandler {
 				hoverCursor: 'pointer',
 			}) as FabricObject<fabric.Circle>;
 			circle.set({
-				id: uuid(),
+				id: v4(),
 			});
 			if (!this.handler.pointArray.length) {
 				circle.set({
@@ -118,7 +118,7 @@ class DrawingHandler {
 		},
 		generate: (pointArray: FabricObject<fabric.Circle>[]) => {
 			const points = [] as any[];
-			const id = uuid();
+			const id = v4();
 			pointArray.forEach(point => {
 				points.push({
 					x: point.left,
@@ -257,7 +257,7 @@ class DrawingHandler {
 			const { absolutePointer } = opt;
 			const { x, y } = absolutePointer;
 			let points = [] as number[];
-			const id = uuid();
+			const id = v4();
 			this.handler.pointArray.forEach(point => {
 				points = points.concat(point.left, point.top, x, y);
 				this.handler.canvas.remove(point);
@@ -346,7 +346,7 @@ class DrawingHandler {
 			});
 			this.handler.canvas.remove(this.handler.activeLine);
 			const option = {
-				id: uuid(),
+				id: v4(),
 				points,
 				type: 'arrow',
 				stroke: 'rgba(0, 0, 0, 1)',

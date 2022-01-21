@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import { NODE_COLORS } from './constant/constants';
 import { getNode } from './configuration/NodeConfiguration';
 import { Canvas } from '../../canvas';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import { Flex } from '../../components/flex';
 import Icon from '../../components/icon/Icon';
 import { CommonButton, Scrollbar } from '../../components/common';
@@ -71,7 +71,7 @@ class WorkflowItems extends Component<IProps> {
 	handlers = {
 		onAddItem: (item, centered?: boolean) => {
 			const { canvasRef } = this.props;
-			const id = uuid();
+			const id = v4();
 			const option = Object.assign({}, item, {
 				id,
 				subType: item.type,

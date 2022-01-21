@@ -1,5 +1,5 @@
 import { fabric } from 'fabric';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 import { FabricObject } from '../utils';
 import { NodeObject, OUT_PORT_TYPE } from './Node';
 import { PortObject } from './Port';
@@ -29,7 +29,7 @@ const Link = fabric.util.createClass(fabric.Line, {
 		this.callSuper('initialize', coords, options);
 		this.set({
 			strokeWidth: 4,
-			id: options.id || uuid(),
+			id: options.id || v4(),
 			originX: 'center',
 			originY: 'center',
 			lockScalingX: true,
