@@ -1,6 +1,6 @@
 import { fabric } from 'fabric';
 import i18next from 'i18next';
-import { uuid } from 'uuidv4';
+import { v4 } from 'uuid';
 
 import { FabricObject } from '../utils';
 import { LinkObject } from './Link';
@@ -122,7 +122,7 @@ const Node = fabric.util.createClass(fabric.Group, {
 		});
 		const node = [rect, icon, this.label, this.errorFlag];
 		const option = Object.assign({}, options, {
-			id: options.id || uuid(),
+			id: options.id || v4(),
 			width: 200,
 			height: 40,
 			originX: 'left',
@@ -272,7 +272,7 @@ const Node = fabric.util.createClass(fabric.Group, {
 	},
 	duplicate() {
 		const options = this.toObject();
-		options.id = uuid();
+		options.id = v4();
 		options.name = `${options.name}_clone`;
 		return new Node(options);
 	},
