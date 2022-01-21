@@ -32,37 +32,6 @@ export interface TooltipProperty {
 	template?: string;
 }
 
-export interface Properties {
-	baseInfo: {
-		equipmentId?: string;
-		equipmentName?: string;
-	},
-	dbInfo?: {
-		dbHost?: string;
-		dbPort?: number;
-		dbId?: string;
-		dbPw?: string;
-		dbQuery?: string;
-	},
-	showProperty?: {
-		showDelay?: number;
-	},
-	bConnectDB?: boolean;
-}
-
-
-// export interface Properties {
-
-// 	dbHost?: string;
-// 	dbPort?: number;
-// 	dbId?: string;
-// 	dbPw?: string;
-// 	dbQuery?: string;
-
-// 	delay?: number;
-
-// }
-
 export interface TriggerProperty {
 	enabled?: boolean;
 	type?: string;
@@ -211,11 +180,6 @@ export type FabricObjectOption<T extends any = fabric.IObjectOptions> = T & {
 	 * @type {boolean}
 	 */
 	clickable?: boolean;
-	/**
-	 * Properties
-	 * @type {Properties}
-	 */
-	 property?: Properties;
 
 	[key: string]: any;
 };

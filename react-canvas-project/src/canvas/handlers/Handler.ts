@@ -748,8 +748,6 @@ class Handler implements HandlerOptions {
 		// Create canvas object
 		if (obj.type === 'image') {
 			createdObj = this.addImage(newOption);
-			console.log("createdObj");
-			console.log(createdObj);
 		} else if (obj.type === 'group') {
 			// TODO...
 			// Group add function needs to be fixed
@@ -1967,9 +1965,6 @@ class Handler implements HandlerOptions {
 	 */
 	public setObjectOption = (objectOption: FabricObjectOption) => {
 		this.objectOption = Object.assign({}, this.objectOption, objectOption);
-
-		console.log("setObjectOption");
-		console.log(this.objectOption);
 	};
 
 	/**

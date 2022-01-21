@@ -62,23 +62,6 @@ export const objectOption: Partial<FabricObjectOption> = {
 	rotation: 0,
 	centeredRotation: true,
 	strokeUniform: true,
-	property: {
-		baseInfo: {
-			equipmentId: '',
-			equipmentName: ''
-		},
-		dbInfo: {
-			dbHost: '',
-			dbPort: 21,
-			dbId: '',
-			dbPw: '',
-			dbQuery: ''
-		},
-		showProperty:{
-			showDelay: 1000
-		},
-		bConnectDB: false
-	}
 };
 
 export const guidelineOption = {

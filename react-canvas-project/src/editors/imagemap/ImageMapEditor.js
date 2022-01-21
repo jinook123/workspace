@@ -71,6 +71,23 @@ const defaultOption = {
 		script: 'return message.value > 0;',
 		effect: 'style',
 	},
+	property: {
+		baseInfo: {
+			equipmentId: '',
+			equipmentName: ''
+		},
+		dbInfo: {
+			dbHost: '',
+			dbPort: 21,
+			dbId: '',
+			dbPw: '',
+			dbQuery: ''
+		},
+		showProperty:{
+			showDelay: 1000
+		},
+		bConnectDB: false
+	}
 };
 
 class ImageMapEditor extends Component {
@@ -170,47 +187,8 @@ class ImageMapEditor extends Component {
 			const changedKey = Object.keys(changedValues)[0];
 			const changedValue = changedValues[changedKey];
 
-			if(changedKey === 'property'){
-				let baseInfo = {};
-				let dbInfo = {};
-				let showProperty = {};
-				let bConnectDB = false;
-
-				// equipment base Info
-				if(typeof changedValues[changedKey].baseInfo === 'undefined'){
-					baseInfo = selectedItem.property.baseInfo;
-				} else {
-					baseInfo = allValues.property.baseInfo;
-				}
-				
-				// database base Info
-				if(typeof changedValues[changedKey].dbInfo === 'undefined'){
-					dbInfo = selectedItem.property.dbInfo;
-				} else {
-					dbInfo = allValues.property.dbInfo;
-				}
-
-				// showproperty base Info
-				if(typeof changedValues[changedKey].showProperty === 'undefined'){
-					showProperty = selectedItem.property.showProperty;
-				} else {
-					showProperty = allValues.property.showProperty;
-				}
-
-				// DB Connect base Info
-				if(typeof changedValues[changedKey].bConnectDB === 'undefined'){
-					bConnectDB = selectedItem.property.bConnectDB;
-				} else {
-					bConnectDB = allValues.property.bConnectDB;
-				}
-
-				const property = {
-					baseInfo: baseInfo,
-					dbInfo: dbInfo,
-					showProperty: showProperty,
-					bConnectDB: bConnectDB
-				};
-
+			if (changedKey === 'property') {
+				const property = Object.assign({}, defaultOption.property, allValues.property);
 				this.canvasRef.handler.set(changedKey, property);
 				return;
 			}
@@ -407,21 +385,24 @@ class ImageMapEditor extends Component {
 			// const compile = SandBox.compile(code);
 			// const result = compile(value, animations, styles, target.userProperty);
 			// console.log(result);
+
+			console.log("onTooltip");
+			console.log(target);
+
 			return (
 				<div>
 					<div>
 						<div>
-							<Button>{target.id}</Button>
+						Equipment ID : {target.property.baseInfo.equipmentId} <br></br>
+						Equipment Name : {target.property.baseInfo.equipmentName}
 						</div>
-						<Badge count={value} />
+						{/* <Badge count={value} /> */}
 					</div>
 				</div>
 			);
 		},
 		onClick: (canvas, target) => {
 			const { link } = target;
-			console.log("onclick");
-			console.log(link);
 			if (link.state === 'current') {
 				document.location.href = link.url;
 				return;
@@ -530,12 +511,19 @@ class ImageMapEditor extends Component {
 			let data;
 			if (this.canvasRef) {
 				data = this.canvasRef.handler.exportJSON().filter(obj => {
+					this.canvasRef.handler.getObjects().forEach(data => {
+						if (obj.id == data.id) {
+							obj.property = data.property;
+						}
+					});
+
 					if (!obj.id) {
 						return false;
 					}
 					return true;
 				});
 			}
+
 			this.setState({
 				preview: typeof checked === 'object' ? false : checked,
 				objects: data,
