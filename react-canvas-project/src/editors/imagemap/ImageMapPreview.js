@@ -23,7 +23,6 @@ class ImageMapPreview extends Component {
 		console.log(this.props);
 		return (
 			preview && (
-				
 				<div className={previewClassName}>
 					<div
 						ref={c => {
@@ -36,7 +35,6 @@ class ImageMapPreview extends Component {
 							height: '100%',
 						}}
 					>
-						
 						<Canvas
 							editable={false}
 							className="rde-canvas"
@@ -51,11 +49,10 @@ class ImageMapPreview extends Component {
 							onClick={onClick}
 							maxZoom={500}
 						/>
-						<Button className="rde-action-btn rde-preview-close-btn" onClick={onChangePreview}>
+						<Button className="rde-action-btn rde-preview-close-btn" onClick={onChangePreview}>{canvasName}
 							<Icon name="times" size={1.5} />
 						</Button>
 					</div>
-					
 				</div>
 			)
 		);

@@ -187,12 +187,6 @@ class ImageMapEditor extends Component {
 			const changedKey = Object.keys(changedValues)[0];
 			const changedValue = changedValues[changedKey];
 
-			if(changedKey === 'name'){
-				this.setState({
-					canvasName: changedValue
-				});
-			}
-
 			if(changedKey === 'property'){
 				let baseInfo = {};
 				let dbInfo = {};
@@ -555,10 +549,15 @@ class ImageMapEditor extends Component {
 		onChangePreview: checked => {
 			let data;
 			if (this.canvasRef) {
+				let bInput = true;
 				data = this.canvasRef.handler.exportJSON().filter(obj => {
 					this.canvasRef.handler.getObjects().forEach(data => {
 						if (obj.id == data.id) {
 							obj.property = data.property;
+						}
+						if(bInput == true && (data.property.baseInfo.equipmentId === '' || data.property.baseInfo.equipmentName === '' 
+						|| data.property.dbInfo.dbHost === '' || data.property.dbInfo.dbId === '' || data.property.dbInfo.dbPw === '')){
+							bInput = false;
 						}
 					});
 
@@ -567,11 +566,18 @@ class ImageMapEditor extends Component {
 					}
 					return true;
 				});
+
+				if(bInput == false){
+					alert('Must Input Information');
+					checked = false;
+					return false;
+				}
 			}
 
 			this.setState({
 				preview: typeof checked === 'object' ? false : checked,
 				objects: data,
+				canvasName: this.canvasRef.handler.workarea.name
 			});
 		},
 		onProgress: progress => {
