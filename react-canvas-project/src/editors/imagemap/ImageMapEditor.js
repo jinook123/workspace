@@ -171,19 +171,33 @@ class ImageMapEditor extends Component {
 			const changedValue = changedValues[changedKey];
 
 			if(changedKey === 'property'){
+				let baseInfo = {};
 				let dbInfo = {};
 				let showProperty = {};
 				let bConnectDB = false;
+
+				// equipment base Info
+				if(typeof changedValues[changedKey].baseInfo === 'undefined'){
+					baseInfo = selectedItem.property.baseInfo;
+				} else {
+					baseInfo = allValues.property.baseInfo;
+				}
+				
+				// database base Info
 				if(typeof changedValues[changedKey].dbInfo === 'undefined'){
 					dbInfo = selectedItem.property.dbInfo;
 				} else {
 					dbInfo = allValues.property.dbInfo;
 				}
+
+				// showproperty base Info
 				if(typeof changedValues[changedKey].showProperty === 'undefined'){
 					showProperty = selectedItem.property.showProperty;
 				} else {
 					showProperty = allValues.property.showProperty;
 				}
+
+				// DB Connect base Info
 				if(typeof changedValues[changedKey].bConnectDB === 'undefined'){
 					bConnectDB = selectedItem.property.bConnectDB;
 				} else {
@@ -191,14 +205,12 @@ class ImageMapEditor extends Component {
 				}
 
 				const property = {
+					baseInfo: baseInfo,
 					dbInfo: dbInfo,
 					showProperty: showProperty,
 					bConnectDB: bConnectDB
 				};
 
-				console.log("property");
-				console.log(property);
-				
 				this.canvasRef.handler.set(changedKey, property);
 				return;
 			}
@@ -408,6 +420,8 @@ class ImageMapEditor extends Component {
 		},
 		onClick: (canvas, target) => {
 			const { link } = target;
+			console.log("onclick");
+			console.log(link);
 			if (link.state === 'current') {
 				document.location.href = link.url;
 				return;
@@ -585,7 +599,15 @@ class ImageMapEditor extends Component {
 		},
 		onDownload: () => {
 			this.showLoading(true);
+
+			// canvas 설정 외에도 property 항목을 추가로 export
 			const objects = this.canvasRef.handler.exportJSON().filter(obj => {
+				this.canvasRef.handler.getObjects().forEach(data => {
+					if (obj.id == data.id) {
+						obj.property = data.property;
+					}
+				});
+				
 				if (!obj.id) {
 					return false;
 				}
@@ -598,8 +620,7 @@ class ImageMapEditor extends Component {
 				styles,
 				dataSources,
 			};
-			console.log("check download exportDatas");
-			console.log(exportDatas);
+
 			const anchorEl = document.createElement('a');
 			anchorEl.href = `data:text/json;charset=utf-8,${encodeURIComponent(
 				JSON.stringify(exportDatas, null, '\t'),

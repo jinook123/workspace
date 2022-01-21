@@ -16,6 +16,7 @@ import UserProperty from './UserProperty';
 import TriggerProperty from './TriggerProperty';
 import ImageFilterProperty from './ImageFilterProperty';
 import ChartProperty from './ChartProperty';
+import BaseProperty from './BaseProperty';
 
 export default {
 	map: {
@@ -103,6 +104,10 @@ export default {
 		},
 	},
 	image: {
+		baseInfo: {
+			title: 'Base Info',
+			component: BaseProperty,
+		},
 		dbInfo: {
 			title: 'DB Info',
 			component: DBProperty,

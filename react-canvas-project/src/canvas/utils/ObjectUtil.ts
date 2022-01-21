@@ -33,7 +33,10 @@ export interface TooltipProperty {
 }
 
 export interface Properties {
-
+	baseInfo: {
+		equipmentId?: string;
+		equipmentName?: string;
+	},
 	dbInfo?: {
 		dbHost?: string;
 		dbPort?: number;

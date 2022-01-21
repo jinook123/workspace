@@ -1,6 +1,7 @@
 import React from 'react';
-import { Form, Input, Slider, Switch, Col, InputNumber, Row } from 'antd';
+import { Form, Input, Button } from 'antd';
 import i18n from 'i18next';
+import Icon from '../../../components/icon/Icon';
 
 export default {
 	render(canvasRef, form, data) {
@@ -52,6 +53,33 @@ export default {
 						initialValue: data.property.dbInfo.dbQuery || ''
 					})(<Input />)}
 				</Form.Item>
+
+				<Button
+					block
+					size="small"
+					onClick={() => {
+						if(data.property.dbInfo.dbHost == "" || data.property.dbInfo.dbId == "" || data.property.dbInfo.dbPw == ""){
+							alert('Must Input DB Information');
+							return false;
+						}
+						data.property.bConnectDB = true;
+						fetch("http://localhost:3001/DBConnect", {
+							method : "post", 
+							headers : {
+								"content-type" : "application/json",
+							},
+							body : JSON.stringify(data.property.dbInfo),
+						}).then((res)=>res.json()) .then((json)=>{
+							console.log("return json");
+							console.log(json);
+
+							data.property.bConnectDB = true;
+						});
+					}}
+				>
+					<Icon name="play" style={{ marginRight: 8 }} />
+					{'연결'}
+				</Button>
 			</React.Fragment>
 		);
 	},

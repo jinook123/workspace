@@ -63,6 +63,10 @@ export const objectOption: Partial<FabricObjectOption> = {
 	centeredRotation: true,
 	strokeUniform: true,
 	property: {
+		baseInfo: {
+			equipmentId: '',
+			equipmentName: ''
+		},
 		dbInfo: {
 			dbHost: '',
 			dbPort: 21,

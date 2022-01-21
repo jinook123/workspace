@@ -8,7 +8,7 @@ export default {
 
 		let bConnectDB = data.property.bConnectDB;
 
-		bConnectDB = true;
+		// bConnectDB = true;
 
 		return (
 			<React.Fragment>
