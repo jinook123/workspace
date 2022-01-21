@@ -23,11 +23,7 @@ export default {
 		map: {
 			title: 'Map',
 			component: MapProperty,
-		},
-		image: {
-			title: 'Image',
-			component: ImageProperty,
-		},
+		}
 	},
 	group: {
 		shadow: {

@@ -187,8 +187,53 @@ class ImageMapEditor extends Component {
 			const changedKey = Object.keys(changedValues)[0];
 			const changedValue = changedValues[changedKey];
 
-			if (changedKey === 'property') {
-				const property = Object.assign({}, defaultOption.property, allValues.property);
+			if(changedKey === 'name'){
+				this.setState({
+					canvasName: changedValue
+				});
+			}
+
+			if(changedKey === 'property'){
+				let baseInfo = {};
+				let dbInfo = {};
+				let showProperty = {};
+				let bConnectDB = false;
+
+				// equipment base Info
+				if(typeof changedValues[changedKey].baseInfo === 'undefined'){
+					baseInfo = selectedItem.property.baseInfo;
+				} else {
+					baseInfo = allValues.property.baseInfo;
+				}
+				
+				// database base Info
+				if(typeof changedValues[changedKey].dbInfo === 'undefined'){
+					dbInfo = selectedItem.property.dbInfo;
+				} else {
+					dbInfo = allValues.property.dbInfo;
+				}
+
+				// showproperty base Info
+				if(typeof changedValues[changedKey].showProperty === 'undefined'){
+					showProperty = selectedItem.property.showProperty;
+				} else {
+					showProperty = allValues.property.showProperty;
+				}
+
+				// DB Connect base Info
+				if(typeof changedValues[changedKey].bConnectDB === 'undefined'){
+					bConnectDB = selectedItem.property.bConnectDB;
+				} else {
+					bConnectDB = allValues.property.bConnectDB;
+				}
+
+				const property = {
+					baseInfo: baseInfo,
+					dbInfo: dbInfo,
+					showProperty: showProperty,
+					bConnectDB: bConnectDB
+				};
+
 				this.canvasRef.handler.set(changedKey, property);
 				return;
 			}
@@ -677,6 +722,7 @@ class ImageMapEditor extends Component {
 			editing,
 			descriptors,
 			objects,
+			canvasName
 		} = this.state;
 		const {
 			onAdd,
@@ -827,6 +873,7 @@ class ImageMapEditor extends Component {
 					onTooltip={onTooltip}
 					onClick={onClick}
 					objects={objects}
+					canvasName={canvasName}
 				/>
 			</div>
 		);

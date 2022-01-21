@@ -12,13 +12,18 @@ class ImageMapPreview extends Component {
 		onTooltip: PropTypes.func,
 		onAction: PropTypes.func,
 		objects: PropTypes.any,
+		canvasName: PropTypes.string
 	};
 
 	render() {
-		const { onChangePreview, onTooltip, onClick, preview, objects } = this.props;
+		const { onChangePreview, onTooltip, onClick, preview, objects, canvasName } = this.props;
 		const previewClassName = classnames('rde-preview', { preview });
+
+		console.log("CHeck objects");
+		console.log(this.props);
 		return (
 			preview && (
+				
 				<div className={previewClassName}>
 					<div
 						ref={c => {
@@ -31,6 +36,7 @@ class ImageMapPreview extends Component {
 							height: '100%',
 						}}
 					>
+						
 						<Canvas
 							editable={false}
 							className="rde-canvas"
@@ -49,6 +55,7 @@ class ImageMapPreview extends Component {
 							<Icon name="times" size={1.5} />
 						</Button>
 					</div>
+					
 				</div>
 			)
 		);
