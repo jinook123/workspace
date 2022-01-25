@@ -4,7 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import i18n from 'i18next';
 import { Form, Input, Select, InputNumber, Switch, Col, Tooltip } from 'antd';
 import Configuration from './index';
-import { Canvas } from '../../../canvas';
+import Canvas, { CanvasInstance } from '../../../canvas/Canvas';
 import { InputJson, InputScript, InputTemplate } from '../../../components/common';
 import Icon from '../../../components/icon/Icon';
 
@@ -35,10 +35,12 @@ export const getEllipsis = (text, length) => {
 };
 
 interface IProps {
-	canvasRef?: Canvas;
+	canvasRef?: CanvasInstance;
 	selectedItem?: any;
 	form?: any;
 	workflow?: any;
+	dbList?: any;
+	dbTableList?: any;
 }
 
 export default class NodeConfiguration extends Component<IProps> {
@@ -47,6 +49,8 @@ export default class NodeConfiguration extends Component<IProps> {
 		selectedItem: PropTypes.object,
 		form: PropTypes.object,
 		workflow: PropTypes.object,
+		dbList: PropTypes.any,
+		dbTableList: PropTypes.any,
 	};
 
 	state = {
@@ -74,10 +78,18 @@ export default class NodeConfiguration extends Component<IProps> {
 			span,
 			max,
 			min,
+			step,
 			placeholder,
 			valuePropName,
 			required,
+			hidden
 		} = formConfig;
+
+		const {
+			dbList,
+			dbTableList
+		} = this.props;
+
 		let initialValue = configuration[key] || formConfig.default;
 		let rules = required
 			? [{ required: true, message: i18n.t('validation.enter-property', { arg: formConfig.label }) }]
@@ -85,23 +97,72 @@ export default class NodeConfiguration extends Component<IProps> {
 		if (formConfig.rules) {
 			rules = rules.concat(formConfig.rules);
 		}
+
+		console.log("recieve prama");
+		console.log(dbTableList);
+		console.log(dbList);
+
 		let selectFormItems = null;
 		switch (formConfig.type) {
 			case 'text':
-				component = <Input disabled={disabled} minLength={min} maxLength={max} placeholder={placeholder} />;
+				component = <Input disabled={disabled} minLength={min} maxLength={max} placeholder={placeholder} hidden={hidden} />;
+				break;
+			case 'equipTextCustom':
+				component = <Input disabled={configuration.bStart} minLength={min} maxLength={max} placeholder={placeholder} hidden={hidden} />;
 				break;
 			case 'textarea':
 				component = <Input.TextArea disabled={disabled} placeholder={placeholder} />;
 				break;
 			case 'number':
-				component = <InputNumber style={{ width: '100%' }} disabled={disabled} min={min} max={max} />;
+				component = <InputNumber style={{ width: '100%' }} disabled={disabled} min={min} max={max} step={step} hidden={hidden} />;
 				initialValue = configuration[key];
 				break;
+			case 'equipNumberCustom':
+				component = <InputNumber style={{ width: '100%' }} disabled={configuration.bStart} min={min} max={max} step={step} hidden={hidden} />;
+				initialValue = configuration[key];
+				break;
+				
 			case 'boolean':
-				component = <Switch disabled={disabled} />;
+				component = <Switch disabled={disabled} hidden={hidden} />;
+				break;
+			case 'equipDBSelect':
+				component = ( 
+					<Select placeholder={placeholder} disabled={configuration.bStart}>
+						{dbList.map(item => {
+							if (item.forms && item.value === initialValue) {
+								selectFormItems = Object.keys(item.forms).map(formKey => {
+									return this.getForm(form, configuration, formKey, item.forms[formKey]);
+								});
+							}
+							return (
+								<Select.Option key={item.value} value={item.value}>
+									{item.label}
+								</Select.Option>
+							);
+						})}
+					</Select>
+				);
+				break;
+			case 'equipDBTableSelect':
+				component = ( 
+					<Select placeholder={placeholder} disabled={configuration.bStart}>
+						{dbTableList.map(item => {
+							if (item.forms && item.value === initialValue) {
+								selectFormItems = Object.keys(item.forms).map(formKey => {
+									return this.getForm(form, configuration, formKey, item.forms[formKey]);
+								});
+							}
+							return (
+								<Select.Option key={item.value} value={item.value}>
+									{item.label}
+								</Select.Option>
+							);
+						})}
+					</Select>
+				);
 				break;
 			case 'select':
-				component = (
+				component = ( 
 					<Select placeholder={placeholder} disabled={disabled}>
 						{formConfig.items.map(item => {
 							if (item.forms && item.value === initialValue) {
@@ -166,7 +227,7 @@ export default class NodeConfiguration extends Component<IProps> {
 				component = <Input minLength={min} maxLength={max} placeholder={placeholder} disabled={disabled} />;
 		}
 		const label =
-			description && description.length ? (
+			hidden && description && description.length ? (
 				<React.Fragment>
 					{icon ? <Icon name={icon} /> : null}
 					<span>{formConfig.label}</span>
@@ -184,8 +245,8 @@ export default class NodeConfiguration extends Component<IProps> {
 			);
 		return (
 			<React.Fragment key={key}>
-				<Col key={key} span={span || 24}>
-					<Form.Item label={label} help={help} extra={extra} colon={false}>
+				<Col key={key} span={span || 24} hidden={hidden}>
+					<Form.Item label={label} help={help} extra={extra} colon={false} >
 						{form.getFieldDecorator(`configuration.${key}`, {
 							initialValue,
 							rules,

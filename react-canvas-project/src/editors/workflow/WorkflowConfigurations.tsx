@@ -4,12 +4,13 @@ import { Tabs } from 'antd';
 import classnames from 'classnames';
 import WorkflowInfo from './WorkflowInfo';
 import WorkflowGlobalParameters from './WorkflowGlobalParameters';
-import { Canvas, FabricObject } from '../../canvas';
+import { FabricObject } from '../../canvas';
+import Canvas, { CanvasInstance } from '../../canvas/Canvas';
 import { CommonButton } from '../../components/common';
 import Icon from '../../components/icon/Icon';
 
 interface IProps {
-	canvasRef?: Canvas;
+	canvasRef?: CanvasInstance;
 	selectedItem?: FabricObject;
 	workflow?: FabricObject;
 	onChange?: any;

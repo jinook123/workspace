@@ -15,18 +15,59 @@ class App extends Component<any, IState> {
 		activeEditor: 'imagemap',
 	};
 
+	dbList: any = [];
+	dbTableList: any = [];
+
 	handleChangeEditor = ({ key }) => {
 		this.setState({
 			activeEditor: key,
 		});
 	};
 
+	getDBList(){
+		this.dbList = [
+			{
+				label: 'mysql',
+				value: 'mysql',
+			},
+			{
+				label: 'oracle',
+				value: 'oracle',
+			},
+			{
+				label: 'mongodb',
+				value: 'mongodb',
+			}
+		];
+	}
+
+	getDBTableList(){
+		this.dbTableList = [
+			{
+				label: 'testTable1',
+				value: 'testTable1',
+			},
+			{
+				label: 'testTable2',
+				value: 'testTable2',
+			},
+			{
+				label: 'testTable3',
+				value: 'testTable3',
+			}
+		];
+	}
+
 	renderEditor = (activeEditor: EditorType) => {
+		
 		switch (activeEditor) {
 			case 'imagemap':
 				return <ImageMapEditor />;
 			case 'workflow':
-				return <WorkflowEditor />;
+				this.getDBList();
+				this.getDBTableList();
+				return <WorkflowEditor dbList={this.dbList} dbTableList={this.dbTableList} />;
+				break;
 			case 'flow':
 				return <FlowEditor />;
 			case 'hexgrid':

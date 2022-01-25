@@ -425,9 +425,6 @@ class ImageMapEditor extends Component {
 			// const result = compile(value, animations, styles, target.userProperty);
 			// console.log(result);
 
-			console.log("onTooltip");
-			console.log(target);
-
 			return (
 				<div>
 					<div>
@@ -555,7 +552,8 @@ class ImageMapEditor extends Component {
 						if (obj.id == data.id) {
 							obj.property = data.property;
 						}
-						if(bInput == true && (data.property.baseInfo.equipmentId === '' || data.property.baseInfo.equipmentName === '' 
+						
+						if(bInput == true && data.type === 'image' && (data.property.baseInfo.equipmentId === '' || data.property.baseInfo.equipmentName === '' 
 						|| data.property.dbInfo.dbHost === '' || data.property.dbInfo.dbId === '' || data.property.dbInfo.dbPw === '')){
 							bInput = false;
 						}

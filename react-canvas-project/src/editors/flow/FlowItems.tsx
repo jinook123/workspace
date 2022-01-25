@@ -12,6 +12,8 @@ interface IProps {
 }
 
 class FlowItems extends Component<IProps> {
+	item: any;
+	
 	attachEventListener = canvasRef => {
 		this.props.canvas.canvas.wrapperEl.addEventListener('dragenter', this.handleDragEnter, false);
 		this.props.canvas.canvas.wrapperEl.addEventListener('dragover', this.handleDragOver, false);
@@ -26,13 +28,13 @@ class FlowItems extends Component<IProps> {
 		this.props.canvas.canvas.wrapperEl.removeEventListener('drop', this.handleDrop);
 	};
 
-	handleDragStart = () => {
+	handleDragStart = (e, item) => {
 		this.item = item;
 		const { target } = e;
 		target.classList.add('dragging');
 	};
 
-	handleDragOver = () => {
+	handleDragOver = (e) => {
 		if (e.preventDefault) {
 			e.preventDefault();
 		}
@@ -40,17 +42,17 @@ class FlowItems extends Component<IProps> {
 		return false;
 	};
 
-	handleDragEnter = () => {
+	handleDragEnter = (e) => {
 		const { target } = e;
 		target.classList.add('over');
 	};
 
-	handleDragLeave = () => {
+	handleDragLeave = (e) => {
 		const { target } = e;
 		target.classList.remove('over');
 	};
 
-	handleDrop = () => {
+	handleDrop = (e) => {
 		e = e || window.event;
 		if (e.preventDefault) {
 			e.preventDefault();
@@ -64,7 +66,7 @@ class FlowItems extends Component<IProps> {
 		return false;
 	};
 
-	handleDragEnd = () => {
+	handleDragEnd = (e) => {
 		this.item = null;
 		e.target.classList.remove('dragging');
 	};

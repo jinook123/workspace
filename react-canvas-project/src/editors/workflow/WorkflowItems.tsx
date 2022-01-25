@@ -5,14 +5,14 @@ import i18n from 'i18next';
 import classnames from 'classnames';
 import { NODE_COLORS } from './constant/constants';
 import { getNode } from './configuration/NodeConfiguration';
-import { Canvas } from '../../canvas';
+import Canvas, { CanvasInstance } from '../../canvas/Canvas';
 import { v4 } from 'uuid';
 import { Flex } from '../../components/flex';
 import Icon from '../../components/icon/Icon';
 import { CommonButton, Scrollbar } from '../../components/common';
 
 interface IProps {
-	canvasRef: Canvas;
+	canvasRef: CanvasInstance;
 	descriptors: any;
 }
 

@@ -30,6 +30,7 @@ export const OUT_PORT_TYPE = {
 	STATIC: 'STATIC',
 	DYNAMIC: 'DYNAMIC',
 	BROADCAST: 'BROADCAST',
+	EQUIP: 'EQUIP',
 	NONE: 'NONE',
 };
 
@@ -64,6 +65,7 @@ export type NodeType = 'TRIGGER' | 'LOGIC' | 'DATA' | 'ACTION';
 export interface NodeObject extends FabricObject<fabric.Group> {
 	errorFlag?: fabric.IText;
 	label?: fabric.Text;
+	showInfo?: fabric.Text;
 	toPort?: PortObject;
 	errors?: any;
 	fromPort?: PortObject[];
@@ -79,7 +81,9 @@ export interface NodeObject extends FabricObject<fabric.Group> {
 	staticPort?: (portOption: Partial<PortObject>) => PortObject[];
 	dynamicPort?: (portOption: Partial<PortObject>) => PortObject[];
 	broadcastPort?: (portOption: Partial<PortObject>) => PortObject[];
+	equipPort?: (portOption: Partial<PortObject>) => PortObject[];
 	setErrors?: (errors: any) => void;
+	setShowInfo?: (showInfo: any) => void;
 	duplicate?: () => NodeObject;
 }
 
@@ -98,8 +102,15 @@ const Node = fabric.util.createClass(fabric.Group, {
 		if (options.name) {
 			name = getEllipsis(options.name, 18);
 		}
+		// wlsdnr fabric public create
 		this.label = new fabric.Text(name || 'Default Node', {
 			fontSize: 16,
+			fontFamily: 'polestar',
+			fontWeight: 500,
+			fill: 'rgba(255, 255, 255, 0.8)',
+		});
+		this.showInfo = new fabric.Text('showInfo : ', {
+			fontSize: 12,
 			fontFamily: 'polestar',
 			fontWeight: 500,
 			fill: 'rgba(255, 255, 255, 0.8)',
@@ -108,7 +119,7 @@ const Node = fabric.util.createClass(fabric.Group, {
 			rx: 10,
 			ry: 10,
 			width: 200,
-			height: 40,
+			height: 80,
 			fill: options.fill || 'rgba(0, 0, 0, 0.3)',
 			stroke: options.stroke || 'rgba(0, 0, 0, 0)',
 			strokeWidth: 2,
@@ -120,11 +131,11 @@ const Node = fabric.util.createClass(fabric.Group, {
 			fill: 'rgba(255, 0, 0, 0.8)',
 			visible: options.errors,
 		});
-		const node = [rect, icon, this.label, this.errorFlag];
+		const node = [rect, icon, this.label, this.errorFlag, this.showInfo];
 		const option = Object.assign({}, options, {
 			id: options.id || v4(),
 			width: 200,
-			height: 40,
+			height: 80,
 			originX: 'left',
 			originY: 'top',
 			hasRotatingPoint: false,
@@ -139,6 +150,10 @@ const Node = fabric.util.createClass(fabric.Group, {
 			top: this.label.top + this.label.height / 2 + 4,
 			left: this.label.left + 35,
 		});
+		// this.showInfo.set({
+		// 	top: this.label.top + this.label.height / 2 + 4,
+		// 	left: this.label.left + 35,
+		// });
 		this.errorFlag.set({
 			left: rect.left,
 			top: rect.top,
@@ -216,6 +231,8 @@ const Node = fabric.util.createClass(fabric.Group, {
 	createFromPort(left: number, top: number) {
 		if (this.descriptor.outPortType === OUT_PORT_TYPE.BROADCAST) {
 			this.fromPort = this.broadcastPort({ ...this.fromPortOption(), left, top });
+		} else if (this.descriptor.outPortType === OUT_PORT_TYPE.EQUIP) {
+			this.fromPort = this.equipPort({ ...this.fromPortOption(), left, top });
 		} else if (this.descriptor.outPortType === OUT_PORT_TYPE.STATIC) {
 			this.fromPort = this.staticPort({ ...this.fromPortOption(), left, top });
 		} else if (this.descriptor.outPortType === OUT_PORT_TYPE.DYNAMIC) {
@@ -256,6 +273,9 @@ const Node = fabric.util.createClass(fabric.Group, {
 	broadcastPort(portOption: any) {
 		return this.singlePort(portOption);
 	},
+	equipPort(portOption: any) {
+		return this.singlePort(portOption);
+	},
 	setErrors(errors: any) {
 		this.set({
 			errors,
@@ -269,6 +289,14 @@ const Node = fabric.util.createClass(fabric.Group, {
 				visible: false,
 			});
 		}
+	},
+	setShowInfo(showInfo: any) {
+		this.showInfo = new fabric.Text('showInfo : ' + showInfo, {
+			fontSize: 10,
+			fontFamily: 'polestar',
+			fontWeight: 500,
+			fill: 'rgba(255, 255, 255, 0.8)',
+		});
 	},
 	duplicate() {
 		const options = this.toObject();

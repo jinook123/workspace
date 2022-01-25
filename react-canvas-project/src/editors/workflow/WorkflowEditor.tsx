@@ -22,9 +22,11 @@ interface IState {
 	selectedItem: any;
 	descriptors: any;
 	editing: boolean;
+	dbList: any;
+	dbTableList: any;
 }
 
-class WorkflowEditor extends Component {
+class WorkflowEditor extends Component<any, IState> {
 	state: IState = {
 		loading: true,
 		zoomRatio: 1,
@@ -32,11 +34,15 @@ class WorkflowEditor extends Component {
 		selectedItem: null,
 		descriptors: {},
 		editing: false,
+		dbList: null,
+		dbTableList: null
 	};
 
 	canvasRef: CanvasInstance;
 	nodeConfigurationRef: any;
 	container: any;
+
+	timerList: Map<String, any> = new Map();
 
 	componentDidMount() {
 		import('./Descriptors.json').then(descriptors => {
@@ -239,6 +245,15 @@ class WorkflowEditor extends Component {
 			if (!this.state.editing) {
 				this.changeEditing(true);
 			}
+
+			const changedKey = Object.keys(changedValues)[0];
+			if(changedKey === 'configuration'){
+				if(selectedItem.type === 'EquipmentNode' && selectedItem.configuration.bStart === true){
+					alert('Must Stop Component');
+					return false;
+				}
+			}
+
 			if (changedValues.workflow) {
 				const workflow = Object.assign({}, this.state.workflow, changedValues.workflow);
 				this.setState({
@@ -263,12 +278,40 @@ class WorkflowEditor extends Component {
 					name: allValues.name,
 					description: allValues.description,
 				});
-				selectedItem.label.set({
-					text: getEllipsis(allValues.name, 18),
-				});
+				// selectedItem.label.set({
+				// 	text: getEllipsis(allValues.name, 18),
+				// });
 				if (selectedItem.descriptor.outPortType === OUT_PORT_TYPE.DYNAMIC) {
 					this.canvasRef.handler.portHandler.recreate(selectedItem);
 				}
+			}
+		},
+		onClick: (div, selectedItem) => {
+			let currentItem = {...selectedItem};
+
+			if(typeof div !== 'undefined'){
+				if(div === 'play'){
+					selectedItem.configuration.bStart = true;
+
+					if(this.timerList.has(currentItem.configuration.equipmentId) == false){
+						const timer = setInterval(() => {
+							console.log("timerStart");
+		
+							selectedItem.setShowInfo(Math.random());
+							this.canvasRef.canvas.renderAll();
+						}, currentItem.configuration.showDelay);
+						
+						this.timerList.set(currentItem.configuration.equipmentId, timer);
+					}
+				} else if(div === 'stop'){
+
+					selectedItem.configuration.bStart = false;
+					if(this.timerList.has(currentItem.configuration.equipmentId) == true){
+						clearInterval(this.timerList.get(currentItem.configuration.equipmentId));
+						this.timerList.delete(currentItem.configuration.equipmentId);
+					}
+				}
+				this.canvasHandlers.onSelect(selectedItem);
 			}
 		},
 	};
@@ -293,7 +336,10 @@ class WorkflowEditor extends Component {
 
 	render() {
 		const { zoomRatio, workflow, selectedItem, descriptors, loading, editing } = this.state;
-		const { onChange, onDownload, onUpload } = this.handlers;
+		const {dbTableList, dbList	} = this.props;
+		console.log("render");
+		console.log( this.state);
+		const { onChange, onDownload, onUpload, onClick } = this.handlers;
 		const { onZoom, onAdd, onSelect, onRemove, onModified } = this.canvasHandlers;
 		const nodes = Nodes(descriptors);
 		const action = (
@@ -386,7 +432,10 @@ class WorkflowEditor extends Component {
 							workflow={workflow}
 							canvasRef={this.canvasRef}
 							descriptors={descriptors}
+							dbList={dbList}
+							dbTableList={dbTableList}
 							onChange={onChange}
+							onClick={onClick}
 						/>
 					</div>
 					<div className="rde-editor-toolbar">

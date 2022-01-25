@@ -58,9 +58,6 @@ class ImageMapConfigurations extends Component {
 		const className = classnames('rde-editor-configurations', {
 			minimize: collapse,
 		});
-		console.log("pannel");
-		console.log(selectedItem);
-
 		return (
 			<div className={className}>
 				<CommonButton

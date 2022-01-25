@@ -5,17 +5,20 @@ import i18n from 'i18next';
 import NodeDescriptor from './configuration/NodeDescriptor';
 import NodeAction from './configuration/NodeAction';
 import NodeConfiguration from './configuration/NodeConfiguration';
-import { Canvas } from '../../canvas';
+import Canvas, { CanvasInstance } from '../../canvas/Canvas';
 import { Scrollbar } from '../../components/common';
 import { Flex } from '../../components/flex';
 import { FormComponentProps } from 'antd/lib/form';
 
 interface IProps extends FormComponentProps {
-	canvasRef?: Canvas;
+	canvasRef?: CanvasInstance;
 	selectedItem?: any;
 	workflow?: any;
 	onChange?: any;
 	descriptors?: any;
+	onClick?: any;
+	dbList?: any;
+	dbTableList?: any;
 }
 
 class WorkflowNodeConfigurations extends Component<IProps> {
@@ -25,6 +28,8 @@ class WorkflowNodeConfigurations extends Component<IProps> {
 		workflow: PropTypes.object,
 		descriptors: PropTypes.object,
 		onChange: PropTypes.func,
+		dbList: PropTypes.any,
+		dbTableList: PropTypes.any,
 	};
 
 	UNSAFE_componentWillReceiveProps(nextProps) {
@@ -36,14 +41,14 @@ class WorkflowNodeConfigurations extends Component<IProps> {
 	}
 
 	render() {
-		const { canvasRef, workflow, selectedItem, form } = this.props;
+		const { canvasRef, workflow, selectedItem, form, onClick, dbList, dbTableList } = this.props;
 		return (
 			<Scrollbar>
 				<Form layout="horizontal">
 					{selectedItem ? (
 						<React.Fragment>
-							<NodeDescriptor workflow={workflow} selectedItem={selectedItem} />
-							<Flex flexDirection="column" style={{ margin: '8px 16px' }}>
+							{/* <NodeDescriptor workflow={workflow} selectedItem={selectedItem} /> */}
+							{/* <Flex flexDirection="column" style={{ margin: '8px 16px' }}>
 								<Form.Item label={i18n.t('common.name')} colon={false}>
 									{form.getFieldDecorator('name', {
 										initialValue: selectedItem.name,
@@ -73,7 +78,7 @@ class WorkflowNodeConfigurations extends Component<IProps> {
 										/>,
 									)}
 								</Form.Item>
-							</Flex>
+							</Flex> */}
 							<Divider>{i18n.t('workflow.node-configuration')}</Divider>
 							<Flex
 								flexDirection="column"
@@ -84,9 +89,11 @@ class WorkflowNodeConfigurations extends Component<IProps> {
 									form={form}
 									selectedItem={selectedItem}
 									workflow={workflow}
+									dbList={dbList}
+									dbTableList={dbTableList}
 								/>
 							</Flex>
-							<NodeAction workflow={workflow} selectedItem={selectedItem} canvasRef={canvasRef} />
+							<NodeAction workflow={workflow} selectedItem={selectedItem} canvasRef={canvasRef} onClick={onClick} />
 						</React.Fragment>
 					) : null}
 				</Form>

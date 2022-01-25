@@ -19,8 +19,6 @@ class ImageMapPreview extends Component {
 		const { onChangePreview, onTooltip, onClick, preview, objects, canvasName } = this.props;
 		const previewClassName = classnames('rde-preview', { preview });
 
-		console.log("CHeck objects");
-		console.log(this.props);
 		return (
 			preview && (
 				<div className={previewClassName}>

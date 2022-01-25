@@ -52,12 +52,16 @@ const Link = fabric.util.createClass(fabric.Line, {
 		if (fromNode.type === 'BroadcastNode') {
 			fromPort = fromNode.fromPort[0];
 		}
+
+		if (fromNode.type === 'EquipmentNode') {
+			fromPort = fromNode.fromPort[0];
+		}
 		fromPort.links.push(this);
 		toPort.links.push(this);
 		this.setPortEnabled(fromNode, fromPort, false);
 	},
 	setPortEnabled(node: NodeObject, port: PortObject, enabled: boolean) {
-		if (node.descriptor.outPortType !== OUT_PORT_TYPE.BROADCAST) {
+		if (node.descriptor.outPortType !== OUT_PORT_TYPE.BROADCAST && node.descriptor.outPortType !== OUT_PORT_TYPE.EQUIP) {
 			port.set({
 				enabled,
 				fill: enabled ? port.originFill : port.selectFill,

@@ -124,10 +124,10 @@ export default {
 		// 	title: 'Link',
 		// 	component: LinkProperty,
 		// },
-		// tooltip: {
-		// 	title: 'Tooltip',
-		// 	component: TooltipProperty,
-		// },
+		tooltip: {
+			title: 'Tooltip',
+			component: TooltipProperty,
+		},
 		// style: {
 		// 	title: 'Style',
 		// 	component: StyleProperty,

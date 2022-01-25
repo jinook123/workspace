@@ -24,4 +24,6 @@ window.fabric.FunctionNode = LogicNode;
 
 window.fabric.BroadcastNode = LogicNode;
 
+window.fabric.EquipmentNode = LogicNode;
+
 export default LogicNode;
