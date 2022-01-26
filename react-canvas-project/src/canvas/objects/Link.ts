@@ -61,7 +61,7 @@ const Link = fabric.util.createClass(fabric.Line, {
 		this.setPortEnabled(fromNode, fromPort, false);
 	},
 	setPortEnabled(node: NodeObject, port: PortObject, enabled: boolean) {
-		if (node.descriptor.outPortType !== OUT_PORT_TYPE.BROADCAST && node.descriptor.outPortType !== OUT_PORT_TYPE.EQUIP) {
+		if (node.descriptor.outPortType !== OUT_PORT_TYPE.BROADCAST) {
 			port.set({
 				enabled,
 				fill: enabled ? port.originFill : port.selectFill,

@@ -74,8 +74,6 @@ class WorkflowEditor extends Component<any, IState> {
 			}
 		},
 		onSelect: target => {
-			console.log("this.nodeConfigurationRef.props");
-			console.log(this.nodeConfigurationRef.props);
 			this.nodeConfigurationRef.props.form.validateFields(err => {
 				if (this.state.selectedItem) {
 					if (err || (this.state.selectedItem.errors && this.state.selectedItem.errors.length)) {

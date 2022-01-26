@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import Title from './components/layout/Title';
 import FlowContainer from './containers/FlowContainer';
-import { FiberEditor, FlowEditor, HexGridEditor, ImageMapEditor, WorkflowEditor, DashBoardEditor } from './editors';
+import { ImageMapEditor, WorkflowEditor, DashBoardEditor } from './editors';
 
-type EditorType = 'imagemap' | 'workflow' | 'flow' | 'hexgrid' | 'fiber' | 'dashboard';
+type EditorType = 'imagemap' | 'workflow' | 'dashboard';
 
 interface IState {
 	activeEditor?: EditorType;
@@ -87,12 +87,6 @@ class App extends Component<any, IState> {
 				this.getDBTableList();
 				return <WorkflowEditor dbList={this.dbList} dbTableList={this.dbTableList} />;
 				break;
-			case 'flow':
-				return <FlowEditor />;
-			case 'hexgrid':
-				return <HexGridEditor />;
-			case 'fiber':
-				return <FiberEditor />;
 		}
 	};
 

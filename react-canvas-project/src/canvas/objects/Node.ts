@@ -148,6 +148,9 @@ const Node = fabric.util.createClass(fabric.Group, {
 		});
 	},
 	toObject() {
+		console.log("callsuper toObject");
+		console.log(this.get('configuration'));
+
 		return fabric.util.object.extend(this.callSuper('toObject'), {
 			id: this.get('id'),
 			name: this.get('name'),
