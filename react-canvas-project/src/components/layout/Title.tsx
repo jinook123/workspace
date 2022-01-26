@@ -63,6 +63,9 @@ class Title extends Component<IProps> {
 						onClick={this.props.onChangeEditor}
 						selectedKeys={[this.props.currentEditor]}
 					>
+						<Menu.Item key="dashboard" style={{ color: '#fff' }}>
+							{i18next.t('dashboard.dashboard')}
+						</Menu.Item>
 						<Menu.Item key="imagemap" style={{ color: '#fff' }}>
 							{i18next.t('imagemap.imagemap')}
 						</Menu.Item>

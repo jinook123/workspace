@@ -13,7 +13,7 @@ interface IProps {
 	setDebugEnabled?: any;
 }
 
-class WorkflowToolbar extends Component<IProps> {
+class DashBoardToolbar extends Component<IProps> {
 	static propTypes = {
 		canvasRef: PropTypes.any,
 		selectedItem: PropTypes.object,
@@ -21,7 +21,7 @@ class WorkflowToolbar extends Component<IProps> {
 	};
 
 	state = {
-		interactionMode: 'selection',
+		interactionMode: 'grab',
 	};
 
 	componentDidMount() {
@@ -139,4 +139,4 @@ class WorkflowToolbar extends Component<IProps> {
 	}
 }
 
-export default WorkflowToolbar;
+export default DashBoardToolbar;

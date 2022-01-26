@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import Title from './components/layout/Title';
 import FlowContainer from './containers/FlowContainer';
-import { FiberEditor, FlowEditor, HexGridEditor, ImageMapEditor, WorkflowEditor } from './editors';
+import { FiberEditor, FlowEditor, HexGridEditor, ImageMapEditor, WorkflowEditor, DashBoardEditor } from './editors';
 
-type EditorType = 'imagemap' | 'workflow' | 'flow' | 'hexgrid' | 'fiber';
+type EditorType = 'imagemap' | 'workflow' | 'flow' | 'hexgrid' | 'fiber' | 'dashboard';
 
 interface IState {
 	activeEditor?: EditorType;
@@ -12,7 +12,7 @@ interface IState {
 
 class App extends Component<any, IState> {
 	state: IState = {
-		activeEditor: 'imagemap',
+		activeEditor: 'dashboard'
 	};
 
 	dbList: any = [];
@@ -58,9 +58,28 @@ class App extends Component<any, IState> {
 		];
 	}
 
+	getWorkFlowJson(){
+		const data =  {
+			
+		};
+		
+		fetch("http://localhost:3001/api/jsonLoad", {
+			method : "post", 
+			headers : {
+				"content-type" : "application/json",
+			},
+			body : JSON.stringify(data),
+		}).then((res)=>res.json()) .then((json)=>{
+			console.log("return json");
+			console.log(json);
+		});
+	}
+
 	renderEditor = (activeEditor: EditorType) => {
 		
 		switch (activeEditor) {
+			case 'dashboard':
+				return <DashBoardEditor />;
 			case 'imagemap':
 				return <ImageMapEditor />;
 			case 'workflow':

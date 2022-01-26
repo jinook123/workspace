@@ -130,6 +130,7 @@ class WorkflowEditor extends Component<any, IState> {
 						workflow: result,
 					});
 					this.canvasRef.handler.clear();
+					this.timerList.clear();
 					const nodes = result.nodes.map(node => {
 						return {
 							...node,
@@ -157,6 +158,15 @@ class WorkflowEditor extends Component<any, IState> {
 					this.canvasRef.handler.importJSON(objects, () => {
 						this.hideLoading();
 						this.canvasRef.canvas.setZoom(this.state.zoomRatio);
+					});
+
+					// timer start
+					this.canvasRef.handler.getObjects().forEach(obj => {
+						if(obj.nodeClazz === 'EquipmentNode'){
+							if(obj.configuration.equipmentId !== '' && obj.configuration.equipmentName !== '' && obj.configuration.dbList !== '' && obj.configuration.dbTableList !== ''){
+								this.handlers.onClick('play', obj);
+							}
+						}
 					});
 				};
 				reader.readAsText(files[0]);
@@ -203,9 +213,14 @@ class WorkflowEditor extends Component<any, IState> {
 								obj.name,
 							);
 						}
+						let name = obj.name;
+						if(obj.nodeClazz === 'EquipmentNode'){
+							name = "Equipment"
+						}
+
 						const node = {
 							id: obj.id,
-							name: obj.name,
+							name: name,
 							description: obj.description,
 							nodeClazz: obj.nodeClazz,
 							configuration: obj.configuration,
@@ -215,6 +230,7 @@ class WorkflowEditor extends Component<any, IState> {
 								icon: obj.icon,
 							},
 						};
+
 						nodes.push(node);
 					} else if (obj.superType === 'link') {
 						const link = {
@@ -300,8 +316,6 @@ class WorkflowEditor extends Component<any, IState> {
 							console.log("timerStart");
 		
 							if(this.canvasRef != null && typeof this.canvasRef.canvas !== 'undefined'){
-								console.log(selectedItem);
-
 								this.canvasRef.handler.reloadCanvas(selectedItem);
 							}
 						
@@ -320,6 +334,24 @@ class WorkflowEditor extends Component<any, IState> {
 				this.canvasHandlers.onSelect(selectedItem);
 			}
 		},
+		onSaveJson: () => {
+			const workflow = this.handlers.exportJsonCode() as any;
+
+			console.log("onSaveJson");
+			console.log(workflow);
+
+			fetch("http://localhost:3001/api/jsonSave", {
+				method : "post", 
+				headers : {
+					"content-type" : "application/json",
+				},
+				body : JSON.stringify(workflow),
+				}).then((res)=>res.json()) .then((json)=>{
+					console.log("return json");
+					console.log(json);
+				}
+			);
+		}
 	};
 
 	showLoading = () => {
@@ -344,11 +376,19 @@ class WorkflowEditor extends Component<any, IState> {
 		const { zoomRatio, workflow, selectedItem, descriptors, loading, editing } = this.state;
 		const {dbTableList, dbList	} = this.props;
 
-		const { onChange, onDownload, onUpload, onClick } = this.handlers;
+		const { onChange, onDownload, onUpload, onClick, onSaveJson } = this.handlers;
 		const { onZoom, onAdd, onSelect, onRemove, onModified } = this.canvasHandlers;
 		const nodes = Nodes(descriptors);
 		const action = (
 			<React.Fragment>
+				<CommonButton
+					className="rde-action-btn"
+					shape="circle"
+					icon="file-download"
+					tooltipTitle={i18n.t('action.dbsave')}
+					tooltipPlacement="bottomRight"
+					onClick={onSaveJson}
+				/>
 				<CommonButton
 					className="rde-action-btn"
 					shape="circle"
