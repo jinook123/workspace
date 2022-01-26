@@ -762,6 +762,10 @@ class Handler implements HandlerOptions {
 		this.canvas.add(createdObj);
 		this.objects = this.getObjects();
 
+		console.log("onAdd");
+		console.log(obj);
+		console.log(createdObj);
+
 		if (!editable && !(obj.superType === 'element')) {
 			createdObj.on('mousedown', this.eventHandler.object.mousedown);
 		}
@@ -1650,6 +1654,24 @@ class Handler implements HandlerOptions {
 		}
 		this.canvas.renderAll();
 		return group;
+	};
+
+	/**
+	 * Set shadow
+	 * @param {fabric.Shadow} option
+	 * @returns
+	 */
+	 public reloadCanvas = (target?: FabricObject) => {
+		// object label change
+		const changeObj = this.canvas.getObjects().filter((obj: any) => {
+			if(target.id === obj.id){
+				target.label.set({text: "Equipment : " + Math.random()});
+			}
+			return true;
+		});
+
+		this.canvas._objects = changeObj;
+		this.canvas.renderAll();
 	};
 
 	/**

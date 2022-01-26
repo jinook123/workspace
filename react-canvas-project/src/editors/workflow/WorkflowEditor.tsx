@@ -74,6 +74,8 @@ class WorkflowEditor extends Component<any, IState> {
 			}
 		},
 		onSelect: target => {
+			console.log("this.nodeConfigurationRef.props");
+			console.log(this.nodeConfigurationRef.props);
 			this.nodeConfigurationRef.props.form.validateFields(err => {
 				if (this.state.selectedItem) {
 					if (err || (this.state.selectedItem.errors && this.state.selectedItem.errors.length)) {
@@ -297,8 +299,12 @@ class WorkflowEditor extends Component<any, IState> {
 						const timer = setInterval(() => {
 							console.log("timerStart");
 		
-							selectedItem.setShowInfo(Math.random());
-							this.canvasRef.canvas.renderAll();
+							if(this.canvasRef != null && typeof this.canvasRef.canvas !== 'undefined'){
+								console.log(selectedItem);
+
+								this.canvasRef.handler.reloadCanvas(selectedItem);
+							}
+						
 						}, currentItem.configuration.showDelay);
 						
 						this.timerList.set(currentItem.configuration.equipmentId, timer);
@@ -337,8 +343,7 @@ class WorkflowEditor extends Component<any, IState> {
 	render() {
 		const { zoomRatio, workflow, selectedItem, descriptors, loading, editing } = this.state;
 		const {dbTableList, dbList	} = this.props;
-		console.log("render");
-		console.log( this.state);
+
 		const { onChange, onDownload, onUpload, onClick } = this.handlers;
 		const { onZoom, onAdd, onSelect, onRemove, onModified } = this.canvasHandlers;
 		const nodes = Nodes(descriptors);

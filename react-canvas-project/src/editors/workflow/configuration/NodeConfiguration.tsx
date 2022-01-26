@@ -97,11 +97,7 @@ export default class NodeConfiguration extends Component<IProps> {
 		if (formConfig.rules) {
 			rules = rules.concat(formConfig.rules);
 		}
-
-		console.log("recieve prama");
-		console.log(dbTableList);
-		console.log(dbList);
-
+		
 		let selectFormItems = null;
 		switch (formConfig.type) {
 			case 'text':
