@@ -8,6 +8,7 @@ Mysql : 8.0.28
 		create user react_test@% identified 1234;
 		grant all privileges on *.* to react_test with grant option;
         alter user 'react_test'@'%' identified with mysql_native_password by '1234';
+        flush privileges;
 		
 		create database pr_mngt character set utf8;		-- db 리스트 저장, json 저장 등등 서버 db
 		create database react character set utf8;		-- 테스트용 db

@@ -59,15 +59,28 @@ const readTb = (req, callback) => {
 
 // json save
 const jsonSave = (req, callback) => {
-	console.log(req);
+	const json = JSON.stringify(req);
 	const sql = `insert into json_list(json) values (?)`;
-	const value = [[req]];
 
-	conn.query(sql, value, (err, result) => {
+	conn.query(sql, [json], (err, result) => {
 		if (err) {
-			return err;
+			throw err;
 		}
 		return callback(result.insertId);
+	})
+}
+
+// json load
+const jsonLoad = (req, callback) => {
+	const sql = `select json
+                 from json_list
+                 where num = (?)`;
+
+	conn.query(sql, [req], (err, result) => {
+		if (err) {
+			throw err;
+		}
+		return callback(result);
 	})
 }
 
