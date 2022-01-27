@@ -1,8 +1,16 @@
 {
-	"parser": "babel-eslint",
+	"parser": "@babel/eslint-parser",
+	"parserOptions": {
+		"ecmaVersion": 8,
+		"requireConfigFile": false,
+		"babelOptions" : {
+			"presets": ["@babel/preset-react"]
+		}
+	},
 	"rules": {
+		"no-unused-vars": "warn",
 		"max-len": [1, 120, 2, { "ignoreComments": true }],
-		"indent": [1, 4, { "SwitchCase": 1 }],
+		"indent": [1, "tab", { "SwitchCase": 1 }],
 		"arrow-body-style": ["error", "as-needed", { "requireReturnForObjectLiteral": true }],
 		"react/jsx-indent": [1, 4],
 		"linebreak-style": 0,
@@ -34,7 +42,7 @@
 				"ignore": ["src/"]
 			}
 		],
-		"react/sort-comp": false,
+		"react/sort-comp": 0,
 		"func-names": "off"
 	},
 	"env": {
