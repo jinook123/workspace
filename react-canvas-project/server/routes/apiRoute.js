@@ -37,4 +37,11 @@ router.post('/jsonSave', (req, res) => {
 	})
 })
 
+// json 로드
+router.post('/jsonLoad', (req, res) => {
+	service.jsonLoad(req.body, result => {
+		res.json(result);
+	})
+})
+
 module.exports = router;
