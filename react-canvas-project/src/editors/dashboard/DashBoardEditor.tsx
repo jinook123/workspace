@@ -5,8 +5,6 @@ import Canvas, { CanvasInstance } from '../../canvas/Canvas';
 import { CommonButton } from '../../components/common';
 import { Content } from '../../components/layout';
 import { getEllipsis, getNode } from './configuration/NodeConfiguration';
-import { OUT_PORT_TYPE } from './constant/constants';
-import NodeConfigurationError from './error/NodeConfigurationError';
 import Links from './link';
 import Nodes from './node';
 import DashBoardTitle from './DashBoardTitle';
@@ -19,6 +17,7 @@ interface IState {
 	workflow: any;
 	selectedItem: any;
 	descriptors: any;
+	loadedJson: any;
 }
 
 class DashBoardEditor extends Component<any, IState> {
@@ -28,6 +27,7 @@ class DashBoardEditor extends Component<any, IState> {
 		workflow: {},
 		selectedItem: null,
 		descriptors: {},
+		loadedJson: null,
 	};
 
 	canvasRef: CanvasInstance;
@@ -47,6 +47,11 @@ class DashBoardEditor extends Component<any, IState> {
 				},
 			);
 		});
+		console.log("loadedJson");
+		console.log(this.state.loadedJson);
+		if(this.state.loadedJson != null){
+
+		}
 	}
 
 	handlers = {
@@ -160,7 +165,6 @@ class DashBoardEditor extends Component<any, IState> {
 
 	render() {
 		const { zoomRatio, workflow, selectedItem, descriptors, loading } = this.state;
-
 		const { onUpload, onClick } = this.handlers;
 		const nodes = Nodes(descriptors);
 		const action = (
@@ -185,7 +189,6 @@ class DashBoardEditor extends Component<any, IState> {
 		const title = <DashBoardTitle title={titleContent} action={action} />;
 		const content = (
 			<div className="rde-editor">
-				
 				<div
 					ref={c => {
 						this.container = c;

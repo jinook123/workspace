@@ -497,6 +497,8 @@ class EventHandler {
 			this.panning = false;
 			return;
 		}
+		console.log("mousedown");
+			console.log(this.handler);
 		const { target, e } = event;
 		if (this.handler.interactionMode === 'selection') {
 			if (target && e.shiftKey && target.superType === 'node') {

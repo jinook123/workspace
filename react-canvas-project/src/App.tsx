@@ -17,6 +17,7 @@ class App extends Component<any, IState> {
 
 	dbList: any = [];
 	dbTableList: any = [];
+	loadedJson: any = null;
 
 	handleChangeEditor = ({ key }) => {
 		this.setState({
@@ -24,38 +25,52 @@ class App extends Component<any, IState> {
 		});
 	};
 
+	componentDidMount(){
+		this.getDBList();
+		this.getDBTableList();
+		this.getWorkFlowJson();
+	}
+
 	getDBList(){
-		this.dbList = [
-			{
-				label: 'mysql',
-				value: 'mysql',
-			},
-			{
-				label: 'oracle',
-				value: 'oracle',
-			},
-			{
-				label: 'mongodb',
-				value: 'mongodb',
+		const promise = fetch("http://localhost:3001/api/DBList", {
+			method : "post", 
+			headers : {
+				"content-type" : "application/json",
 			}
-		];
+		});
+
+		promise.then((res)=>res.json()).then((json)=>{
+			console.log("return DBList");
+			console.log(json);
+
+			this.dbList = [];
+			json.forEach(element => {
+				this.dbList.push({label: element.name, value: element.db});
+			});
+		});
 	}
 
 	getDBTableList(){
-		this.dbTableList = [
-			{
-				label: 'testTable1',
-				value: 'testTable1',
+		const data = {
+			db: "react"
+		}
+		const promise = fetch("http://localhost:3001/api/readTb", {
+			method : "post", 
+			headers : {
+				"content-type" : "application/json",
 			},
-			{
-				label: 'testTable2',
-				value: 'testTable2',
-			},
-			{
-				label: 'testTable3',
-				value: 'testTable3',
-			}
-		];
+			body : JSON.stringify(data),
+		});
+
+		promise.then((res)=>res.json()).then((json)=>{
+			console.log("return readTb react");
+			console.log(json);
+
+			this.dbTableList = [];
+			json.forEach(element => {
+				this.dbTableList.push({label: element.Tables_in_react, value: element.Tables_in_react});
+			});
+		});
 	}
 
 	getWorkFlowJson(){
@@ -72,25 +87,25 @@ class App extends Component<any, IState> {
 		}).then((res)=>res.json()) .then((json)=>{
 			console.log("return json");
 			console.log(json);
+
+			// this.loadedJson = json;
 		});
 	}
 
 	renderEditor = (activeEditor: EditorType) => {
-		
 		switch (activeEditor) {
 			case 'dashboard':
-				return <DashBoardEditor />;
+				return <DashBoardEditor loadedJson={this.loadedJson} />;
 			case 'imagemap':
 				return <ImageMapEditor />;
 			case 'workflow':
-				this.getDBList();
-				this.getDBTableList();
 				return <WorkflowEditor dbList={this.dbList} dbTableList={this.dbTableList} />;
 				break;
 		}
 	};
 
 	render() {
+		console.log("render");
 		const { activeEditor } = this.state;
 		return (
 			<div className="rde-main">

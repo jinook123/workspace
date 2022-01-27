@@ -762,10 +762,6 @@ class Handler implements HandlerOptions {
 		this.canvas.add(createdObj);
 		this.objects = this.getObjects();
 
-		console.log("onAdd");
-		console.log(obj);
-		console.log(createdObj);
-
 		if (!editable && !(obj.superType === 'element')) {
 			createdObj.on('mousedown', this.eventHandler.object.mousedown);
 		}
