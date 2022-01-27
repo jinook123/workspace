@@ -14,7 +14,7 @@ Mysql : 8.0.28
 		
 		-- 테스트 테이블 생성 및 데이터 입력
 		use react;
-		CREATE TABLE component_test_my (num int auto_increment primary key, name varchar(100), des varchar(500));
+		CREATE TABLE component_test_my (num int auto_increment primary key comment '인덱스', name varchar(100) comment '이름', des varchar(500) comment '기타');
 		insert into component_test_my(name, des) values
 			('Steve Rogers', 'Captain Amarica'),
 			('Tony Stark', 'Ironman'),
