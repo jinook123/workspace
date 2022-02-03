@@ -90,3 +90,5 @@ module.exports.delDb = delDb;
 module.exports.modDb = modDb;
 module.exports.readTb = readTb;
 module.exports.jsonSave = jsonSave;
+module.exports.jsonLoad = jsonLoad;
+

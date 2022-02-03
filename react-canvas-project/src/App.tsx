@@ -8,28 +8,25 @@ type EditorType = 'imagemap' | 'workflow' | 'dashboard';
 
 interface IState {
 	activeEditor?: EditorType;
+	bUpdateFlag?: boolean;
 }
 
 class App extends Component<any, IState> {
 	state: IState = {
-		activeEditor: 'dashboard'
+		activeEditor: 'dashboard',
+		bUpdateFlag: false
 	};
 
 	dbList: any = [];
 	dbTableList: any = [];
 	loadedJson: any = null;
+	bFlag: boolean = false;
 
 	handleChangeEditor = ({ key }) => {
 		this.setState({
 			activeEditor: key,
 		});
 	};
-
-	componentDidMount(){
-		this.getDBList();
-		this.getDBTableList();
-		this.getWorkFlowJson();
-	}
 
 	getDBList(){
 		const promise = fetch("http://localhost:3001/api/DBList", {
@@ -39,7 +36,7 @@ class App extends Component<any, IState> {
 			}
 		});
 
-		promise.then((res)=>res.json()).then((json)=>{
+		return promise.then((res)=>res.json()).then((json)=>{
 			console.log("return DBList");
 			console.log(json);
 
@@ -62,7 +59,7 @@ class App extends Component<any, IState> {
 			body : JSON.stringify(data),
 		});
 
-		promise.then((res)=>res.json()).then((json)=>{
+		return promise.then((res)=>res.json()).then((json)=>{
 			console.log("return readTb react");
 			console.log(json);
 
@@ -73,39 +70,64 @@ class App extends Component<any, IState> {
 		});
 	}
 
-	getWorkFlowJson(){
-		const data =  {
-			
-		};
-		
-		fetch("http://localhost:3001/api/jsonLoad", {
-			method : "post", 
-			headers : {
-				"content-type" : "application/json",
-			},
-			body : JSON.stringify(data),
-		}).then((res)=>res.json()) .then((json)=>{
-			console.log("return json");
-			console.log(json);
+	getDBInfo(){
+		if(this.bFlag == true){
+			console.log("this bFLag is false");
+			this.bFlag = false;
+		} else{
+			const promiseDB = this.getDBList();
+			const promiseTable = this.getDBTableList();
 
-			// this.loadedJson = json;
-		});
+			Promise.all([promiseDB, promiseTable]).then(()=>{
+				console.log("this bFLag is true");
+				this.bFlag = true;
+				this.setState({ bUpdateFlag: !this.state.bUpdateFlag });
+				// this.forceUpdate();
+			});
+		}
+	}
+
+
+	getWorkFlowJson(){
+		if(this.bFlag == true){
+			this.bFlag = false;
+		} else{
+			const data =  {
+				num: 1
+			};
+			
+			const promise = fetch("http://localhost:3001/api/jsonLoad", {
+				method : "post", 
+				headers : {
+					"content-type" : "application/json",
+				},
+				body : JSON.stringify(data),
+			});
+
+			promise.then((res)=>res.json()).then((json)=>{
+				this.bFlag = true;
+				this.loadedJson = JSON.parse(json[0].json);
+				this.setState({ bUpdateFlag: !this.state.bUpdateFlag });
+				// this.forceUpdate();
+			});
+		}
 	}
 
 	renderEditor = (activeEditor: EditorType) => {
 		switch (activeEditor) {
 			case 'dashboard':
+				this.getWorkFlowJson();
 				return <DashBoardEditor loadedJson={this.loadedJson} />;
 			case 'imagemap':
 				return <ImageMapEditor />;
 			case 'workflow':
+				this.getDBInfo();
 				return <WorkflowEditor dbList={this.dbList} dbTableList={this.dbTableList} />;
 				break;
 		}
 	};
 
 	render() {
-		console.log("render");
 		const { activeEditor } = this.state;
 		return (
 			<div className="rde-main">
