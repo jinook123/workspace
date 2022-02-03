@@ -57,6 +57,13 @@ class WorkflowEditor extends Component<any, IState> {
 		});
 	}
 
+	componentWillUnmount() {
+		// timer end
+		this.timerList.forEach(obj => {
+			clearInterval(obj);
+		});
+	}
+
 	canvasHandlers = {
 		onZoom: zoom => {
 			this.setState({

@@ -29,6 +29,8 @@ class App extends Component<any, IState> {
 	};
 
 	getDBList(){
+		this.dbList = [];
+		
 		const promise = fetch("http://localhost:3001/api/DBList", {
 			method : "post", 
 			headers : {
@@ -40,7 +42,6 @@ class App extends Component<any, IState> {
 			console.log("return DBList");
 			console.log(json);
 
-			this.dbList = [];
 			json.forEach(element => {
 				this.dbList.push({label: element.name, value: element.db});
 			});
@@ -51,6 +52,8 @@ class App extends Component<any, IState> {
 		const data = {
 			db: "react"
 		}
+		this.dbTableList = [];
+
 		const promise = fetch("http://localhost:3001/api/readTb", {
 			method : "post", 
 			headers : {
@@ -63,7 +66,6 @@ class App extends Component<any, IState> {
 			console.log("return readTb react");
 			console.log(json);
 
-			this.dbTableList = [];
 			json.forEach(element => {
 				this.dbTableList.push({label: element.Tables_in_react, value: element.Tables_in_react});
 			});
@@ -96,6 +98,8 @@ class App extends Component<any, IState> {
 				num: 1
 			};
 			
+			this.loadedJson = null;
+
 			const promise = fetch("http://localhost:3001/api/jsonLoad", {
 				method : "post", 
 				headers : {
@@ -105,6 +109,10 @@ class App extends Component<any, IState> {
 			});
 
 			promise.then((res)=>res.json()).then((json)=>{
+
+				console.log("return workFlow Json");
+				console.log(json);
+				console.log(JSON.parse(json[0].json));
 				this.bFlag = true;
 				this.loadedJson = JSON.parse(json[0].json);
 				this.setState({ bUpdateFlag: !this.state.bUpdateFlag });
