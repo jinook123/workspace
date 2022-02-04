@@ -2,25 +2,22 @@ import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import Title from './components/layout/Title';
 import FlowContainer from './containers/FlowContainer';
-import { ImageMapEditor, WorkflowEditor, DashBoardEditor } from './editors';
+import { ImageMapEditor, WorkflowEditor, DashBoardEditor, DBMngtBoard } from './editors';
 
-type EditorType = 'imagemap' | 'workflow' | 'dashboard';
+type EditorType = 'imagemap' | 'workflow' | 'dashboard' | 'admin';
 
 interface IState {
 	activeEditor?: EditorType;
-	bUpdateFlag?: boolean;
 }
 
 class App extends Component<any, IState> {
 	state: IState = {
 		activeEditor: 'dashboard',
-		bUpdateFlag: false
 	};
 
 	dbList: any = [];
 	dbTableList: any = [];
 	loadedJson: any = null;
-	bFlag: boolean = false;
 
 	handleChangeEditor = ({ key }) => {
 		this.setState({
@@ -28,114 +25,93 @@ class App extends Component<any, IState> {
 		});
 	};
 
-	getDBList(){
-		this.dbList = [];
-		
-		const promise = fetch("http://localhost:3001/api/DBList", {
-			method : "post", 
-			headers : {
-				"content-type" : "application/json",
-			}
-		});
-
-		return promise.then((res)=>res.json()).then((json)=>{
-			console.log("return DBList");
-			console.log(json);
-
-			json.forEach(element => {
-				this.dbList.push({label: element.name, value: element.db});
-			});
-		});
+	componentDidMount() {
+		this.getDBList();
+		this.getDBTableList();
+		this.getWorkFlowJson();
 	}
 
-	getDBTableList(){
-		const data = {
-			db: "react"
-		}
-		this.dbTableList = [];
-
-		const promise = fetch("http://localhost:3001/api/readTb", {
-			method : "post", 
-			headers : {
-				"content-type" : "application/json",
+	getDBList() {
+		const promise = fetch('http://localhost:3001/api/DBList', {
+			method: 'post',
+			headers: {
+				'content-type': 'application/json',
 			},
-			body : JSON.stringify(data),
 		});
 
-		return promise.then((res)=>res.json()).then((json)=>{
-			console.log("return readTb react");
-			console.log(json);
-
-			json.forEach(element => {
-				this.dbTableList.push({label: element.Tables_in_react, value: element.Tables_in_react});
-			});
-		});
-	}
-
-	getDBInfo(){
-		if(this.bFlag == true){
-			console.log("this bFLag is false");
-			this.bFlag = false;
-		} else{
-			const promiseDB = this.getDBList();
-			const promiseTable = this.getDBTableList();
-
-			Promise.all([promiseDB, promiseTable]).then(()=>{
-				console.log("this bFLag is true");
-				this.bFlag = true;
-				this.setState({ bUpdateFlag: !this.state.bUpdateFlag });
-				// this.forceUpdate();
-			});
-		}
-	}
-
-
-	getWorkFlowJson(){
-		if(this.bFlag == true){
-			this.bFlag = false;
-		} else{
-			const data =  {
-				num: 1
-			};
-			
-			this.loadedJson = null;
-
-			const promise = fetch("http://localhost:3001/api/jsonLoad", {
-				method : "post", 
-				headers : {
-					"content-type" : "application/json",
-				},
-				body : JSON.stringify(data),
-			});
-
-			promise.then((res)=>res.json()).then((json)=>{
-
-				console.log("return workFlow Json");
+		promise
+			.then(res => res.json())
+			.then(json => {
+				console.log('return DBList');
 				console.log(json);
-				console.log(JSON.parse(json[0].json));
-				this.bFlag = true;
-				this.loadedJson = JSON.parse(json[0].json);
-				this.setState({ bUpdateFlag: !this.state.bUpdateFlag });
-				// this.forceUpdate();
+
+				this.dbList = [];
+				json.forEach(element => {
+					this.dbList.push({ label: element.name, value: element.db });
+				});
 			});
-		}
+	}
+
+	getDBTableList() {
+		const data = {
+			db: 'react',
+		};
+		const promise = fetch('http://localhost:3001/api/readTb', {
+			method: 'post',
+			headers: {
+				'content-type': 'application/json',
+			},
+			body: JSON.stringify(data),
+		});
+
+		promise
+			.then(res => res.json())
+			.then(json => {
+				console.log('return readTb react');
+				console.log(json);
+
+				this.dbTableList = [];
+				json.forEach(element => {
+					this.dbTableList.push({ label: element.Tables_in_react, value: element.Tables_in_react });
+				});
+			});
+	}
+
+	getWorkFlowJson() {
+		const data = {};
+
+		fetch('http://localhost:3001/api/jsonLoad', {
+			method: 'post',
+			headers: {
+				'content-type': 'application/json',
+			},
+			body: JSON.stringify(data),
+		})
+			.then(res => res.json())
+			.then(json => {
+				console.log('return json');
+				console.log(json);
+
+				// this.loadedJson = json;
+			});
 	}
 
 	renderEditor = (activeEditor: EditorType) => {
 		switch (activeEditor) {
 			case 'dashboard':
-				this.getWorkFlowJson();
 				return <DashBoardEditor loadedJson={this.loadedJson} />;
 			case 'imagemap':
 				return <ImageMapEditor />;
 			case 'workflow':
-				this.getDBInfo();
 				return <WorkflowEditor dbList={this.dbList} dbTableList={this.dbTableList} />;
+			case 'admin':
+				return <DBMngtBoard />;
 				break;
 		}
 	};
 
 	render() {
+		console.log('render');
 		const { activeEditor } = this.state;
 		return (
 			<div className="rde-main">
