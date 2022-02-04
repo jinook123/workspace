@@ -21,6 +21,11 @@ class DBMngtBoard extends Component {
 	dblist = [];
 	tmpList = [];
 
+	componentDidMount() {
+		this.DBHandlers.getDBList();
+	}
+
+
 	DBHandlers = {
 		//DB selectAll
 		getDBList: () => {
@@ -60,8 +65,7 @@ class DBMngtBoard extends Component {
 				}),
 			});
 
-			request
-				.then(res => res.json())
+			request.then(res => res.json())
 				.then(json => {
 					this.tmpList = [];
 
@@ -80,8 +84,7 @@ class DBMngtBoard extends Component {
 					this.setState({
 						tmpList: json,
 					});
-					console.log('modify DB. num=' + id);
-					this.modalModify();
+					this.modalHandlers.modalModify(json[0]);
 				});
 		},
 
@@ -106,7 +109,8 @@ class DBMngtBoard extends Component {
 					console.log(json);
 
 					//refresh
-					this.getDBList;
+					//this.getDBList;
+					this.DBHandlers.getDBList();
 				});
 
 			//refresh
@@ -218,7 +222,7 @@ class DBMngtBoard extends Component {
 				des: '',
 			});
 		},
-		modalModify: () => {
+		modalModify: (data) => {
 			this.setState({
 				visible: true,
 				mode: 'modify',
@@ -234,7 +238,13 @@ class DBMngtBoard extends Component {
 				console.log(value);
 			});
 			this.setState({
-				tempKey: tempValue,
+				name: data.name,
+				src: data.src,
+				host: data.host,
+				port: data.port,
+				port: data.port,
+				db: data.db,
+				des: data.des
 			});
 		},
 	};
@@ -242,7 +252,7 @@ class DBMngtBoard extends Component {
 		const { tmpList, visible } = this.state;
 		const { getDBList, onModify, onDelete, onChange } = this.DBHandlers;
 		const { onOk, onCancel } = this.submitHandlers;
-		const { modalAdd, modalModify } = this.modalHandlers;
+		const { modalAdd } = this.modalHandlers;
 
 		const columns = [
 			{
