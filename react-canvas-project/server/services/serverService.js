@@ -14,18 +14,38 @@ const getDBList = callback => {
 	});
 };
 
+// db 조회
+const selectOne = (req, callback) => {
+	const num = req.num;
+
+	const sql = 'select * from db_list where num=?';
+
+	conn.query(sql, [num], (err, rows) => {
+		if (err) {
+			throw err;
+		}
+		return callback(rows);
+	});
+};
+
 // db 데이터 추가
 const addDb = (req, callback) => {
-	const host = req.dbHost;
-	const id = req.dbId;
-	const port = req.dbPort;
-	const pw = req.dbPw;
-	const query = req.dbQuery;
-	const value = [[id, pw, host, port, 'mysql', query]];
+	//const host = req.dbHost;
+	//const id = req.dbId;
+	//const port = req.dbPort;
+	//const pw = req.dbPw;
+	//const query = req.dbQuery;
+	//const value = [[id, pw, host, port, 'mysql', query]];
+	const name = req.name;
+	const src = req.src;
+	const host = req.host;
+	const port = req.port;
+	const db = req.db;
+	const des = req.des;
 
-	const sql = 'insert into db_list(name, src, host, port, db, des) values (?)';
+	const sql = 'insert into db_list(name, src, host, port, db, des) values (?,?,?,?,?,?)';
 
-	conn.query(sql, value, (err, result) => {
+	conn.query(sql, [name, src, host, port, db, des], (err, result) => {
 		if (err) {
 			throw err;
 		}
@@ -35,27 +55,52 @@ const addDb = (req, callback) => {
 
 // db 제거
 const delDb = (req, callback) => {
+	const num = req.num;
+	console.log(num);
 
-}
+	const sql = 'delete from db_list where num=?';
+
+	conn.query(sql, [num], (err, result) => {
+		if (err) {
+			throw err;
+		}
+		return callback(result);
+	});
+};
 
 // db 수정
 const modDb = (req, callback) => {
+	const num = req.num;
+	const name = req.name;
+	const src = req.src;
+	const host = req.host;
+	const port = req.port;
+	const db = req.db;
+	const des = req.des;
 
-}
+	const sql = 'update db_list set (name, src, host, port, db, des) = (?,?,?,?,?,?) where id=?';
+
+	conn.query(sql, [name, src, host, port, db, des, num], (err, result) => {
+		if (err) {
+			throw err;
+		}
+		return callback(result);
+	});
+};
 
 // db의 table 목록 조회
 const readTb = (req, callback) => {
 	const database = req.db;
 
-	const sql = `show tables from ${ database }`;
+	const sql = `show tables from ${database}`;
 
 	conn.query(sql, (err, rows) => {
 		if (err) {
 			return err;
 		}
 		return callback(rows);
-	})
-}
+	});
+};
 
 // json save
 const jsonSave = (req, callback) => {
@@ -67,8 +112,8 @@ const jsonSave = (req, callback) => {
 			throw err;
 		}
 		return callback(result.insertId);
-	})
-}
+	});
+};
 
 // json load
 const jsonLoad = (req, callback) => {
@@ -81,14 +126,14 @@ const jsonLoad = (req, callback) => {
 			throw err;
 		}
 		return callback(result);
-	})
-}
+	});
+};
 
 module.exports.getDBList = getDBList;
+module.exports.selectOne = selectOne;
 module.exports.addDb = addDb;
 module.exports.delDb = delDb;
 module.exports.modDb = modDb;
 module.exports.readTb = readTb;
 module.exports.jsonSave = jsonSave;
 module.exports.jsonLoad = jsonLoad;
-

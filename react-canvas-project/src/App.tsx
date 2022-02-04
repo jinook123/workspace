@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Helmet } from 'react-helmet';
 import Title from './components/layout/Title';
 import FlowContainer from './containers/FlowContainer';
-import { ImageMapEditor, WorkflowEditor, DashBoardEditor } from './editors';
+import { ImageMapEditor, WorkflowEditor, DashBoardEditor, DBMngtBoard } from './editors';
 
-type EditorType = 'imagemap' | 'workflow' | 'dashboard';
+type EditorType = 'imagemap' | 'workflow' | 'dashboard' | 'admin';
 
 interface IState {
 	activeEditor?: EditorType;
@@ -14,7 +14,7 @@ interface IState {
 class App extends Component<any, IState> {
 	state: IState = {
 		activeEditor: 'dashboard',
-		bUpdateFlag: false
+		bUpdateFlag: false,
 	};
 
 	dbList: any = [];
@@ -28,60 +28,64 @@ class App extends Component<any, IState> {
 		});
 	};
 
-	getDBList(){
+	getDBList() {
 		this.dbList = [];
-		
-		const promise = fetch("http://localhost:3001/api/DBList", {
-			method : "post", 
-			headers : {
-				"content-type" : "application/json",
-			}
+
+		const promise = fetch('http://localhost:3001/api/DBList', {
+			method: 'post',
+			headers: {
+				'content-type': 'application/json',
+			},
 		});
 
-		return promise.then((res)=>res.json()).then((json)=>{
-			console.log("return DBList");
-			console.log(json);
+		return promise
+			.then(res => res.json())
+			.then(json => {
+				console.log('return DBList');
+				console.log(json);
 
-			json.forEach(element => {
-				this.dbList.push({label: element.name, value: element.db});
+				json.forEach(element => {
+					this.dbList.push({ label: element.name, value: element.db });
+				});
 			});
-		});
 	}
 
-	getDBTableList(){
+	getDBTableList() {
 		const data = {
-			db: "react"
-		}
+			db: 'react',
+		};
 		this.dbTableList = [];
 
-		const promise = fetch("http://localhost:3001/api/readTb", {
-			method : "post", 
-			headers : {
-				"content-type" : "application/json",
+		const promise = fetch('http://localhost:3001/api/readTb', {
+			method: 'post',
+			headers: {
+				'content-type': 'application/json',
 			},
-			body : JSON.stringify(data),
+			body: JSON.stringify(data),
 		});
 
-		return promise.then((res)=>res.json()).then((json)=>{
-			console.log("return readTb react");
-			console.log(json);
+		return promise
+			.then(res => res.json())
+			.then(json => {
+				console.log('return readTb react');
+				console.log(json);
 
-			json.forEach(element => {
-				this.dbTableList.push({label: element.Tables_in_react, value: element.Tables_in_react});
+				json.forEach(element => {
+					this.dbTableList.push({ label: element.Tables_in_react, value: element.Tables_in_react });
+				});
 			});
-		});
 	}
 
-	getDBInfo(){
-		if(this.bFlag == true){
-			console.log("this bFLag is false");
+	getDBInfo() {
+		if (this.bFlag == true) {
+			console.log('this bFLag is false');
 			this.bFlag = false;
-		} else{
+		} else {
 			const promiseDB = this.getDBList();
 			const promiseTable = this.getDBTableList();
 
-			Promise.all([promiseDB, promiseTable]).then(()=>{
-				console.log("this bFLag is true");
+			Promise.all([promiseDB, promiseTable]).then(() => {
+				console.log('this bFLag is true');
 				this.bFlag = true;
 				this.setState({ bUpdateFlag: !this.state.bUpdateFlag });
 				// this.forceUpdate();
@@ -89,35 +93,35 @@ class App extends Component<any, IState> {
 		}
 	}
 
-
-	getWorkFlowJson(){
-		if(this.bFlag == true){
+	getWorkFlowJson() {
+		if (this.bFlag == true) {
 			this.bFlag = false;
-		} else{
-			const data =  {
-				num: 1
+		} else {
+			const data = {
+				num: 1,
 			};
-			
+
 			this.loadedJson = null;
 
-			const promise = fetch("http://localhost:3001/api/jsonLoad", {
-				method : "post", 
-				headers : {
-					"content-type" : "application/json",
+			const promise = fetch('http://localhost:3001/api/jsonLoad', {
+				method: 'post',
+				headers: {
+					'content-type': 'application/json',
 				},
-				body : JSON.stringify(data),
+				body: JSON.stringify(data),
 			});
 
-			promise.then((res)=>res.json()).then((json)=>{
-
-				console.log("return workFlow Json");
-				console.log(json);
-				console.log(JSON.parse(json[0].json));
-				this.bFlag = true;
-				this.loadedJson = JSON.parse(json[0].json);
-				this.setState({ bUpdateFlag: !this.state.bUpdateFlag });
-				// this.forceUpdate();
-			});
+			promise
+				.then(res => res.json())
+				.then(json => {
+					console.log('return workFlow Json');
+					console.log(json);
+					console.log(JSON.parse(json[0].json));
+					this.bFlag = true;
+					this.loadedJson = JSON.parse(json[0].json);
+					this.setState({ bUpdateFlag: !this.state.bUpdateFlag });
+					// this.forceUpdate();
+				});
 		}
 	}
 
@@ -131,6 +135,8 @@ class App extends Component<any, IState> {
 			case 'workflow':
 				this.getDBInfo();
 				return <WorkflowEditor dbList={this.dbList} dbTableList={this.dbTableList} />;
+			case 'admin':
+				return <DBMngtBoard />;
 				break;
 		}
 	};
