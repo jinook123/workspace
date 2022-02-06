@@ -1,57 +1,50 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Modal, Form, Radio } from 'antd';
-import i18n from 'i18next';
+import { Modal, Form } from 'antd';
 
 class AlertModal extends Component {
 	static propTypes = {
-		onOk: PropTypes.func.isRequired,
-		onCancel: PropTypes.func,
-		visible: PropTypes.bool.isRequired,
+		alertVisible: PropTypes.bool.isRequired,
+		msg: PropTypes.string.isRequired,
+		title: PropTypes.string.isRequired,
+		alertCancle: PropTypes.func,
 	};
 
 	state = {
-		loadType: 'file',
 		visible: false,
 	};
 
 	UNSAFE_componentWillReceiveProps(nextProps) {
-		if (nextProps.visible !== this.props.visible) {
+		if (nextProps.alertVisible !== this.props.alertVisible) {
 			this.setState({
-				visible: nextProps.visible,
+				visible: nextProps.alertVisible,
 			});
 		}
 	}
 
 	alertOk = () => {
-		const { onOk } = this.props;
-		onOk('confirm');
+		this.props.alertCancle();
+		this.setState({visible: false});
 	};
 
 	alertCancel = () => {
-		const { onCancel } = this.props;
-		if (onCancel) {
-			onCancel();
-			return;
-		}
-		this.setState({
-			visible: false,
-		});
+		this.props.alertCancle();
+		this.setState({visible: false});
 	};
 
 	render() {
-		const { text } = this.props;
-		const { loadType, visible } = this.state;
+		const { msg, title } = this.props;
+		const { visible } = this.state;
 		return (
 			<Modal
-				title={i18n.t('imagemap.svg.add-svg')}
+				title={title}
 				closable
 				onCancel={this.alertCancel}
 				onOk={this.alertOk}
 				visible={visible}
 			>
 				<Form.Item
-					label={text}
+					label={msg}
 					colon={false}
 					hasFeedback
 				>
@@ -61,4 +54,4 @@ class AlertModal extends Component {
 	}
 }
 
-export default Form.create()(SVGModal);
+export default Form.create()(AlertModal);

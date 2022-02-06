@@ -3,18 +3,25 @@ import { Helmet } from 'react-helmet';
 import Title from './components/layout/Title';
 import FlowContainer from './containers/FlowContainer';
 import { ImageMapEditor, WorkflowEditor, DashBoardEditor, DBMngtBoard } from './editors';
+import { AlertModal } from './components/common';
 
 type EditorType = 'imagemap' | 'workflow' | 'dashboard' | 'admin';
 
 interface IState {
 	activeEditor?: EditorType;
 	bUpdateFlag?: boolean;
+	alertVisible?: boolean;
+	alertMsg?: string;
+	alertTitle?: string;
 }
 
 class App extends Component<any, IState> {
 	state: IState = {
 		activeEditor: 'dashboard',
 		bUpdateFlag: false,
+		alertVisible: false,
+		alertMsg: "",
+		alertTitle: ""
 	};
 
 	dbList: any = [];
@@ -28,6 +35,14 @@ class App extends Component<any, IState> {
 		});
 	};
 
+	alertBox = (title, msg) => {
+		this.setState({alertTitle: title, alertMsg: msg, alertVisible: true});
+	}
+	
+	alertCancle = () => {
+		this.setState({alertTitle: "", alertMsg: "msg", alertVisible: false});
+	}
+	
 	getDBList() {
 		this.dbList = [];
 
@@ -77,6 +92,7 @@ class App extends Component<any, IState> {
 	}
 
 	getDBInfo() {
+		console.log("get DBInfo");
 		if (this.bFlag == true) {
 			console.log('this bFLag is false');
 			this.bFlag = false;
@@ -116,9 +132,10 @@ class App extends Component<any, IState> {
 				.then(json => {
 					console.log('return workFlow Json');
 					console.log(json);
-					console.log(JSON.parse(json[0].json));
 					this.bFlag = true;
-					this.loadedJson = JSON.parse(json[0].json);
+					if(json.length != 0){
+						this.loadedJson = JSON.parse(json[0].json);
+					}
 					this.setState({ bUpdateFlag: !this.state.bUpdateFlag });
 					// this.forceUpdate();
 				});
@@ -129,14 +146,14 @@ class App extends Component<any, IState> {
 		switch (activeEditor) {
 			case 'dashboard':
 				this.getWorkFlowJson();
-				return <DashBoardEditor loadedJson={this.loadedJson} />;
+				return <DashBoardEditor loadedJson={this.loadedJson} alertBox={(this.alertBox)} />;
 			case 'imagemap':
-				return <ImageMapEditor />;
+				return <ImageMapEditor alertBox={(this.alertBox)} />;
 			case 'workflow':
 				this.getDBInfo();
-				return <WorkflowEditor dbList={this.dbList} dbTableList={this.dbTableList} />;
+				return <WorkflowEditor dbList={this.dbList} dbTableList={this.dbTableList} alertBox={(this.alertBox)} />;
 			case 'admin':
-				return <DBMngtBoard />;
+				return <DBMngtBoard alertBox={(this.alertBox)} />;
 				break;
 		}
 	};
@@ -173,6 +190,7 @@ class App extends Component<any, IState> {
 				<FlowContainer>
 					<div className="rde-content">{this.renderEditor(activeEditor)}</div>
 				</FlowContainer>
+				<AlertModal alertVisible={this.state.alertVisible} msg={this.state.alertMsg} title={this.state.alertTitle} alertCancle={this.alertCancle}></AlertModal>
 			</div>
 		);
 	}

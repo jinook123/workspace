@@ -19,3 +19,5 @@ export { default as Scrollbar } from './Scrollbar';
 export { default as UrlModal } from './UrlModal';
 
 export { default as SVGModal } from './SVGModal';
+
+export { default as AlertModal } from './AlertModal';

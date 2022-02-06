@@ -25,7 +25,7 @@ class DashBoardEditor extends Component<any, IState> {
 		zoomRatio: 1,
 		workflow: {},
 		selectedItem: null,
-		descriptors: {},
+		descriptors: {}
 	};
 
 	canvasRef: CanvasInstance;
