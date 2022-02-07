@@ -17,7 +17,6 @@ interface IState {
 	workflow: any;
 	selectedItem: any;
 	descriptors: any;
-	loadedJson: any;
 }
 
 class DashBoardEditor extends Component<any, IState> {
@@ -26,8 +25,7 @@ class DashBoardEditor extends Component<any, IState> {
 		zoomRatio: 1,
 		workflow: {},
 		selectedItem: null,
-		descriptors: {},
-		loadedJson: null,
+		descriptors: {}
 	};
 
 	canvasRef: CanvasInstance;
@@ -44,14 +42,23 @@ class DashBoardEditor extends Component<any, IState> {
 				},
 				() => {
 					this.hideLoading();
+
+					const { loadedJson } = this.props;
+					if(loadedJson != null){
+						this.loadJson(loadedJson);
+					}
 				},
 			);
 		});
-		console.log("loadedJson");
-		console.log(this.state.loadedJson);
-		if(this.state.loadedJson != null){
 
-		}
+		
+	}
+
+	componentWillUnmount() {
+		// timer end
+		this.timerList.forEach(obj => {
+			clearInterval(obj);
+		});
 	}
 
 	handlers = {
@@ -163,10 +170,60 @@ class DashBoardEditor extends Component<any, IState> {
 		});
 	};
 
+	loadJson = (json) => {
+		const result = json;
+		this.setState({
+			workflow: result,
+		});
+		// this.canvasRef.handler.clear();
+		this.timerList.clear();
+		const nodes = result.nodes.map(node => {
+			return {
+				...node,
+				type: getNode(node.nodeClazz),
+				left: node.properties ? node.properties.left : 0,
+				top: node.properties ? node.properties.top : 0,
+			};
+		});
+		const links = result.links.map(link => {
+			return {
+				fromNodeId: link.fromNode,
+				fromPortId: link.fromPort,
+				toNodeId: link.toNode,
+				type: 'curvedLink',
+				superType: 'link',
+				left: link.properties ? link.properties.left : 0,
+				top: link.properties ? link.properties.top : 0,
+			};
+		});
+		const objects = nodes.concat(links);
+		const { viewportTransform } = result.properties;
+		if (viewportTransform) {
+			this.canvasRef.canvas.setViewportTransform(viewportTransform);
+		}
+		this.canvasRef.handler.importJSON(objects, () => {
+			this.hideLoading();
+			this.canvasRef.canvas.setZoom(this.state.zoomRatio);
+		});
+
+		// timer start
+		this.canvasRef.handler.getObjects().forEach(obj => {
+			if(obj.nodeClazz === 'EquipmentNode'){
+				if(obj.configuration.equipmentId !== '' && obj.configuration.equipmentName !== '' && obj.configuration.dbList !== '' && obj.configuration.dbTableList !== ''){
+					this.handlers.onClick('play', obj);
+				}
+			}
+		});
+	}
+
 	render() {
+		
 		const { zoomRatio, workflow, selectedItem, descriptors, loading } = this.state;
 		const { onUpload, onClick } = this.handlers;
 		const nodes = Nodes(descriptors);
+
+		
+
 		const action = (
 			<React.Fragment>
 				<CommonButton

@@ -19,6 +19,7 @@ interface IProps extends FormComponentProps {
 	onClick?: any;
 	dbList?: any;
 	dbTableList?: any;
+	alertBox?: any;
 }
 
 class WorkflowNodeConfigurations extends Component<IProps> {
@@ -30,6 +31,7 @@ class WorkflowNodeConfigurations extends Component<IProps> {
 		onChange: PropTypes.func,
 		dbList: PropTypes.any,
 		dbTableList: PropTypes.any,
+		alertBox: PropTypes.func
 	};
 
 	UNSAFE_componentWillReceiveProps(nextProps) {
@@ -41,44 +43,12 @@ class WorkflowNodeConfigurations extends Component<IProps> {
 	}
 
 	render() {
-		const { canvasRef, workflow, selectedItem, form, onClick, dbList, dbTableList } = this.props;
+		const { canvasRef, workflow, selectedItem, form, onClick, dbList, dbTableList, alertBox } = this.props;
 		return (
 			<Scrollbar>
 				<Form layout="horizontal">
 					{selectedItem ? (
 						<React.Fragment>
-							{/* <NodeDescriptor workflow={workflow} selectedItem={selectedItem} /> */}
-							{/* <Flex flexDirection="column" style={{ margin: '8px 16px' }}>
-								<Form.Item label={i18n.t('common.name')} colon={false}>
-									{form.getFieldDecorator('name', {
-										initialValue: selectedItem.name,
-										rules: [
-											{
-												required: true,
-												message: i18n.t('validation.enter-property', {
-													arg: i18n.t('common.name'),
-												}),
-											},
-										],
-									})(
-										<Input
-											minLength={0}
-											maxLength={30}
-											placeholder={i18n.t('workflow.node-name-required')}
-										/>,
-									)}
-								</Form.Item>
-								<Form.Item label={i18n.t('common.description')} colon={false}>
-									{form.getFieldDecorator('description', {
-										initialValue: selectedItem.description,
-									})(
-										<Input.TextArea
-											style={{ maxHeight: 200 }}
-											placeholder={i18n.t('workflow.node-description-required')}
-										/>,
-									)}
-								</Form.Item>
-							</Flex> */}
 							<Divider>{i18n.t('workflow.node-configuration')}</Divider>
 							<Flex
 								flexDirection="column"
@@ -93,7 +63,7 @@ class WorkflowNodeConfigurations extends Component<IProps> {
 									dbTableList={dbTableList}
 								/>
 							</Flex>
-							<NodeAction workflow={workflow} selectedItem={selectedItem} canvasRef={canvasRef} onClick={onClick} />
+							<NodeAction workflow={workflow} selectedItem={selectedItem} canvasRef={canvasRef} onClick={onClick} alertBox={alertBox} />
 						</React.Fragment>
 					) : null}
 				</Form>

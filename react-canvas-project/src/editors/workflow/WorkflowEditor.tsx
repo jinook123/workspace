@@ -22,8 +22,6 @@ interface IState {
 	selectedItem: any;
 	descriptors: any;
 	editing: boolean;
-	dbList: any;
-	dbTableList: any;
 }
 
 class WorkflowEditor extends Component<any, IState> {
@@ -33,9 +31,7 @@ class WorkflowEditor extends Component<any, IState> {
 		workflow: {},
 		selectedItem: null,
 		descriptors: {},
-		editing: false,
-		dbList: null,
-		dbTableList: null
+		editing: false
 	};
 
 	canvasRef: CanvasInstance;
@@ -54,6 +50,13 @@ class WorkflowEditor extends Component<any, IState> {
 					this.hideLoading();
 				},
 			);
+		});
+	}
+
+	componentWillUnmount() {
+		// timer end
+		this.timerList.forEach(obj => {
+			clearInterval(obj);
 		});
 	}
 
@@ -265,7 +268,7 @@ class WorkflowEditor extends Component<any, IState> {
 			const changedKey = Object.keys(changedValues)[0];
 			if(changedKey === 'configuration'){
 				if(selectedItem.type === 'EquipmentNode' && selectedItem.configuration.bStart === true){
-					alert('Must Stop Component');
+					this.props.alertBox('warning', 'Must Stop Component');
 					return false;
 				}
 			}
@@ -372,7 +375,7 @@ class WorkflowEditor extends Component<any, IState> {
 
 	render() {
 		const { zoomRatio, workflow, selectedItem, descriptors, loading, editing } = this.state;
-		const {dbTableList, dbList	} = this.props;
+		const { dbTableList, dbList, alertBox } = this.props;
 
 		const { onChange, onDownload, onUpload, onClick, onSaveJson } = this.handlers;
 		const { onZoom, onAdd, onSelect, onRemove, onModified } = this.canvasHandlers;
@@ -477,6 +480,7 @@ class WorkflowEditor extends Component<any, IState> {
 							descriptors={descriptors}
 							dbList={dbList}
 							dbTableList={dbTableList}
+							alertBox={alertBox}
 							onChange={onChange}
 							onClick={onClick}
 						/>

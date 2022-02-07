@@ -10,6 +10,13 @@ router.post('/DBList', (req, res) => {
 	});
 });
 
+// db 조회
+router.post('/selectOne', (req, res) => {
+	service.selectOne(req.body, result => {
+		res.json(result);
+	});
+});
+
 // db 정보 추가
 router.post('/addDB', (req, res) => {
 	service.addDb(req.body, result => {
@@ -18,12 +25,20 @@ router.post('/addDB', (req, res) => {
 });
 
 // db 정보 제거
-router.post('/delDB', (req, res) => {});
+router.post('/delDB', (req, res) => {
+	service.delDb(req.body, result => {
+		res.json(result);
+	});
+});
 
 // db 정보 수정
-router.post('/modDB', (req, res) => {});
+router.post('/modDB', (req, res) => {
+	service.modDb(req.body, result => {
+		res.json(result);
+	});
+});
 
-// table list 호
+// table list
 router.post('/readTb', (req, res) => {
 	service.readTb(req.body, result => {
 		res.json(result);
@@ -34,14 +49,14 @@ router.post('/readTb', (req, res) => {
 router.post('/jsonSave', (req, res) => {
 	service.jsonSave(req.body, result => {
 		res.json(result);
-	})
-})
+	});
+});
 
 // json 로드
 router.post('/jsonLoad', (req, res) => {
 	service.jsonLoad(req.body, result => {
 		res.json(result);
-	})
-})
+	});
+});
 
 module.exports = router;

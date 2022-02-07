@@ -35,7 +35,7 @@ Mysql : 8.0.28
         create table json_list (num int auto_increment primary key, savetime datetime default current_timestamp on update current_timestamp, json JSON);
 			
 			
-orcle : 21c
+orcle : 21c 
 
 		ALTER SESSION SET "_ORACLE_SCRIPT"=TRUE;
 		CREATE USER react_test IDENTIFIED BY 1234;

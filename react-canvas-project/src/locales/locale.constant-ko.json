@@ -246,5 +246,8 @@
 		"validate-fields-error": "설정이 잘못된 노드가 존재합니다.",
 		"node-name-required": "노드 이름을 입력하세요",
 		"node-description-required": "노드 설명을 입력하세요"
+	},
+	"admin": {
+		"admin": "Admin"
 	}
 }

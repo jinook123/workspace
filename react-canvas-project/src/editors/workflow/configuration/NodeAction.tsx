@@ -10,12 +10,13 @@ interface IProps {
 	selectedItem?: any;
 	workflow?: any;
 	onClick?: any;
+	alertBox?: any;
 }
 
 class NodeAction extends Component<IProps> {
 	// timerList: Map<String, any> = new Map();
 	render() {
-		const { canvasRef, selectedItem, onClick } = this.props;
+		const { canvasRef, selectedItem, onClick, alertBox } = this.props;
 		return (
 			<Flex justifyContent="center" alignItems="flex-end" flex="1">
 				<Flex.Item alignSelf="flex-start">
@@ -45,7 +46,7 @@ class NodeAction extends Component<IProps> {
 						disabled={selectedItem.configuration.bStart}
 						onClick={() => {
 							if(selectedItem.configuration.equipmentId === '' || selectedItem.configuration.equipmentName === '' || selectedItem.configuration.dbList === '' || selectedItem.configuration.dbTableList === ''){
-								alert('Must Input Information');
+								alertBox('warning', 'Must Input Information');
 								return false;
 							}
 							onClick('play', selectedItem);

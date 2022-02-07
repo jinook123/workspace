@@ -72,7 +72,7 @@ class DashBoardToolbar extends Component<IProps> {
 	attachEventListener = canvasRef => {
 		canvasRef.canvas.wrapperEl.addEventListener('keydown', this.events.keydown, false);
 	};
-
+p
 	detachEventListener = canvasRef => {
 		canvasRef.canvas.wrapperEl.removeEventListener('keydown', this.events.keydown);
 	};
