@@ -1,131 +1,168 @@
-const db = require('../dbconnection');
-
-const conn = db.mysqlServer;
+/**
+ * Admin(server) services
+ */
+const DB = require('../connection/mysqlServerConnPool');
 
 // 전체 db 리스트
 const getDBList = callback => {
+
 	const sql = 'select * from db_list';
 
-	conn.query(sql, (err, rows) => {
-		if (err) {
-			throw err;
-		}
-		return callback(rows);
+	DB.getConnection((DBErr, conn) => {
+
+		if (DBErr) throw DBErr;
+
+		conn.query(sql, (err, rows) => {
+
+			if (err) throw err;
+			else return callback(rows);
+		});
+		conn.release();
 	});
 };
 
 // db 조회
 const selectOne = (req, callback) => {
-	const num = req.num;
 
+	const {num} = req;
 	const sql = 'select * from db_list where num=?';
 
-	conn.query(sql, [num], (err, rows) => {
-		if (err) {
-			throw err;
-		}
-		return callback(rows);
-	});
+	DB.getConnection((DBErr, conn) => {
+
+		if (DBErr) throw DBErr;
+
+		conn.query(sql, [num], (err, rows) => {
+
+			if (err) throw err;
+			else return callback(rows);
+		});
+		conn.release();
+	})
 };
 
 // db 데이터 추가
 const addDb = (req, callback) => {
-	//const host = req.dbHost;
-	//const id = req.dbId;
-	//const port = req.dbPort;
-	//const pw = req.dbPw;
-	//const query = req.dbQuery;
-	//const value = [[id, pw, host, port, 'mysql', query]];
-	const name = req.name;
-	const src = req.src;
-	const host = req.host;
-	const port = req.port;
-	const db = req.db;
-	const des = req.des;
+
+	const {name} = req;
+	const {src} = req;
+	const {host} = req;
+	const {port} = req;
+	const {db} = req;
+	const {des} = req;
 
 	const sql = 'insert into db_list(name, src, host, port, db, des) values (?,?,?,?,?,?)';
 
-	conn.query(sql, [name, src, host, port, db, des], (err, result) => {
-		if (err) {
-			throw err;
-		}
-		return callback(result.insertId);
-	});
+	DB.getConnection((DBErr, conn) => {
+
+		if (DBErr) throw DBErr;
+
+		conn.query(sql, [name, src, host, port, db, des], (err, result) => {
+
+			if (err) throw err;
+			else return callback(result.insertId);
+		});
+		conn.release();
+	})
 };
 
 // db 제거
 const delDb = (req, callback) => {
-	const num = req.num;
-	console.log(num);
+
+	const {num} = req;
 
 	const sql = 'delete from db_list where num=?';
 
-	conn.query(sql, [num], (err, result) => {
-		if (err) {
-			throw err;
-		}
-		return callback(result);
+	DB.getConnection((DBErr, conn) => {
+
+		if (DBErr) throw DBErr;
+
+		conn.query(sql, [num], (err, result) => {
+
+			if (err) throw err;
+			else return callback(result);
+		});
+		conn.release();
 	});
 };
 
 // db 수정
 const modDb = (req, callback) => {
-	const num = req.num;
-	const name = req.name;
-	const src = req.src;
-	const host = req.host;
-	const port = req.port;
-	const db = req.db;
-	const des = req.des;
+
+	const {num} = req;
+	const {name} = req;
+	const {src} = req;
+	const {host} = req;
+	const {port} = req;
+	const {db} = req;
+	const {des} = req;
 
 	const sql = 'update db_list set (name, src, host, port, db, des) = (?,?,?,?,?,?) where id=?';
 
-	conn.query(sql, [name, src, host, port, db, des, num], (err, result) => {
-		if (err) {
-			throw err;
-		}
-		return callback(result);
-	});
+	DB.getConnection((DBErr, conn) => {
+
+		if (DBErr) throw DBErr;
+
+		conn.query(sql, [name, src, host, port, db, des, num], (err, result) => {
+
+			if (err) throw err;
+			else return callback(result);
+		});
+		conn.release();
+	})
 };
 
 // db의 table 목록 조회
 const readTb = (req, callback) => {
+
 	const database = req.db;
 
 	const sql = `show tables from ${database}`;
 
-	conn.query(sql, (err, rows) => {
-		if (err) {
-			return err;
-		}
-		return callback(rows);
-	});
+	DB.getConnection((DBErr, conn) => {
+
+		if (DBErr) throw DBErr;
+
+		conn.query(sql, (err, rows) => {
+			if (err) return err;
+			return callback(rows);
+		});
+		conn.release();
+	})
 };
 
 // json save
 const jsonSave = (req, callback) => {
+
 	const json = JSON.stringify(req);
 	const sql = `insert into json_list(json) values (?)`;
 
-	conn.query(sql, [json], (err, result) => {
-		if (err) {
-			throw err;
-		}
-		return callback(result.insertId);
-	});
+	DB.getConnection((DBErr, conn) => {
+
+		if (DBErr) throw DBErr;
+
+		conn.query(sql, [json], (err, result) => {
+			if (err) throw err;
+			else return callback(result.insertId);
+		});
+		conn.release();
+	})
 };
 
 // json load
 const jsonLoad = (req, callback) => {
-	const sql = `select json
-                 from json_list
-                 where num = (?)`;
 
-	conn.query(sql, [req], (err, result) => {
-		if (err) {
-			throw err;
-		}
-		return callback(result);
+	const {num} = req;
+	const sql = `select json from json_list where num = (?)`;
+
+	DB.getConnection((DBErr, conn) => {
+
+		if (DBErr) throw DBErr;
+
+		conn.query(sql, [num], (err, result) => {
+			if (err) throw err;
+			else return callback(result);
+		});
+		conn.release();
 	});
 };
 

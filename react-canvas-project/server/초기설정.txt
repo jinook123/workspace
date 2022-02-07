@@ -55,8 +55,8 @@ server 설명
     config: db 접속 정보 등 설정값 저장
     routes: 라우팅 정보, response, request 처리
     services: db crud
+    connection: DB 접속 및 pool 관리
 
-    dbconnection.js: db connection 관리
     server.js: 서버 실행, 관리 등등
 
 

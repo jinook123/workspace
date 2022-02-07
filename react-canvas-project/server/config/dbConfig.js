@@ -1,9 +1,13 @@
+/**
+ * DB Config
+ */
 const react = {
 	host: 'localhost',
 	port: 3306,
 	user: 'react_test',
 	password: '1234',
 	database: 'react',
+	connectionLimit: 50
 };
 
 const server = {
@@ -12,6 +16,7 @@ const server = {
 	user: 'react_test',
 	password: '1234',
 	database: 'pr_mngt',
+	connectionLimit: 5
 };
 
 const oracle = {
