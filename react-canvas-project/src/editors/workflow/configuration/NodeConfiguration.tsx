@@ -123,7 +123,7 @@ export default class NodeConfiguration extends Component<IProps> {
 				break;
 			case 'equipDBSelect':
 				component = ( 
-					<Select placeholder={placeholder} disabled={configuration.bStart}>
+					<Select placeholder={placeholder} disabled={configuration.bStart}> 
 						{dbList.map(item => {
 							if (item.forms && item.value === initialValue) {
 								selectFormItems = Object.keys(item.forms).map(formKey => {

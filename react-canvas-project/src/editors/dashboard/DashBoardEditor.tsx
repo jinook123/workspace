@@ -50,8 +50,6 @@ class DashBoardEditor extends Component<any, IState> {
 				},
 			);
 		});
-
-		
 	}
 
 	componentWillUnmount() {
@@ -175,7 +173,7 @@ class DashBoardEditor extends Component<any, IState> {
 		this.setState({
 			workflow: result,
 		});
-		// this.canvasRef.handler.clear();
+		this.canvasRef.handler.clear();
 		this.timerList.clear();
 		const nodes = result.nodes.map(node => {
 			return {
@@ -221,8 +219,6 @@ class DashBoardEditor extends Component<any, IState> {
 		const { zoomRatio, workflow, selectedItem, descriptors, loading } = this.state;
 		const { onUpload, onClick } = this.handlers;
 		const nodes = Nodes(descriptors);
-
-		
 
 		const action = (
 			<React.Fragment>
