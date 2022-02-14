@@ -66,15 +66,16 @@ class Title extends Component<IProps> {
 						<Menu.Item key="dashboard" style={{ color: '#fff' }}>
 							{i18next.t('dashboard.dashboard')}
 						</Menu.Item>
+						<Menu.Item key="admin" style={{ color: '#fff' }}>
+							{i18next.t('admin.admin')}
+						</Menu.Item>
 						<Menu.Item key="imagemap" style={{ color: '#fff' }}>
 							{i18next.t('imagemap.imagemap')}
 						</Menu.Item>
 						<Menu.Item key="workflow" style={{ color: '#fff' }}>
 							{i18next.t('workflow.workflow')}
 						</Menu.Item>
-						<Menu.Item key="admin" style={{ color: '#fff' }}>
-							{i18next.t('admin.admin')}
-						</Menu.Item>
+						
 						{/* <Menu.Item key="flow" style={{ color: '#fff' }}>{i18n.t('flow.flow')}</Menu.Item> */}
 						{/* <Menu.Item key="hexgrid" style={{ color: '#fff' }}>
 							{i18next.t('hexgrid.hexgrid')}

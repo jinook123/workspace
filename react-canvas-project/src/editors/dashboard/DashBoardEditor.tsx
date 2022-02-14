@@ -4,9 +4,9 @@ import React, { Component } from 'react';
 import Canvas, { CanvasInstance } from '../../canvas/Canvas';
 import { CommonButton } from '../../components/common';
 import { Content } from '../../components/layout';
-import { getEllipsis, getNode } from './configuration/NodeConfiguration';
-import Links from './link';
-import Nodes from './node';
+import { getEllipsis, getNode } from '../common/configuration/NodeConfiguration';
+import Links from '../common/link';
+import Nodes from '../common/node';
 import DashBoardTitle from './DashBoardTitle';
 import DashBoardToolbar from './DashBoardToolbar';
 
@@ -35,7 +35,7 @@ class DashBoardEditor extends Component<any, IState> {
 	timerList: Map<String, any> = new Map();
 
 	componentDidMount() {
-		import('./Descriptors.json').then(descriptors => {
+		import('../common/Descriptors.json').then(descriptors => {
 			this.setState(
 				{
 					descriptors,
@@ -50,8 +50,6 @@ class DashBoardEditor extends Component<any, IState> {
 				},
 			);
 		});
-
-		
 	}
 
 	componentWillUnmount() {
@@ -175,7 +173,7 @@ class DashBoardEditor extends Component<any, IState> {
 		this.setState({
 			workflow: result,
 		});
-		// this.canvasRef.handler.clear();
+		this.canvasRef.handler.clear();
 		this.timerList.clear();
 		const nodes = result.nodes.map(node => {
 			return {
@@ -221,8 +219,6 @@ class DashBoardEditor extends Component<any, IState> {
 		const { zoomRatio, workflow, selectedItem, descriptors, loading } = this.state;
 		const { onUpload, onClick } = this.handlers;
 		const nodes = Nodes(descriptors);
-
-		
 
 		const action = (
 			<React.Fragment>

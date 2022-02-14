@@ -1,0 +1,25 @@
+{
+	"LOGIC": [
+		{
+			"name": "Equipment",
+			"description": "Equipment",
+			"type": "LOGIC",
+			"nodeClazz": "EquipmentNode",
+			"configClazz": "EquipmentNodeConfiguration",
+			"defaultConfiguration": {
+				"outputCount": 0,
+				"showDelay": 1000,
+				"equipmentId": "",
+				"equipmentName": "",
+				"dbTableList": "",
+				"bStart": false 
+			},
+			"inEnabled": true,
+			"outPortType": "EQUIP",
+			"outPorts": [
+				""
+			],
+			"icon": ""
+		}
+	]
+}

@@ -4,11 +4,11 @@ import React, { Component } from 'react';
 import Canvas, { CanvasInstance } from '../../canvas/Canvas';
 import { CommonButton } from '../../components/common';
 import { Content } from '../../components/layout';
-import { getEllipsis, getNode } from './configuration/NodeConfiguration';
-import { OUT_PORT_TYPE } from './constant/constants';
-import NodeConfigurationError from './error/NodeConfigurationError';
-import Links from './link';
-import Nodes from './node';
+import { getEllipsis, getNode } from '../common/configuration/NodeConfiguration';
+import { OUT_PORT_TYPE } from '../common/constant/constants';
+import NodeConfigurationError from '../common/error/NodeConfigurationError';
+import Links from '../common/link';
+import Nodes from '../common/node';
 import WorkflowConfigurations from './WorkflowConfigurations';
 import WorkflowItems from './WorkflowItems';
 import WorkflowNodeConfigurations from './WorkflowNodeConfigurations';
@@ -41,7 +41,7 @@ class WorkflowEditor extends Component<any, IState> {
 	timerList: Map<String, any> = new Map();
 
 	componentDidMount() {
-		import('./Descriptors.json').then(descriptors => {
+		import('../common/Descriptors.json').then(descriptors => {
 			this.setState(
 				{
 					descriptors,

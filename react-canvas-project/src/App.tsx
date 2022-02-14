@@ -9,24 +9,28 @@ type EditorType = 'imagemap' | 'workflow' | 'dashboard' | 'admin';
 
 interface IState {
 	activeEditor?: EditorType;
-	bUpdateFlag?: boolean;
 	alertVisible?: boolean;
 	alertMsg?: string;
 	alertTitle?: string;
+	loadedJson?: any;
+	dbList?: any,
+	dbTableList?: any,
 }
 
 class App extends Component<any, IState> {
 	state: IState = {
 		activeEditor: 'dashboard',
-		bUpdateFlag: false,
 		alertVisible: false,
 		alertMsg: "",
-		alertTitle: ""
+		alertTitle: "",
+		loadedJson: null,
+		dbList: null,
+		dbTableList: null,
 	};
 
 	dbList: any = [];
 	dbTableList: any = [];
-	loadedJson: any = null;
+	// loadedJson: any = null;
 	bFlag: boolean = false;
 
 	handleChangeEditor = ({ key }) => {
@@ -88,36 +92,32 @@ class App extends Component<any, IState> {
 				json.forEach(element => {
 					this.dbTableList.push({ label: element.Tables_in_react, value: element.Tables_in_react });
 				});
-			});
+		});
 	}
 
 	getDBInfo() {
 		console.log("get DBInfo");
 		if (this.bFlag == true) {
-			console.log('this bFLag is false');
 			this.bFlag = false;
 		} else {
 			const promiseDB = this.getDBList();
 			const promiseTable = this.getDBTableList();
 
 			Promise.all([promiseDB, promiseTable]).then(() => {
-				console.log('this bFLag is true');
 				this.bFlag = true;
-				this.setState({ bUpdateFlag: !this.state.bUpdateFlag });
-				// this.forceUpdate();
+				this.setState({ dbTableList: this.dbTableList, dbList: this.dbList });
 			});
 		}
 	}
 
 	getWorkFlowJson() {
 		if (this.bFlag == true) {
+			console.log('this bFLag is false');
 			this.bFlag = false;
 		} else {
 			const data = {
-				num: 1,
+				num: 3,
 			};
-
-			this.loadedJson = null;
 
 			const promise = fetch('http://localhost:3001/api/jsonLoad', {
 				method: 'post',
@@ -134,11 +134,9 @@ class App extends Component<any, IState> {
 					console.log(json);
 					this.bFlag = true;
 					if(json.length != 0){
-						this.loadedJson = JSON.parse(json[0].json);
+						this.setState({loadedJson: JSON.parse(json[0].json)});
 					}
-					this.setState({ bUpdateFlag: !this.state.bUpdateFlag });
-					// this.forceUpdate();
-				});
+			});
 		}
 	}
 
@@ -146,7 +144,7 @@ class App extends Component<any, IState> {
 		switch (activeEditor) {
 			case 'dashboard':
 				this.getWorkFlowJson();
-				return <DashBoardEditor loadedJson={this.loadedJson} alertBox={(this.alertBox)} />;
+				return <DashBoardEditor loadedJson={this.state.loadedJson} alertBox={(this.alertBox)} />;
 			case 'imagemap':
 				return <ImageMapEditor alertBox={(this.alertBox)} />;
 			case 'workflow':

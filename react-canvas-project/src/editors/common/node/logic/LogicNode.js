@@ -16,14 +16,6 @@ LogicNode.fromObject = function(options, callback) {
 	return callback(new LogicNode(options));
 };
 
-window.fabric.LogicNode = LogicNode;
-
-window.fabric.DelayNode = LogicNode;
-
-window.fabric.FunctionNode = LogicNode;
-
-window.fabric.BroadcastNode = LogicNode;
-
 window.fabric.EquipmentNode = LogicNode;
 
 export default LogicNode;
