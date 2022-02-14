@@ -3,23 +3,25 @@ import { Button, Table, Modal, Input, Form } from 'antd';
 import Icon from '../../components/icon/Icon';
 import { Flex } from '../../components/flex';
 
-class DBMngtBoard extends Component {
+class DBMngtBoard extends Component<any> {
+
 	state = {
-		tempKey: '',
-		tempValue: '',
 		visible: false,
-		mode: '',
+		mode: 'none',
+		activeIndex:0,
+		num: 0,
 		name: '',
 		src: '',
-		host: 'localhost',
+		host: '',
 		port: '',
 		db: '',
 		des: '',
+		dbListAll:[],
+		connStatus : ''
 	};
 
 	//리스트 초기화
-	dblist = [];
-	tmpList = [];
+	dbListAll : any = [];
 
 	componentDidMount() {
 		this.DBHandlers.getDBList();
@@ -36,60 +38,33 @@ class DBMngtBoard extends Component {
 				},
 			});
 
-			request
+			return request
 				.then(res => res.json())
 				.then(json => {
 					console.log('return DBList');
+					this.dbListAll=[];
+					//this.dbListAll=json;
 
-					this.dblist = json;
+					this.setState({dbListAll : json});
 
-					this.setState({
-						dblist: json,
-					});
-					console.log(this.dblist);
+					console.log(this.state.dbListAll);
 				});
 		},
 
 		//DB Modify
-		onModify: e => {
-			const id = e.target.id;
+		onModify: () => {
+			//const id = e.target.id;
+			const id=this.state.activeIndex;
+			console.log('onModify...');
+			console.log('id='+id);
+			console.log(this.state.dbListAll[id]);
+			const tmpList = this.state.dbListAll[id];
 
-			//선택 id의 DB정보 불러오기
-			const request = fetch('http://localhost:3001/api/selectOne', {
-				method: 'post',
-				headers: {
-					'content-type': 'application/json',
-				},
-				body: JSON.stringify({
-					num: id,
-				}),
-			});
-
-			request.then(res => res.json())
-				.then(json => {
-					this.tmpList = [];
-
-					json.forEach(element => {
-						this.tmpList.push({
-							num: element.num,
-							name: element.name,
-							src: element.src,
-							host: element.host,
-							port: element.port,
-							db: element.db,
-							des: element.des,
-						});
-					});
-
-					this.setState({
-						tmpList: json,
-					});
-					this.modalHandlers.modalModify(json[0]);
-				});
+				this.modalHandlers.modalModify(tmpList);
 		},
 
 		//DB Delete
-		onDelete: e => {
+		onDelete: (e) => {
 			const id = e.target.id;
 
 			const request = fetch('http://localhost:3001/api/delDB', {
@@ -103,13 +78,10 @@ class DBMngtBoard extends Component {
 			});
 
 			request
-				.then(res => res.json())
-				.then(json => {
+				.then(res =>  {
 					console.log('delete DB. num=' + id);
-					console.log(json);
 
 					//refresh
-					//this.getDBList;
 					this.DBHandlers.getDBList();
 				});
 
@@ -137,6 +109,30 @@ class DBMngtBoard extends Component {
 						'content-type': 'application/json',
 					},
 					body: JSON.stringify({
+						name: this.state.name,
+						src: this.state.src,
+						host: this.state.host,
+						port: this.state.port,
+						db: this.state.db,
+						des: this.state.des,
+					}),
+				})
+					.then(res => {
+						console.log('insert DBList');
+						console.log(res);
+
+					//refresh
+					this.modalHandlers.modalHide();
+					this.DBHandlers.getDBList();				
+					});
+
+			} else if (mode == 'modify') {
+				fetch('http://localhost:3001/api/modDB', {
+					method: 'post',
+					headers: {
+						'content-type': 'application/json',
+					},
+					body: JSON.stringify({
 						num: this.state.num,
 						name: this.state.name,
 						src: this.state.src,
@@ -148,35 +144,13 @@ class DBMngtBoard extends Component {
 				})
 					.then(res => res.json())
 					.then(json => {
-						console.log('insert DBList');
-						console.log(json);
+						console.log('modify DB. id=' + json);
+
+					//refresh
+					this.modalHandlers.modalHide();
+					this.DBHandlers.getDBList();
 					});
-				//refresh
-				this.modalHandlers.modalHide();
-				this.DBHandlers.getDBList();
-			} else if (mode == 'modify') {
-				fetch('http://localhost:3001/api/modDB', {
-					method: 'post',
-					headers: {
-						'content-type': 'application/json',
-					},
-					body: JSON.stringify({
-						num: this.state.id,
-						name: this.state.name,
-						src: this.state.src,
-						host: this.state.host,
-						port: this.state.port,
-						db: this.state.db,
-						des: this.state.des,
-					}),
-				})
-					.then(res => res.json())
-					.then(json => {
-						console.log('modify DB. id=' + id);
-					});
-				//refresh
-				this.modalHandlers.modalHide();
-				this.DBHandlers.getDBList();
+
 			} else {
 				console.log('[mode]' + mode);
 				return;
@@ -190,8 +164,42 @@ class DBMngtBoard extends Component {
 				port: '',
 				db: '',
 				des: '',
+				connStatus : ''
 			});
 			this.modalHandlers.modalHide();
+		},
+		onConnect: () =>{
+
+			this.setState({ loading: true });
+			
+			//임시테스트 readTb 호출
+			fetch('http://localhost:3001/api/readTb', {
+				method: 'post',
+				headers: {
+					'content-type': 'application/json',
+				},
+				body: JSON.stringify({
+					src: this.state.src,
+					host: this.state.host,
+					port: this.state.port,
+					db: this.state.db,
+				}),
+			})
+				.then(res => res.status)
+				.then(status => {
+						
+					if(status==200){
+						console.log('connect Success');
+						console.log(status);
+						this.setState({connStatus : 'Success'});
+
+					}else{
+						//status==500
+						console.log('connect Fail');
+						console.log(status);
+						this.setState({connStatus : 'Fail'});
+					}
+				});
 		},
 	};
 
@@ -209,51 +217,44 @@ class DBMngtBoard extends Component {
 		modalAdd: () => {
 			this.setState({
 				visible: true,
-				tempKey: '',
-				tempValue: '',
 				mode: 'add',
-				validateStatus: '',
-				help: '',
-				name: '',
-				src: '',
-				host: '',
-				port: '',
-				db: '',
-				des: '',
 			});
 		},
 		modalModify: (data) => {
-			this.setState({
-				visible: true,
+			console.log('moalModify...');
+
+ 			this.setState({
 				mode: 'modify',
+				num : data.num,
+				name : data.name,
+				src : data.src,
+				host : data.host,
+				port : data.port,
+				db : data.db,
+				des : data.des,
 			});
-			console.log(Object.keys(this.dblist[0]));
-
-			Object.keys(this.dblist[0]).forEach(element => {
-				const key = element;
-				const value = element.key;
-				//console.log(Object.keys(this.dblist[0]).key);
-
-				console.log(key);
-				console.log(value);
-			});
-			this.setState({
-				name: data.name,
-				src: data.src,
-				host: data.host,
-				port: data.port,
-				port: data.port,
-				db: data.db,
-				des: data.des
-			});
+			
+			this.modalHandlers.modalShow();
+			
 		},
 	};
-	render() {
-		const { tmpList, visible } = this.state;
-		const { getDBList, onModify, onDelete, onChange } = this.DBHandlers;
-		const { onOk, onCancel } = this.submitHandlers;
-		const { modalAdd } = this.modalHandlers;
 
+	render() {
+        const { alertBox } = this.props;        
+		const { dbListAll, visible, connStatus } = this.state;
+		const { getDBList, onModify, onDelete, onChange } = this.DBHandlers;
+		const { onOk, onCancel, onConnect } = this.submitHandlers;
+		const { modalAdd } = this.modalHandlers;
+		let TestConnection;
+
+		if(connStatus == 'Success'){
+			TestConnection = <Icon name="check-circle" />;
+		} else if (connStatus == 'Fail') {
+			TestConnection = <Icon type="exclamation" />;
+		} else {
+			TestConnection = "";
+		}
+		
 		const columns = [
 			{
 				key: 'num',
@@ -293,10 +294,10 @@ class DBMngtBoard extends Component {
 				key: 'action',
 				title: '',
 				dataIndex: 'action',
-				render: (text, record) => {
+				render: (text,record,index) => {
 					return (
 						<div>
-							<Button className="rde-action-btn" shape="circle" id={record.num} onClick={onModify}>
+ 							<Button className="rde-action-btn" shape="circle" id={record.num} onClick={onModify}>
 								<Icon name="edit" />
 							</Button>
 							<Button className="rde-action-btn" shape="circle" id={record.num} onClick={onDelete}>
@@ -308,17 +309,27 @@ class DBMngtBoard extends Component {
 			},
 		];
 		return (
-			<div align="center">
+			<div>
 				<div>
 					<Flex className="rde-content-layout-title" alignItems="center" flexWrap="wrap">
 						<h2> DB List </h2>
 					</Flex>
 					<Flex justifyContent="center">
-						<Modal onOk={onOk} onCancel={onCancel} visible={visible} tmpList={tmpList}>
+						<Modal
+						 onOk={onOk} 
+						 onCancel={onCancel} 
+						 visible={visible}
+						 footer={[
+							<Button key="test" onClick={onConnect}>
+								<span>Test Connection</span>
+								{TestConnection}
+							</Button>,
+							<Button key="cancel" onClick={onCancel}>Cancel</Button>,
+							<Button key="submit" onClick={onOk}>OK</Button>,
+						]}>
 							<Form>
 								<label>NAME</label>
 								<Input name="name" value={this.state.name} onChange={onChange} />
-								{/* <input type="text" name="name" onChange={this.onChange}></input> */}
 								<label>SRC</label>
 								<Input name="src" value={this.state.src} onChange={onChange} />
 								<label>HOST</label>
@@ -329,7 +340,7 @@ class DBMngtBoard extends Component {
 								<Input name="db" value={this.state.db} onChange={onChange} />
 								<label>Description</label>
 								<Input name="des" value={this.state.des} onChange={onChange} />
-							</Form>
+							</Form> 
 						</Modal>
 					</Flex>
 					<Table
@@ -338,8 +349,9 @@ class DBMngtBoard extends Component {
 							pageSize: 10,
 						}}
 						columns={columns}
-						dataSource={this.dblist}
-						rowKey="name"
+						dataSource={dbListAll}
+						rowKey="num"
+						onRow = {(record, index) => { return {onClick: () =>{this.setState({activeIndex:index});/* console.log('index='+index); */}}}}
 					/>
 					<Button onClick={getDBList}>조회</Button>
 					<Button onClick={modalAdd}>추가</Button>
