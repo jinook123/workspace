@@ -9,37 +9,23 @@ type EditorType = 'imagemap' | 'workflow' | 'dashboard' | 'admin';
 
 interface IState {
 	activeEditor?: EditorType;
-<<<<<<< HEAD
 	alertVisible?: boolean;
 	alertMsg?: string;
 	alertTitle?: string;
 	loadedJson?: any;
 	dbList?: any,
 	dbTableList?: any,
-=======
-	bUpdateFlag?: boolean;
-	alertVisible?: boolean;
-	alertMsg?: string;
-	alertTitle?: string;
->>>>>>> branch2
 }
 
 class App extends Component<any, IState> {
 	state: IState = {
 		activeEditor: 'dashboard',
-<<<<<<< HEAD
 		alertVisible: false,
 		alertMsg: "",
 		alertTitle: "",
 		loadedJson: null,
 		dbList: null,
 		dbTableList: null,
-=======
-		bUpdateFlag: false,
-		alertVisible: false,
-		alertMsg: "",
-		alertTitle: ""
->>>>>>> branch2
 	};
 
 	dbList: any = [];
@@ -106,30 +92,18 @@ class App extends Component<any, IState> {
 				json.forEach(element => {
 					this.dbTableList.push({ label: element.Tables_in_react, value: element.Tables_in_react });
 				});
-<<<<<<< HEAD
 		});
-=======
-			});
->>>>>>> branch2
 	}
 
 	getDBInfo() {
 		console.log("get DBInfo");
 		if (this.bFlag == true) {
-<<<<<<< HEAD
-=======
-			console.log('this bFLag is false');
->>>>>>> branch2
 			this.bFlag = false;
 		} else {
 			const promiseDB = this.getDBList();
 			const promiseTable = this.getDBTableList();
 
 			Promise.all([promiseDB, promiseTable]).then(() => {
-<<<<<<< HEAD
-=======
-				console.log('this bFLag is true');
->>>>>>> branch2
 				this.bFlag = true;
 				this.setState({ dbTableList: this.dbTableList, dbList: this.dbList });
 			});
@@ -138,22 +112,12 @@ class App extends Component<any, IState> {
 
 	getWorkFlowJson() {
 		if (this.bFlag == true) {
-<<<<<<< HEAD
 			console.log('this bFLag is false');
 			this.bFlag = false;
 		} else {
 			const data = {
 				num: 3,
 			};
-=======
-			this.bFlag = false;
-		} else {
-			const data = {
-				num: 1,
-			};
-
-			this.loadedJson = null;
->>>>>>> branch2
 
 			const promise = fetch('http://localhost:3001/api/jsonLoad', {
 				method: 'post',
@@ -170,17 +134,9 @@ class App extends Component<any, IState> {
 					console.log(json);
 					this.bFlag = true;
 					if(json.length != 0){
-<<<<<<< HEAD
 						this.setState({loadedJson: JSON.parse(json[0].json)});
 					}
 			});
-=======
-						this.loadedJson = JSON.parse(json[0].json);
-					}
-					this.setState({ bUpdateFlag: !this.state.bUpdateFlag });
-					// this.forceUpdate();
-				});
->>>>>>> branch2
 		}
 	}
 
@@ -188,11 +144,7 @@ class App extends Component<any, IState> {
 		switch (activeEditor) {
 			case 'dashboard':
 				this.getWorkFlowJson();
-<<<<<<< HEAD
 				return <DashBoardEditor loadedJson={this.state.loadedJson} alertBox={(this.alertBox)} />;
-=======
-				return <DashBoardEditor loadedJson={this.loadedJson} alertBox={(this.alertBox)} />;
->>>>>>> branch2
 			case 'imagemap':
 				return <ImageMapEditor alertBox={(this.alertBox)} />;
 			case 'workflow':
