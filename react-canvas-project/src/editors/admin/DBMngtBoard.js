@@ -3,7 +3,7 @@ import { Button, Table, Modal, Input, Form } from 'antd';
 import Icon from '../../components/icon/Icon';
 import { Flex } from '../../components/flex';
 
-class DBManageEditor extends Component {
+class DBMngtBoard extends Component {
 	state = {
 		tempKey: '',
 		tempValue: '',
@@ -21,108 +21,115 @@ class DBManageEditor extends Component {
 	dblist = [];
 	tmpList = [];
 
-	//DB 조회
-	getDBList = () => {
-		const request = fetch('http://localhost:3001/api/DBList', {
-			method: 'post',
-			headers: {
-				'content-type': 'application/json',
-			},
-		});
+	componentDidMount() {
+		this.DBHandlers.getDBList();
+	}
 
-		request
-			.then(res => res.json())
-			.then(json => {
-				console.log('return DBList');
 
-				this.dblist = json;
-
-				this.setState({
-					dblist: json,
-				});
-				console.log(this.dblist);
+	DBHandlers = {
+		//DB selectAll
+		getDBList: () => {
+			const request = fetch('http://localhost:3001/api/DBList', {
+				method: 'post',
+				headers: {
+					'content-type': 'application/json',
+				},
 			});
-	};
 
-	//DB 수정
-	onModify = e => {
-		const id = e.target.id;
+			request
+				.then(res => res.json())
+				.then(json => {
+					console.log('return DBList');
 
-		//수정대상 id의 DB정보 불러오기
-		const request = fetch('http://localhost:3001/api/selectOne', {
-			method: 'post',
-			headers: {
-				'content-type': 'application/json',
-			},
-			body: JSON.stringify({
-				num: id,
-			}),
-		});
+					this.dblist = json;
 
-		request
-			.then(res => res.json())
-			.then(json => {
-				this.tmpList = [];
-
-				json.forEach(element => {
-					this.tmpList.push({
-						num: element.num,
-						name: element.name,
-						src: element.src,
-						host: element.host,
-						port: element.port,
-						db: element.db,
-						des: element.des,
+					this.setState({
+						dblist: json,
 					});
+					console.log(this.dblist);
 				});
+		},
 
-				this.setState({
-					tmpList: json,
-				});
-				console.log('modify DB. num=' + id);
-				this.handleModify();
-			});
-	};
+		//DB Modify
+		onModify: e => {
+			const id = e.target.id;
 
-	//DB 삭제
-	onDelete = e => {
-		const id = e.target.id;
-
-		const request = fetch('http://localhost:3001/api/delDB', {
-			method: 'post',
-			headers: {
-				'content-type': 'application/json',
-			},
-			body: JSON.stringify({
-				num: id,
-			}),
-		});
-
-		request
-			.then(res => res.json())
-			.then(json => {
-				console.log('delete DB. num=' + id);
-				console.log(json);
+			//선택 id의 DB정보 불러오기
+			const request = fetch('http://localhost:3001/api/selectOne', {
+				method: 'post',
+				headers: {
+					'content-type': 'application/json',
+				},
+				body: JSON.stringify({
+					num: id,
+				}),
 			});
 
-		//refresh
-		this.getDBList();
+			request.then(res => res.json())
+				.then(json => {
+					this.tmpList = [];
+
+					json.forEach(element => {
+						this.tmpList.push({
+							num: element.num,
+							name: element.name,
+							src: element.src,
+							host: element.host,
+							port: element.port,
+							db: element.db,
+							des: element.des,
+						});
+					});
+
+					this.setState({
+						tmpList: json,
+					});
+					this.modalHandlers.modalModify(json[0]);
+				});
+		},
+
+		//DB Delete
+		onDelete: e => {
+			const id = e.target.id;
+
+			const request = fetch('http://localhost:3001/api/delDB', {
+				method: 'post',
+				headers: {
+					'content-type': 'application/json',
+				},
+				body: JSON.stringify({
+					num: id,
+				}),
+			});
+
+			request
+				.then(res => res.json())
+				.then(json => {
+					console.log('delete DB. num=' + id);
+					console.log(json);
+
+					//refresh
+					//this.getDBList;
+					this.DBHandlers.getDBList();
+				});
+
+			//refresh
+		},
+
+		//param set
+		onChange: e => {
+			this.setState({
+				[e.target.name]: e.target.value,
+			});
+			//console.log(this.state);
+		},
 	};
 
-	//입력값 변경
-	onChange = e => {
-		this.setState({
-			[e.target.name]: e.target.value,
-		});
-		//console.log(this.state);
-	};
-
-	//onOk(=onSubmit) : 추가 및 수정 , onCancel : 취소
-	handlers = {
+	submitHandlers = {
 		onOk: () => {
 			const { mode } = this.state;
 
-			//추가
+			//mode (add : 추가 , modfiy : 수정)
 			if (mode == 'add') {
 				fetch('http://localhost:3001/api/addDB', {
 					method: 'post',
@@ -144,12 +151,10 @@ class DBManageEditor extends Component {
 						console.log('insert DBList');
 						console.log(json);
 					});
-				//DB 리스트 갱신
-				this.getDBList();
-				this.modalHandlers.onHide();
-			}
-			//수정
-			else if (mode == 'modify') {
+				//refresh
+				this.modalHandlers.modalHide();
+				this.DBHandlers.getDBList();
+			} else if (mode == 'modify') {
 				fetch('http://localhost:3001/api/modDB', {
 					method: 'post',
 					headers: {
@@ -169,9 +174,9 @@ class DBManageEditor extends Component {
 					.then(json => {
 						console.log('modify DB. id=' + id);
 					});
-				//DB 리스트 갱신
-				this.getDBList();
-				this.modalHandlers.onHide();
+				//refresh
+				this.modalHandlers.modalHide();
+				this.DBHandlers.getDBList();
 			} else {
 				console.log('[mode]' + mode);
 				return;
@@ -186,64 +191,69 @@ class DBManageEditor extends Component {
 				db: '',
 				des: '',
 			});
-			this.modalHandlers.onHide();
+			this.modalHandlers.modalHide();
 		},
 	};
 
-	//모달
 	modalHandlers = {
-		onShow: () => {
+		modalShow: () => {
 			this.setState({
 				visible: true,
 			});
 		},
-		onHide: () => {
+		modalHide: () => {
 			this.setState({
 				visible: false,
 			});
 		},
+		modalAdd: () => {
+			this.setState({
+				visible: true,
+				tempKey: '',
+				tempValue: '',
+				mode: 'add',
+				validateStatus: '',
+				help: '',
+				name: '',
+				src: '',
+				host: '',
+				port: '',
+				db: '',
+				des: '',
+			});
+		},
+		modalModify: (data) => {
+			this.setState({
+				visible: true,
+				mode: 'modify',
+			});
+			console.log(Object.keys(this.dblist[0]));
+
+			Object.keys(this.dblist[0]).forEach(element => {
+				const key = element;
+				const value = element.key;
+				//console.log(Object.keys(this.dblist[0]).key);
+
+				console.log(key);
+				console.log(value);
+			});
+			this.setState({
+				name: data.name,
+				src: data.src,
+				host: data.host,
+				port: data.port,
+				port: data.port,
+				db: data.db,
+				des: data.des
+			});
+		},
 	};
-	//모달 - DB 추가
-	handleAdd = () => {
-		this.setState({
-			visible: true,
-			tempKey: '',
-			tempValue: '',
-			mode: 'add',
-			validateStatus: '',
-			help: '',
-			name: '',
-			src: '',
-			host: '',
-			port: '',
-			db: '',
-			des: '',
-		});
-	};
-
-	handleModify = () => {
-		this.setState({
-			visible: true,
-			mode: 'modify',
-		});
-		console.log(Object.keys(this.dblist[0]));
-
-		Object.keys(this.dblist[0]).forEach(element => {
-			const key = element;
-			const value = element.key;
-			//console.log(Object.keys(this.dblist[0]).key);
-
-			console.log(key);
-			console.log(value);
-		});
-		this.setState({
-			tempKey: tempValue,
-		});
-	};
-
 	render() {
 		const { tmpList, visible } = this.state;
-		const { onOk, onCancel } = this.handlers;
+		const { getDBList, onModify, onDelete, onChange } = this.DBHandlers;
+		const { onOk, onCancel } = this.submitHandlers;
+		const { modalAdd } = this.modalHandlers;
+
 		const columns = [
 			{
 				key: 'num',
@@ -286,10 +296,10 @@ class DBManageEditor extends Component {
 				render: (text, record) => {
 					return (
 						<div>
-							<Button className="rde-action-btn" shape="circle" id={record.num} onClick={this.onModify}>
+							<Button className="rde-action-btn" shape="circle" id={record.num} onClick={onModify}>
 								<Icon name="edit" />
 							</Button>
-							<Button className="rde-action-btn" shape="circle" id={record.num} onClick={this.onDelete}>
+							<Button className="rde-action-btn" shape="circle" id={record.num} onClick={onDelete}>
 								<Icon name="times" />
 							</Button>
 						</div>
@@ -307,18 +317,18 @@ class DBManageEditor extends Component {
 						<Modal onOk={onOk} onCancel={onCancel} visible={visible} tmpList={tmpList}>
 							<Form>
 								<label>NAME</label>
-								<Input name="name" value={this.state.name} onChange={this.onChange} />
+								<Input name="name" value={this.state.name} onChange={onChange} />
 								{/* <input type="text" name="name" onChange={this.onChange}></input> */}
 								<label>SRC</label>
-								<Input name="src" value={this.state.src} onChange={this.onChange} />
+								<Input name="src" value={this.state.src} onChange={onChange} />
 								<label>HOST</label>
-								<Input name="host" value={this.state.host} onChange={this.onChange} />
+								<Input name="host" value={this.state.host} onChange={onChange} />
 								<label>PORT</label>
-								<Input name="port" value={this.state.port} onChange={this.onChange} />
+								<Input name="port" value={this.state.port} onChange={onChange} />
 								<label>DB</label>
-								<Input name="db" value={this.state.db} onChange={this.onChange} />
+								<Input name="db" value={this.state.db} onChange={onChange} />
 								<label>Description</label>
-								<Input name="des" value={this.state.des} onChange={this.onChange} />
+								<Input name="des" value={this.state.des} onChange={onChange} />
 							</Form>
 						</Modal>
 					</Flex>
@@ -331,11 +341,11 @@ class DBManageEditor extends Component {
 						dataSource={this.dblist}
 						rowKey="name"
 					/>
-					<Button onClick={this.getDBList}>조회</Button>
-					<Button onClick={this.handleAdd}>추가</Button>
+					<Button onClick={getDBList}>조회</Button>
+					<Button onClick={modalAdd}>추가</Button>
 				</div>
 			</div>
 		);
 	}
 }
-export default DBManageEditor;
+export default DBMngtBoard;

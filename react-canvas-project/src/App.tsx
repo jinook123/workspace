@@ -3,21 +3,35 @@ import { Helmet } from 'react-helmet';
 import Title from './components/layout/Title';
 import FlowContainer from './containers/FlowContainer';
 import { ImageMapEditor, WorkflowEditor, DashBoardEditor, DBMngtBoard } from './editors';
+import { AlertModal } from './components/common';
 
 type EditorType = 'imagemap' | 'workflow' | 'dashboard' | 'admin';
 
 interface IState {
 	activeEditor?: EditorType;
+	alertVisible?: boolean;
+	alertMsg?: string;
+	alertTitle?: string;
+	loadedJson?: any;
+	dbList?: any,
+	dbTableList?: any,
 }
 
 class App extends Component<any, IState> {
 	state: IState = {
 		activeEditor: 'dashboard',
+		alertVisible: false,
+		alertMsg: "",
+		alertTitle: "",
+		loadedJson: null,
+		dbList: null,
+		dbTableList: null,
 	};
 
 	dbList: any = [];
 	dbTableList: any = [];
-	loadedJson: any = null;
+	// loadedJson: any = null;
+	bFlag: boolean = false;
 
 	handleChangeEditor = ({ key }) => {
 		this.setState({
@@ -25,13 +39,17 @@ class App extends Component<any, IState> {
 		});
 	};
 
-	componentDidMount() {
-		this.getDBList();
-		this.getDBTableList();
-		this.getWorkFlowJson();
+	alertBox = (title, msg) => {
+		this.setState({alertTitle: title, alertMsg: msg, alertVisible: true});
 	}
-
+	
+	alertCancle = () => {
+		this.setState({alertTitle: "", alertMsg: "msg", alertVisible: false});
+	}
+	
 	getDBList() {
+		this.dbList = [];
+
 		const promise = fetch('http://localhost:3001/api/DBList', {
 			method: 'post',
 			headers: {
@@ -39,13 +57,12 @@ class App extends Component<any, IState> {
 			},
 		});
 
-		promise
+		return promise
 			.then(res => res.json())
 			.then(json => {
 				console.log('return DBList');
 				console.log(json);
 
-				this.dbList = [];
 				json.forEach(element => {
 					this.dbList.push({ label: element.name, value: element.db });
 				});
@@ -56,6 +73,8 @@ class App extends Component<any, IState> {
 		const data = {
 			db: 'react',
 		};
+		this.dbTableList = [];
+
 		const promise = fetch('http://localhost:3001/api/readTb', {
 			method: 'post',
 			headers: {
@@ -64,54 +83,80 @@ class App extends Component<any, IState> {
 			body: JSON.stringify(data),
 		});
 
-		promise
+		return promise
 			.then(res => res.json())
 			.then(json => {
 				console.log('return readTb react');
 				console.log(json);
 
-				this.dbTableList = [];
 				json.forEach(element => {
 					this.dbTableList.push({ label: element.Tables_in_react, value: element.Tables_in_react });
 				});
+		});
+	}
+
+	getDBInfo() {
+		console.log("get DBInfo");
+		if (this.bFlag == true) {
+			this.bFlag = false;
+		} else {
+			const promiseDB = this.getDBList();
+			const promiseTable = this.getDBTableList();
+
+			Promise.all([promiseDB, promiseTable]).then(() => {
+				this.bFlag = true;
+				this.setState({ dbTableList: this.dbTableList, dbList: this.dbList });
 			});
+		}
 	}
 
 	getWorkFlowJson() {
-		const data = {};
+		if (this.bFlag == true) {
+			console.log('this bFLag is false');
+			this.bFlag = false;
+		} else {
+			const data = {
+				num: 3,
+			};
 
-		fetch('http://localhost:3001/api/jsonLoad', {
-			method: 'post',
-			headers: {
-				'content-type': 'application/json',
-			},
-			body: JSON.stringify(data),
-		})
-			.then(res => res.json())
-			.then(json => {
-				console.log('return json');
-				console.log(json);
-
-				// this.loadedJson = json;
+			const promise = fetch('http://localhost:3001/api/jsonLoad', {
+				method: 'post',
+				headers: {
+					'content-type': 'application/json',
+				},
+				body: JSON.stringify(data),
 			});
+
+			promise
+				.then(res => res.json())
+				.then(json => {
+					console.log('return workFlow Json');
+					console.log(json);
+					this.bFlag = true;
+					if(json.length != 0){
+						this.setState({loadedJson: JSON.parse(json[0].json)});
+					}
+			});
+		}
 	}
 
 	renderEditor = (activeEditor: EditorType) => {
 		switch (activeEditor) {
 			case 'dashboard':
-				return <DashBoardEditor loadedJson={this.loadedJson} />;
+				this.getWorkFlowJson();
+				return <DashBoardEditor loadedJson={this.state.loadedJson} alertBox={(this.alertBox)} />;
 			case 'imagemap':
-				return <ImageMapEditor />;
+				return <ImageMapEditor alertBox={(this.alertBox)} />;
 			case 'workflow':
-				return <WorkflowEditor dbList={this.dbList} dbTableList={this.dbTableList} />;
+				this.getDBInfo();
+				return <WorkflowEditor dbList={this.dbList} dbTableList={this.dbTableList} alertBox={(this.alertBox)} />;
 			case 'admin':
-				return <DBMngtBoard />;
+				return <DBMngtBoard alertBox={(this.alertBox)} />;
 				break;
 		}
 	};
 
 	render() {
-		console.log('render');
 		const { activeEditor } = this.state;
 		return (
 			<div className="rde-main">
@@ -143,6 +188,7 @@ class App extends Component<any, IState> {
 				<FlowContainer>
 					<div className="rde-content">{this.renderEditor(activeEditor)}</div>
 				</FlowContainer>
+				<AlertModal alertVisible={this.state.alertVisible} msg={this.state.alertMsg} title={this.state.alertTitle} alertCancle={this.alertCancle}></AlertModal>
 			</div>
 		);
 	}
