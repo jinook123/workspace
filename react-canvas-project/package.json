@@ -19,7 +19,8 @@
 		"lint": "npm run tsc",
 		"clean": "node scripts/clean",
 		"tsc": "tsc",
-		"typedoc": "typedoc"
+		"typedoc": "typedoc",
+        "start:server": "concurrently \"npm start\" \"node ./server/server.js\""
 	},
 	"keywords": [
 		"React.js",
@@ -42,6 +43,7 @@
 		"body-parser": "^1.19.1",
 		"classnames": "^2.2.6",
 		"color": "^3.1.2",
+		"concurrently": "^7.0.0",
 		"cors": "^2.8.5",
 		"echarts": "^4.7.0",
 		"express": "^4.17.2",

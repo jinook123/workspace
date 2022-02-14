@@ -2,10 +2,12 @@ const express = require('express');
 const cors = require('cors');
 const indexRoute = require('./routes/indexRoute');
 const apiRoute = require('./routes/apiRoute');
+const componentRoute = require('./routes/componentRoute');
 
 const app = express();
 const PORT = 3001;
 
+// CORS 설정, 배포 시 변경 필요
 const corsOptions = {
 	'Content-Type': 'application/json',
 	'Access-Control-Allow-Origin': '*',
@@ -14,35 +16,19 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// app.use(cors(corsOptions));
-
-// const bodyParser = require('body-parser');
-// const { router } = require('express/lib/application');
-
-// app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(bodyParser.json());
-
-// app.get('/', (req, res) => {
-// 	res.json(`it works!`);
-// });
-
+// 기본 router (임시)
 app.use('/', indexRoute);
-
+// admin(server) router
 app.use('/api', apiRoute);
+// user(component 등등) router
+app.use('/component', componentRoute);
 
-// app.post('/DBConnect', (req, res) => {
-// 	const text = req.body;
-// 	console.log(text);
-// 	const sendText = {
-// 		db: 'localhost',
-// 	};
-// 	res.json(sendText);
-// });
-
+// 서버 실행
 app.listen(PORT, () => {
 	console.log(`Connected : ${PORT}`);
 });
 
+// 404 처리
 app.use((req, res) => {
 	res.status(404).json('404 not found');
 });
