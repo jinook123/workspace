@@ -755,6 +755,8 @@ class Handler implements HandlerOptions {
 			const groupOption = Object.assign({}, newOption, { objects, name: 'New Group' });
 			createdObj = this.fabricObjects[obj.type].create(groupOption);
 		} else {
+			console.log("obj.type");
+			console.log(obj.type);
 			createdObj = this.fabricObjects[obj.type].create(newOption);
 		}
 

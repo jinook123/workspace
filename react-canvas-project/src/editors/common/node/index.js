@@ -1,14 +1,8 @@
 import metadata from '../../../libs/fontawesome-5.2.0/metadata/icons.json';
 
-import ActionNode from './action/ActionNode';
-import DataNode from './data/DataNode';
 import LogicNode from './logic/LogicNode';
-import TriggerNode from './trigger/TriggerNode';
 
 import { getNode } from '../configuration/NodeConfiguration';
-import FilterNode from './logic/FilterNode';
-import SwitchNode from './logic/SwitchNode';
-import VirtualButtonNode from './trigger/VirtualButtonNode';
 
 const defaultOption = {
 	fill: 'rgba(0, 0, 0, 0.3)',
@@ -33,22 +27,6 @@ const defaultOption = {
 };
 
 const NODES = {
-	ACTION: {
-		create: (option, descriptor) =>
-			new ActionNode({
-				...defaultOption,
-				...option,
-				descriptor,
-			}),
-	},
-	DATA: {
-		create: (option, descriptor) =>
-			new DataNode({
-				...defaultOption,
-				...option,
-				descriptor,
-			}),
-	},
 	LOGIC: {
 		create: (option, descriptor) => {
 			const node = getNode(descriptor.nodeClazz);
@@ -62,19 +40,7 @@ const NODES = {
 					return new LogicNode(options);
 			}
 		},
-	},
-	TRIGGER: {
-		create: (option, descriptor) => {
-			const node = getNode(descriptor.nodeClazz);
-			const options = Object.assign({}, defaultOption, { descriptor }, option);
-			switch (node) {
-				case 'VirtualButtonNode':
-					return new VirtualButtonNode(options);
-				default:
-					return new TriggerNode(options);
-			}
-		},
-	},
+	}
 };
 
 export default descriptors => {
