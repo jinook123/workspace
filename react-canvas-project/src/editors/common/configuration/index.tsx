@@ -1,6 +1,8 @@
 
 import logic from './logic';
+import data from './data';
 
 export default {
-	...logic
+	...logic,
+	...data
 };

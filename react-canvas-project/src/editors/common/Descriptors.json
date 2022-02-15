@@ -8,18 +8,30 @@
 			"configClazz": "EquipmentNodeConfiguration",
 			"defaultConfiguration": {
 				"outputCount": 0,
-				"showDelay": 1000,
 				"equipmentId": "",
-				"equipmentName": "",
-				"dbTableList": "",
-				"bStart": false 
+				"equipmentName": ""
 			},
 			"inEnabled": true,
 			"outPortType": "EQUIP",
 			"outPorts": [
 				""
-			],
-			"icon": ""
+			]
+		}
+	],
+	"DATA": [
+		{
+			"name": "Bar",
+			"description": "Bar",
+			"type": "DATA",
+			"nodeClazz": "BarNode",
+			"configClazz": "BarNodeConfiguration",
+			"defaultConfiguration": {
+				"showDelay": 1000,
+				"dbList": "",
+				"dbTableList": "",
+				"bStart": false 
+			},
+			"inEnabled": true
 		}
 	]
 }
