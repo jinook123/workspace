@@ -102,11 +102,7 @@ class DashBoardEditor extends Component<any, IState> {
 
 					// timer start
 					this.canvasRef.handler.getObjects().forEach(obj => {
-						if(obj.nodeClazz === 'EquipmentNode'){
-							if(obj.configuration.equipmentId !== '' && obj.configuration.equipmentName !== '' && obj.configuration.dbList !== '' && obj.configuration.dbTableList !== ''){
-								this.handlers.onClick('play', obj);
-							}
-						}
+						this.canvasRef.handler.timerStart(obj, this.canvasRef);
 					});
 				};
 				reader.readAsText(files[0]);
@@ -126,31 +122,11 @@ class DashBoardEditor extends Component<any, IState> {
 		},
 		
 		onClick: (div, selectedItem) => {
-			let currentItem = {...selectedItem};
-
 			if(typeof div !== 'undefined'){
 				if(div === 'play'){
-					selectedItem.configuration.bStart = true;
-
-					if(this.timerList.has(currentItem.configuration.equipmentId) == false){
-						const timer = setInterval(() => {
-							console.log("timerStart");
-		
-							if(this.canvasRef != null && typeof this.canvasRef.canvas !== 'undefined'){
-								this.canvasRef.handler.reloadCanvas(selectedItem);
-							}
-						
-						}, currentItem.configuration.showDelay);
-						
-						this.timerList.set(currentItem.configuration.equipmentId, timer);
-					}
+					this.canvasRef.handler.timerStart(selectedItem, this.canvasRef);
 				} else if(div === 'stop'){
-
-					selectedItem.configuration.bStart = false;
-					if(this.timerList.has(currentItem.configuration.equipmentId) == true){
-						clearInterval(this.timerList.get(currentItem.configuration.equipmentId));
-						this.timerList.delete(currentItem.configuration.equipmentId);
-					}
+					this.canvasRef.handler.timerStop(selectedItem);
 				}
 			}
 		},
@@ -206,11 +182,7 @@ class DashBoardEditor extends Component<any, IState> {
 
 		// timer start
 		this.canvasRef.handler.getObjects().forEach(obj => {
-			if(obj.nodeClazz === 'EquipmentNode'){
-				if(obj.configuration.equipmentId !== '' && obj.configuration.equipmentName !== '' && obj.configuration.dbList !== '' && obj.configuration.dbTableList !== ''){
-					this.handlers.onClick('play', obj);
-				}
-			}
+			this.canvasRef.handler.timerStart(obj, this.canvasRef);
 		});
 	}
 

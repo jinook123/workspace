@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import i18n from 'i18next';
-import Canvas, { CanvasInstance } from '../../../canvas/Canvas';
+import { CanvasInstance } from '../../../canvas/Canvas';
 import { Flex } from '../../../components/flex';
 import { CommonButton } from '../../../components/common';
-import { random } from 'lodash';
 
 interface IProps {
 	canvasRef?: CanvasInstance;
@@ -14,10 +13,10 @@ interface IProps {
 }
 
 class NodeAction extends Component<IProps> {
-	// timerList: Map<String, any> = new Map();
 	render() {
 		const { canvasRef, selectedItem, onClick, alertBox } = this.props;
 		return (
+			selectedItem.subType === 'LOGIC' ? null : 
 			<Flex justifyContent="center" alignItems="flex-end" flex="1">
 				<Flex.Item alignSelf="flex-start">
 					<CommonButton
@@ -45,7 +44,7 @@ class NodeAction extends Component<IProps> {
 						icon="play"
 						disabled={selectedItem.configuration.bStart}
 						onClick={() => {
-							if(selectedItem.configuration.equipmentId === '' || selectedItem.configuration.equipmentName === '' || selectedItem.configuration.dbList === '' || selectedItem.configuration.dbTableList === ''){
+							if(selectedItem.configuration.dbList === '' || selectedItem.configuration.dbTableList === ''){
 								alertBox('warning', 'Must Input Information');
 								return false;
 							}

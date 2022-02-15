@@ -1,6 +1,7 @@
 import metadata from '../../../libs/fontawesome-5.2.0/metadata/icons.json';
 
 import LogicNode from './logic/LogicNode';
+import DataNode from './data/DataNode';
 
 import { getNode } from '../configuration/NodeConfiguration';
 
@@ -31,13 +32,24 @@ const NODES = {
 		create: (option, descriptor) => {
 			const node = getNode(descriptor.nodeClazz);
 			const options = Object.assign({}, defaultOption, { descriptor }, option);
-			switch (node) {
-				case 'FilterNode':
-					return new FilterNode(options);
-				case 'SwitchNode':
-					return new SwitchNode(options);
-				default:
-					return new LogicNode(options);
+			// switch (node) {
+			// 	case 'FilterNode':
+			// 		return new FilterNode(options);
+			// 	case 'SwitchNode':
+			// 		return new SwitchNode(options);
+			// 	default:
+			// 		return new LogicNode(options);
+			// }
+			return new LogicNode(options);
+		},
+	},
+	DATA: {
+		create: (option, descriptor) => {
+			console.log("option");
+			console.log(option);
+			const node = getNode(descriptor.nodeClazz);
+			if(node === 'BarNode'){
+				return new DataNode(option);
 			}
 		},
 	}

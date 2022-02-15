@@ -305,6 +305,8 @@ class Handler implements HandlerOptions {
 
 	private m_property: any;
 
+	timerList: Map<String, any> = new Map();
+
 
 	constructor(options: HandlerOptions) {
 		this.initialize(options);
@@ -755,11 +757,11 @@ class Handler implements HandlerOptions {
 			const groupOption = Object.assign({}, newOption, { objects, name: 'New Group' });
 			createdObj = this.fabricObjects[obj.type].create(groupOption);
 		} else {
-			console.log("obj.type");
-			console.log(obj.type);
 			createdObj = this.fabricObjects[obj.type].create(newOption);
 		}
 
+		console.log("createdObj");
+		console.log(createdObj);
 		// add canvas
 		this.canvas.add(createdObj);
 		this.objects = this.getObjects();
@@ -1661,9 +1663,43 @@ class Handler implements HandlerOptions {
 	 */
 	 public reloadCanvas = (target?: FabricObject) => {
 		// object label change
+		const nodeType = target.type;
 		const changeObj = this.canvas.getObjects().filter((obj: any) => {
 			if(target.id === obj.id){
-				target.label.set({text: "Equipment : " + Math.random()});
+				switch(nodeType){
+					case "BarNode":
+						const level = Math.round(Math.random()*100);
+						target.label.set({text: level + "%"});
+						// height 계산
+						const height = (target.outerRect.height - 2) / 100 * level;
+						target.innerRect.set({top: target.outerRect.top + target.outerRect.height - height , height: height}); 
+						break;
+					default:
+						break;
+				}
+			}
+			
+			return true;
+		});
+
+		this.canvas._objects = changeObj;
+		this.canvas.renderAll();
+	};
+
+	/**
+	 * Set shadow
+	 * @param {fabric.Shadow} option
+	 * @returns
+	 */
+	 public changeEquipmentName = (target?: FabricObject, value?: string) => {
+		// object label change
+		const changeObj = this.canvas.getObjects().filter((obj: any) => {
+			if(target.id === obj.id){
+				if(value === ""){
+					target.label.set({text: "Equipment"});
+				} else{
+					target.label.set({text: value});
+				}
 			}
 			return true;
 		});
@@ -1893,6 +1929,10 @@ class Handler implements HandlerOptions {
 		this.guidelineHandler.destroy();
 		this.contextmenuHandler.destory();
 		this.tooltipHandler.destroy();
+		// timer end
+		this.timerList.forEach(obj => {
+			clearInterval(obj);
+		});
 		this.clear(true);
 	};
 
@@ -2015,6 +2055,39 @@ class Handler implements HandlerOptions {
 		this.handlers[name] = new handler(this);
 		return this.handlers[name];
 	};
+
+	public timerStart = (selectedItem: any, canvasObj: any) => {
+		const nodeType = selectedItem.type;
+		switch(nodeType){
+			case "BarNode":
+				if(selectedItem.configuration.dbList !== '' && selectedItem.configuration.dbTableList !== ''){
+					selectedItem.configuration.bStart = true;
+
+					if(this.timerList.has(selectedItem.id) == false){
+						const timer = setInterval(() => {
+							console.log("timerStart");
+							if(canvasObj != null){
+								canvasObj.handler.reloadCanvas(selectedItem);
+							}
+						
+						}, selectedItem.configuration.showDelay);
+						
+						this.timerList.set(selectedItem.id, timer);
+					}
+				}
+				break;
+			default:
+				break;
+		}
+	}
+
+	public timerStop = (selectedItem: any) => {
+		selectedItem.configuration.bStart = false;
+		if(this.timerList.has(selectedItem.id) == true){
+			clearInterval(this.timerList.get(selectedItem.id));
+			this.timerList.delete(selectedItem.id);
+		}
+	}
 }
 
 export default Handler;

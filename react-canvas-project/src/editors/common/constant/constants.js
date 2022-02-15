@@ -4,6 +4,10 @@ const NODE_COLORS = {
 	LOGIC: {
 		fill: '#AF7AC5',
 		border: '#9B59B6',
+	},
+	DATA: {
+		fill: '#5DADE2',
+		border: '#3498DB',
 	}
 };
 

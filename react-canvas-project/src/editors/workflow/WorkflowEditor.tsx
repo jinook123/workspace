@@ -38,8 +38,6 @@ class WorkflowEditor extends Component<any, IState> {
 	nodeConfigurationRef: any;
 	container: any;
 
-	timerList: Map<String, any> = new Map();
-
 	componentDidMount() {
 		import('../common/Descriptors.json').then(descriptors => {
 			this.setState(
@@ -54,10 +52,7 @@ class WorkflowEditor extends Component<any, IState> {
 	}
 
 	componentWillUnmount() {
-		// timer end
-		this.timerList.forEach(obj => {
-			clearInterval(obj);
-		});
+	
 	}
 
 	canvasHandlers = {
@@ -77,15 +72,15 @@ class WorkflowEditor extends Component<any, IState> {
 			}
 		},
 		onSelect: target => {
-			this.nodeConfigurationRef.props.form.validateFields(err => {
-				if (this.state.selectedItem) {
-					if (err || (this.state.selectedItem.errors && this.state.selectedItem.errors.length)) {
-						this.state.selectedItem.setErrors(true);
-					} else {
-						this.state.selectedItem.setErrors(false);
-					}
-				}
-			});
+			// this.nodeConfigurationRef.props.form.validateFields(err => {
+			// 	if (this.state.selectedItem) {
+			// 		if (err || (this.state.selectedItem.errors && this.state.selectedItem.errors.length)) {
+			// 			this.state.selectedItem.setErrors(true);
+			// 		} else {
+			// 			this.state.selectedItem.setErrors(false);
+			// 		}
+			// 	}
+			// });
 			if (
 				target &&
 				target.id &&
@@ -131,7 +126,6 @@ class WorkflowEditor extends Component<any, IState> {
 						workflow: result,
 					});
 					this.canvasRef.handler.clear();
-					this.timerList.clear();
 					const nodes = result.nodes.map(node => {
 						return {
 							...node,
@@ -163,11 +157,7 @@ class WorkflowEditor extends Component<any, IState> {
 
 					// timer start
 					this.canvasRef.handler.getObjects().forEach(obj => {
-						if(obj.nodeClazz === 'EquipmentNode'){
-							if(obj.configuration.equipmentId !== '' && obj.configuration.equipmentName !== '' && obj.configuration.dbList !== '' && obj.configuration.dbTableList !== ''){
-								this.handlers.onClick('play', obj);
-							}
-						}
+						this.canvasRef.handler.timerStart(obj, this.canvasRef);
 					});
 				};
 				reader.readAsText(files[0]);
@@ -206,7 +196,7 @@ class WorkflowEditor extends Component<any, IState> {
 			const links = [];
 			try {
 				this.canvasRef.handler.exportJSON().forEach(obj => {
-					if (obj.superType === 'node') {
+					if (obj.superType === 'node' || obj.superType === 'Bar') {
 						if (obj.errors) {
 							throw new NodeConfigurationError(
 								i18n.t('workflow.validate-fields-error'),
@@ -267,9 +257,10 @@ class WorkflowEditor extends Component<any, IState> {
 
 			const changedKey = Object.keys(changedValues)[0];
 			if(changedKey === 'configuration'){
-				if(selectedItem.type === 'EquipmentNode' && selectedItem.configuration.bStart === true){
-					this.props.alertBox('warning', 'Must Stop Component');
-					return false;
+				if(selectedItem.type === 'EquipmentNode'){
+					if(typeof allValues.configuration.equipmentName !== 'undefined'){
+						this.canvasRef.handler.changeEquipmentName(selectedItem, allValues.configuration.equipmentName);
+					}
 				}
 			}
 
@@ -300,46 +291,25 @@ class WorkflowEditor extends Component<any, IState> {
 				// selectedItem.label.set({
 				// 	text: getEllipsis(allValues.name, 18),
 				// });
-				if (selectedItem.descriptor.outPortType === OUT_PORT_TYPE.DYNAMIC) {
-					this.canvasRef.handler.portHandler.recreate(selectedItem);
+				if(typeof selectedItem.descriptor !== 'undefined'){
+					if (typeof selectedItem.descriptor.outPortType !== 'undefined' && selectedItem.descriptor.outPortType === OUT_PORT_TYPE.DYNAMIC) {
+						this.canvasRef.handler.portHandler.recreate(selectedItem);
+					}
 				}
 			}
 		},
 		onClick: (div, selectedItem) => {
-			let currentItem = {...selectedItem};
-
 			if(typeof div !== 'undefined'){
 				if(div === 'play'){
-					selectedItem.configuration.bStart = true;
-
-					if(this.timerList.has(currentItem.configuration.equipmentId) == false){
-						const timer = setInterval(() => {
-							console.log("timerStart");
-		
-							if(this.canvasRef != null && typeof this.canvasRef.canvas !== 'undefined'){
-								this.canvasRef.handler.reloadCanvas(selectedItem);
-							}
-						
-						}, currentItem.configuration.showDelay);
-						
-						this.timerList.set(currentItem.configuration.equipmentId, timer);
-					}
+					this.canvasRef.handler.timerStart(selectedItem, this.canvasRef);
 				} else if(div === 'stop'){
-
-					selectedItem.configuration.bStart = false;
-					if(this.timerList.has(currentItem.configuration.equipmentId) == true){
-						clearInterval(this.timerList.get(currentItem.configuration.equipmentId));
-						this.timerList.delete(currentItem.configuration.equipmentId);
-					}
+					this.canvasRef.handler.timerStop(selectedItem);
 				}
 				this.canvasHandlers.onSelect(selectedItem);
 			}
 		},
 		onSaveJson: () => {
 			const workflow = this.handlers.exportJsonCode() as any;
-
-			console.log("onSaveJson");
-			console.log(workflow);
 
 			fetch("http://localhost:3001/api/jsonSave", {
 				method : "post", 
