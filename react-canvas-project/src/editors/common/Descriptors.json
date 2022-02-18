@@ -32,6 +32,20 @@
 				"bStart": false 
 			},
 			"inEnabled": true
+		},
+		{
+			"name": "Text",
+			"description": "Text",
+			"type": "DATA",
+			"nodeClazz": "TextNode",
+			"configClazz": "TextNodeConfiguration",
+			"defaultConfiguration": {
+				"showDelay": 1000,
+				"dbList": "",
+				"dbTableList": "",
+				"bStart": false 
+			},
+			"inEnabled": true
 		}
-	]
+	]	
 }
