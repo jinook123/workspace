@@ -6,7 +6,12 @@ const mysqlServerConn = require('../connection/mysqlServerConn');
 const query = require('../sql/serverSql');
 const {selectDBByNum} = require("../sql/serverSql");
 
-// 전체 db 리스트
+
+/**
+ * select * from db_list
+ * @param callback
+ * @returns {Promise<*>} all DB List
+ */
 const getDBList = async (callback) => {
 
 	const sql = query.getDBList;
@@ -16,7 +21,13 @@ const getDBList = async (callback) => {
 	return callback(result);
 };
 
-// db 조회
+
+/**
+ * select * from db_list where num=(?)
+ * @param req selected num value
+ * @param callback
+ * @returns {Promise<*>}
+ */
 const getDBByNum = async (req, callback) => {
 
 	const {num} = req;
@@ -28,7 +39,13 @@ const getDBByNum = async (req, callback) => {
 	return callback(result);
 };
 
-// db 데이터 추가
+
+/**
+ * insert into db_list(name, src, host, port, db, des) values (?,?,?,?,?,?)
+ * @param req db name, db src, db host, db port, database name (service name), desc
+ * @param callback
+ * @returns {Promise<*>}
+ */
 const insertDBInfo = async (req, callback) => {
 
 	const {name} = req;
