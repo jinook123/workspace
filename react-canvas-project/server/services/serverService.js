@@ -1,47 +1,35 @@
 /**
  * Admin(server) services
  */
-const DB = require('../connection/mysqlServerConnPool');
+const DB = require('../connection/mysqlServerPool');
+const mysqlServerConn = require('../connection/mysqlServerConn');
+const query = require('../sql/serverSql');
+const {selectDBByNum} = require("../sql/serverSql");
 
 // 전체 db 리스트
-const getDBList = callback => {
+const getDBList = async (callback) => {
 
-	const sql = 'select * from db_list';
+	const sql = query.getDBList;
+	const result = await mysqlServerConn.selectSql(sql, null)
+		.catch( err => { throw err } );
 
-	DB.getConnection((DBErr, conn) => {
-
-		if (DBErr) throw DBErr;
-
-		conn.query(sql, (err, rows) => {
-
-			if (err) throw err;
-			else return callback(rows);
-		});
-		conn.release();
-	});
+	return callback(result);
 };
 
 // db 조회
-const selectOne = (req, callback) => {
+const getDBByNum = async (req, callback) => {
 
 	const {num} = req;
-	const sql = 'select * from db_list where num=?';
+	const sql = query.getDBByNum;
 
-	DB.getConnection((DBErr, conn) => {
+	const result = await mysqlServerConn.selectSql(sql, [num])
+		.catch(err => { throw err });
 
-		if (DBErr) throw DBErr;
-
-		conn.query(sql, [num], (err, rows) => {
-
-			if (err) throw err;
-			else return callback(rows);
-		});
-		conn.release();
-	})
+	return callback(result);
 };
 
 // db 데이터 추가
-const addDb = (req, callback) => {
+const insertDBInfo = async (req, callback) => {
 
 	const {name} = req;
 	const {src} = req;
@@ -50,39 +38,25 @@ const addDb = (req, callback) => {
 	const {db} = req;
 	const {des} = req;
 
-	const sql = 'insert into db_list(name, src, host, port, db, des) values (?,?,?,?,?,?)';
+	const sql = query.insertDBInfo;
 
-	DB.getConnection((DBErr, conn) => {
+	const result = await mysqlServerConn.insertSql(sql, [name, src, host, port, db, des])
+		.catch(err => { throw err });
 
-		if (DBErr) throw DBErr;
-
-		conn.query(sql, [name, src, host, port, db, des], (err, result) => {
-
-			if (err) throw err;
-			else return callback(result.insertId);
-		});
-		conn.release();
-	})
+	return callback(result);
 };
 
 // db 제거
-const delDb = (req, callback) => {
+const delDb = async (req, callback) => {
 
 	const {num} = req;
 
-	const sql = 'delete from db_list where num=?';
+	const sql = query.deleteDBByNum;
 
-	DB.getConnection((DBErr, conn) => {
+	const result = await mysqlServerConn.deleteSql(sql, [num])
+		.catch(err => { throw err });
 
-		if (DBErr) throw DBErr;
-
-		conn.query(sql, [num], (err, result) => {
-
-			if (err) throw err;
-			else return callback(result);
-		});
-		conn.release();
-	});
+	return callback(result);
 };
 
 // db 수정
@@ -148,29 +122,50 @@ const jsonSave = (req, callback) => {
 	})
 };
 
-// json load
-const jsonLoad = (req, callback) => {
 
+/**
+ * select json from json_list where id = (?)
+ * @param req user id
+ * @param callback
+ * @returns {Promise<*>} all saved w/f json list
+ */
+const userSavedJsonList = async (req, callback) => {
+
+	const {id} = req;
+
+	const sql = query.getUserJsonList;
+
+	const result = await mysqlServerConn.selectSql(sql, [id])
+		.catch(err => { throw err });
+
+	return callback(result);
+};
+
+
+/**
+ * select json from json_list where id = (?) and num = (?)
+ * @param req user id, seleted num
+ * @param callback
+ * @returns {Promise<*>} saved w/f json data
+ */
+const getUserJson = async (req, callback) => {
+
+	const {id} = req;
 	const {num} = req;
-	const sql = `select json from json_list where num = (?)`;
 
-	DB.getConnection((DBErr, conn) => {
+	const sql = query.getUserJsonByIdNum;
 
-		if (DBErr) throw DBErr;
+	const result = await mysqlServerConn.selectSql(sql, [id, num])
+		.catch(err => { throw err });
 
-		conn.query(sql, [num], (err, result) => {
-			if (err) throw err;
-			else return callback(result);
-		});
-		conn.release();
-	});
+	return callback(result);
 };
 
 module.exports.getDBList = getDBList;
-module.exports.selectOne = selectOne;
-module.exports.addDb = addDb;
+module.exports.getDBByNum = getDBByNum;
+module.exports.insertDBInfo = insertDBInfo;
 module.exports.delDb = delDb;
 module.exports.modDb = modDb;
 module.exports.readTb = readTb;
 module.exports.jsonSave = jsonSave;
-module.exports.jsonLoad = jsonLoad;
+module.exports.userSavedJsonList = userSavedJsonList;
