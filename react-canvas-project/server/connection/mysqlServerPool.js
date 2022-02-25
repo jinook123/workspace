@@ -13,6 +13,15 @@ const connection = {
 	connectionLimit: config.server.connectionLimit
 };
 
-module.exports = mysql.createPool(connection);
+const pool = mysql.createPool(connection);
+
+const getConnection = callback => {
+
+	pool.getConnection((err, conn) => {
+		if (!err) callback(conn);
+	});
+}
+
+module.exports = getConnection;
 
 

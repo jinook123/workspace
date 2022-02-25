@@ -59,7 +59,7 @@ const addDb = (req, callback) => {
 		conn.query(sql, [name, src, host, port, db, des], (err, result) => {
 
 			if (err) throw err;
-			else return callback(result);
+			else return callback(result.insertId);
 		});
 		conn.release();
 	})
@@ -96,14 +96,7 @@ const modDb = (req, callback) => {
 	const {db} = req;
 	const {des} = req;
 
-	const sql = `update db_list
-				set name=?,
-					src=?,
-					host=?,
-					port=?,
-					db=?,
-					des=?
-				where num=?`;
+	const sql = 'update db_list set (name, src, host, port, db, des) = (?,?,?,?,?,?) where id=?';
 
 	DB.getConnection((DBErr, conn) => {
 

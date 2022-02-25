@@ -13,7 +13,7 @@ router.post('/DBList', (req, res) => {
 	try {
 		service.getDBList(result => {
 			res.status(200).send(result);
-		});
+		}).then();
 	} catch (err) {
 		res.status(500).send({
 			success: false,
