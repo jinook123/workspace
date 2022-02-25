@@ -20,7 +20,7 @@
 		"clean": "node scripts/clean",
 		"tsc": "tsc",
 		"typedoc": "typedoc",
-        "start:server": "concurrently \"npm start\" \"node ./server/server.js\""
+		"start:server": "concurrently \"npm start\" \"node ./server/server.js\""
 	},
 	"keywords": [
 		"React.js",
@@ -55,6 +55,7 @@
 		"lodash": "^4.17.10",
 		"mediaelement": "^4.2.9",
 		"mysql": "^2.18.1",
+		"oracledb": "^5.3.0",
 		"prop-types": "^15.6.2",
 		"react": "^16.14.0",
 		"react-ace": "^8.1.0",

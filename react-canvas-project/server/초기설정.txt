@@ -33,7 +33,7 @@ Mysql : 8.0.28
 
         -- json save 테이블
         create table json_list (num int auto_increment primary key, savetime datetime default current_timestamp on update current_timestamp, json JSON);
-			
+		alter table json_list add id varchar(20);
 			
 orcle : 21c 
 
