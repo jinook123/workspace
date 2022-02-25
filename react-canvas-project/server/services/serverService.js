@@ -24,9 +24,9 @@ const getDBList = async (callback) => {
 
 /**
  * select * from db_list where num=(?)
- * @param req selected num value
+ * @param req selected DB num value
  * @param callback
- * @returns {Promise<*>}
+ * @returns {Promise<*>} selected DB info data
  */
 const getDBByNum = async (req, callback) => {
 
@@ -44,7 +44,7 @@ const getDBByNum = async (req, callback) => {
  * insert into db_list(name, src, host, port, db, des) values (?,?,?,?,?,?)
  * @param req db name, db src, db host, db port, database name (service name), desc
  * @param callback
- * @returns {Promise<*>}
+ * @returns {Promise<*>} affectedRows
  */
 const insertDBInfo = async (req, callback) => {
 
@@ -63,8 +63,13 @@ const insertDBInfo = async (req, callback) => {
 	return callback(result);
 };
 
-// db 제거
-const delDb = async (req, callback) => {
+/**
+ * delete from db_list where num=(?)
+ * @param req selected DB num
+ * @param callback
+ * @returns {Promise<*>} affectedRows
+ */
+const delDB = async (req, callback) => {
 
 	const {num} = req;
 
@@ -76,8 +81,14 @@ const delDb = async (req, callback) => {
 	return callback(result);
 };
 
-// db 수정
-const modDb = (req, callback) => {
+
+/**
+ * update db_list set (name, src, host, port, db, des) = (?,?,?,?,?,?) where num=(?)
+ * @param req db set values, selected db num
+ * @param callback
+ * @returns {Promise<*>} affectedRows
+ */
+const modDb = async (req, callback) => {
 
 	const {num} = req;
 	const {name} = req;
@@ -87,20 +98,14 @@ const modDb = (req, callback) => {
 	const {db} = req;
 	const {des} = req;
 
-	const sql = 'update db_list set (name, src, host, port, db, des) = (?,?,?,?,?,?) where id=?';
+	const sql = query.modifyDB;
 
-	DB.getConnection((DBErr, conn) => {
+	const result = await mysqlServerConn.updateSql(sql, [name, src, host, port, db, des, num])
+		.catch(err => { throw err; });
 
-		if (DBErr) throw DBErr;
-
-		conn.query(sql, [name, src, host, port, db, des, num], (err, result) => {
-
-			if (err) throw err;
-			else return callback(result);
-		});
-		conn.release();
-	})
+	return callback(result);
 };
+
 
 // db의 table 목록 조회
 const readTb = (req, callback) => {
@@ -121,22 +126,23 @@ const readTb = (req, callback) => {
 	})
 };
 
-// json save
-const jsonSave = (req, callback) => {
+/**
+ * insert into json_list(json, id) values (?,?) -- savetime 자동
+ * @param req w/f json data, id
+ * @param callback
+ * @returns {Promise<*>} affectedRows
+ */
+const saveUserJson = async (req, callback) => {
 
-	const json = JSON.stringify(req);
-	const sql = `insert into json_list(json) values (?)`;
+	const {json} = req;
+	const {id} = req;
 
-	DB.getConnection((DBErr, conn) => {
+	const sql = query.saveUserJson;
 
-		if (DBErr) throw DBErr;
+	const result = await mysqlServerConn.insertSql(sql, [json, id])
+		.catch(err => { throw err; });
 
-		conn.query(sql, [json], (err, result) => {
-			if (err) throw err;
-			else return callback(result.insertId);
-		});
-		conn.release();
-	})
+	return  callback(result);
 };
 
 
@@ -176,13 +182,13 @@ const getUserJson = async (req, callback) => {
 		.catch(err => { throw err });
 
 	return callback(result);
-};
+}
 
 module.exports.getDBList = getDBList;
 module.exports.getDBByNum = getDBByNum;
 module.exports.insertDBInfo = insertDBInfo;
-module.exports.delDb = delDb;
+module.exports.delDB = delDB;
 module.exports.modDb = modDb;
 module.exports.readTb = readTb;
-module.exports.jsonSave = jsonSave;
+module.exports.saveUserJson = saveUserJson;
 module.exports.userSavedJsonList = userSavedJsonList;

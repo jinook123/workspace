@@ -17,7 +17,7 @@ export default {
 						],
 						initialValue: data.property.dbInfo.dbHost || ''
 					})(<Input />)}
-				</Form.Item>
+    </Form.Item>
 				<Form.Item label={i18n.t('dbInfo.dbPort')} colon={false}>
 					{getFieldDecorator('property.dbInfo.dbPort', {
 						rules: [
@@ -27,7 +27,7 @@ export default {
 						],
 						initialValue: data.property.dbInfo.dbPort || 21
 					})(<Input />)}
-				</Form.Item>
+    </Form.Item>
 				<Form.Item label={i18n.t('dbInfo.dbId')} colon={false}>
 					{getFieldDecorator('property.dbInfo.dbId', {
 						rules: [
@@ -37,7 +37,7 @@ export default {
 						],
 						initialValue: data.property.dbInfo.dbId || 'root'
 					})(<Input />)}
-				</Form.Item>
+    </Form.Item>
 				<Form.Item label={i18n.t('dbInfo.dbPw')} colon={false}>
 					{getFieldDecorator('property.dbInfo.dbPw', {
 						rules: [
@@ -47,12 +47,12 @@ export default {
 						],
 						initialValue: data.property.dbInfo.dbPw || ''
 					})(<Input />)}
-				</Form.Item>
+    </Form.Item>
 				<Form.Item label={i18n.t('dbInfo.dbQuery')} colon={false}>
 					{getFieldDecorator('property.dbInfo.dbQuery', {
 						initialValue: data.property.dbInfo.dbQuery || ''
 					})(<Input />)}
-				</Form.Item>
+    </Form.Item>
 
 				<Button
 					block
@@ -63,7 +63,7 @@ export default {
 							return false;
 						}
 						data.property.bConnectDB = true;
-						fetch("http://localhost:3001/DBConnect", {
+						fetch("http://localhost:3001/component/test", {
 							method : "post", 
 							headers : {
 								"content-type" : "application/json",
@@ -79,8 +79,8 @@ export default {
 				>
 					<Icon name="play" style={{ marginRight: 8 }} />
 					{'연결'}
-				</Button>
-			</React.Fragment>
+    </Button>
+    </React.Fragment>
 		);
 	},
 };

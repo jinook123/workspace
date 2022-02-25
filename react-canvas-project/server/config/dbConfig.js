@@ -22,9 +22,11 @@ const server = {
 const oracle = {
 	host: 'localhost',
 	port: 1521,
-	user: 'react-test',
+	user: 'react_test',
 	password: '1234',
 	database: 'XE',
+	connectString: 'localhost:1521/XE',
+	poolMax: 50
 };
 
 module.exports.react = react;
