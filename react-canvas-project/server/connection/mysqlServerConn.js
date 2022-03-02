@@ -1,4 +1,6 @@
+const mysql = require('mysql');
 const connection = require('./mysqlServerPool');
+const dbConfig = require('../config/dbConfig');
 
 /**
  *
@@ -108,7 +110,39 @@ const updateSql = async (query, param) => {
 	return result;
 }
 
+/**
+ * DB 연결 테스트
+ * @param param 입력한 db 정보
+ * @return {Promise<unknown>} connection state
+ */
+const connTest = async (param) => {
+
+	const testConnection = mysql.createConnection({
+		host: param.dbHost,
+		user: dbConfig.server.user,
+		password: dbConfig.server.password,
+		port: param.dbPort,
+		database: 'pr_mngt'
+	});
+
+	// eslint-disable-next-line no-shadow
+	const promise = new Promise((resolve, reject) => {
+
+		testConnection.connect(err => {
+
+			if (err) reject(err);
+			else resolve(testConnection.state);
+		});
+	});
+
+	const result = await promise;
+	await testConnection.destroy();
+
+	return result;
+}
+
 module.exports.selectSql = selectSql;
 module.exports.insertSql = insertSql;
 module.exports.updateSql = updateSql;
 module.exports.deleteSql = deleteSql;
+module.exports.connTest = connTest;

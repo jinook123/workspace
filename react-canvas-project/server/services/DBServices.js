@@ -1,11 +1,8 @@
 /**
  * Admin(server) services
  */
-const DB = require('../connection/mysqlServerPool');
 const mysqlServerConn = require('../connection/mysqlServerConn');
-const query = require('../sql/serverSql');
-const {selectDBByNum} = require("../sql/serverSql");
-
+const query = require('../sql/serverSql').DBQuery;
 
 /**
  * select * from db_list
@@ -107,79 +104,29 @@ const modDb = async (req, callback) => {
 };
 
 
-// db의 table 목록 조회
-const readTb = (req, callback) => {
+// // db의 table 목록 조회
+// const readTb = (req, callback) => {
+//
+// 	const database = req.db;
+//
+// 	const sql = `show tables from ${database}`;
+//
+// 	DB.getConnection((DBErr, conn) => {
+//
+// 		if (DBErr) throw DBErr;
+//
+// 		conn.query(sql, (err, rows) => {
+// 			if (err) return err;
+// 			return callback(rows);
+// 		});
+// 		conn.release();
+// 	})
+// };
 
-	const database = req.db;
+const mysqlConnTest = async (req, callback) => {
 
-	const sql = `show tables from ${database}`;
-
-	DB.getConnection((DBErr, conn) => {
-
-		if (DBErr) throw DBErr;
-
-		conn.query(sql, (err, rows) => {
-			if (err) return err;
-			return callback(rows);
-		});
-		conn.release();
-	})
-};
-
-/**
- * insert into json_list(json, id) values (?,?) -- savetime 자동
- * @param req w/f json data, id
- * @param callback
- * @returns {Promise<*>} affectedRows
- */
-const saveUserJson = async (req, callback) => {
-
-	const {json} = req;
-	const {id} = req;
-
-	const sql = query.saveUserJson;
-
-	const result = await mysqlServerConn.insertSql(sql, [json, id])
+	const result = await mysqlServerConn.connTest(req)
 		.catch(err => { throw err; });
-
-	return  callback(result);
-};
-
-
-/**
- * select json from json_list where id = (?)
- * @param req user id
- * @param callback
- * @returns {Promise<*>} all saved w/f json list
- */
-const userSavedJsonList = async (req, callback) => {
-
-	const {id} = req;
-
-	const sql = query.getUserJsonList;
-
-	const result = await mysqlServerConn.selectSql(sql, [id])
-		.catch(err => { throw err });
-
-	return callback(result);
-};
-
-
-/**
- * select json from json_list where id = (?) and num = (?)
- * @param req user id, seleted num
- * @param callback
- * @returns {Promise<*>} saved w/f json data
- */
-const getUserJson = async (req, callback) => {
-
-	const {id} = req;
-	const {num} = req;
-
-	const sql = query.getUserJsonByIdNum;
-
-	const result = await mysqlServerConn.selectSql(sql, [id, num])
-		.catch(err => { throw err });
 
 	return callback(result);
 }
@@ -189,6 +136,4 @@ module.exports.getDBByNum = getDBByNum;
 module.exports.insertDBInfo = insertDBInfo;
 module.exports.delDB = delDB;
 module.exports.modDb = modDb;
-module.exports.readTb = readTb;
-module.exports.saveUserJson = saveUserJson;
-module.exports.userSavedJsonList = userSavedJsonList;
+module.exports.mysqlConnTest = mysqlConnTest;
