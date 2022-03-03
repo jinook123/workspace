@@ -1,5 +1,5 @@
 /**
- * Mysql react DB Connection
+ * Mysql react(user) DB Connection
  */
 const mysql = require('mysql');
 const config = require('../config/dbConfig')
@@ -13,6 +13,13 @@ const connection = {
 	connectionLimit: config.react.connectionLimit
 };
 
-module.exports = mysql.createPool(connection);
+const pool = mysql.createPool(connection);
 
+const getConnection = callback => {
 
+	pool.getConnection((err, conn) => {
+		if (!err) callback(conn);
+	});
+}
+
+module.exports = getConnection;

@@ -1,5 +1,10 @@
-const query = require('../sql/serverSql').jsonQuery;
-const mysqlServerConn = require('../connection/mysqlServerConn');
+/**
+ * Workflow services
+ * w/f 저장, 수정 등 관리
+ */
+
+const query = require('../sql/mysqlSql').jsonQuery;
+const mysqlServerConn = require('../connection/mysqlQueryExecutor');
 
 
 /**
@@ -61,7 +66,7 @@ const getUserJson = async (req, callback) => {
 
 
 /**
- *
+ * update json_list set (name, des, json) = (?,?,?) where id=(?)
  * @param req
  * @param callback
  * @return {Promise<*>}
@@ -81,7 +86,26 @@ const updateUserJson = async (req, callback) => {
 	return callback(result);
 }
 
+/**
+ *
+ * @param req
+ * @param callback
+ * @returns {Promise<*>}
+ */
+const deleteUserJson = async (req, callback) => {
+
+	const {id} = req;
+
+	const sql = query.deleteUserJson;
+
+	const result = await mysqlServerConn.deleteSql(sql, [id])
+		.catch(err => { throw err });
+
+	return callback(result);
+}
+
 module.exports.saveUserJson = saveUserJson;
 module.exports.getJsonList = getJsonList;
 module.exports.getUserJson = getUserJson;
 module.exports.updateUserJson = updateUserJson;
+module.exports.deleteUserJson = deleteUserJson;

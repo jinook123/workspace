@@ -7,13 +7,13 @@ const DBQuery = {
 	modifyDB: `update db_list set (name, src, host, port, db, des) = (?,?,?,?,?,?) where num=(?)`,
 }
 
-
 const jsonQuery = {
 
 	getJsonList: `select json from json_list`,
 	getUserJsonById: `select json from json_list where id = (?)`,
 	saveUserJson: `insert into json_list(id, name, des, json) values (?,?,?,?)`,
 	updateUserJson: `update json_list set (name, des, json) = (?,?,?) where id=(?)`,
+	deleteUserJson: `delete * from json_list where id=(?)`
 }
 
 

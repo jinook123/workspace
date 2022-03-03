@@ -1,8 +1,9 @@
 /**
  * Admin(server) services
  */
-const mysqlServerConn = require('../connection/mysqlServerConn');
-const query = require('../sql/serverSql').DBQuery;
+const mysqlQueryExecutor = require('../connection/mysqlQueryExecutor');
+const oracleQueryExecutor = require("../connection/oracleQueryExecutor");
+const mysqlDBquery = require('../sql/mysqlSql').DBQuery;
 
 /**
  * select * from db_list
@@ -11,8 +12,8 @@ const query = require('../sql/serverSql').DBQuery;
  */
 const getDBList = async (callback) => {
 
-	const sql = query.getDBList;
-	const result = await mysqlServerConn.selectSql(sql, null)
+	const sql = mysqlDBquery.getDBList;
+	const result = await mysqlQueryExecutor.selectSql(sql, null)
 		.catch( err => { throw err } );
 
 	return callback(result);
@@ -28,9 +29,9 @@ const getDBList = async (callback) => {
 const getDBByNum = async (req, callback) => {
 
 	const {num} = req;
-	const sql = query.getDBByNum;
+	const sql = mysqlDBquery.getDBByNum;
 
-	const result = await mysqlServerConn.selectSql(sql, [num])
+	const result = await mysqlQueryExecutor.selectSql(sql, [num])
 		.catch(err => { throw err });
 
 	return callback(result);
@@ -52,9 +53,9 @@ const insertDBInfo = async (req, callback) => {
 	const {db} = req;
 	const {des} = req;
 
-	const sql = query.insertDBInfo;
+	const sql = mysqlDBquery.insertDBInfo;
 
-	const result = await mysqlServerConn.insertSql(sql, [name, src, host, port, db, des])
+	const result = await mysqlQueryExecutor.insertSql(sql, [name, src, host, port, db, des])
 		.catch(err => { throw err });
 
 	return callback(result);
@@ -70,9 +71,9 @@ const delDB = async (req, callback) => {
 
 	const {num} = req;
 
-	const sql = query.deleteDBByNum;
+	const sql = mysqlDBquery.deleteDBByNum;
 
-	const result = await mysqlServerConn.deleteSql(sql, [num])
+	const result = await mysqlQueryExecutor.deleteSql(sql, [num])
 		.catch(err => { throw err });
 
 	return callback(result);
@@ -95,38 +96,40 @@ const modDb = async (req, callback) => {
 	const {db} = req;
 	const {des} = req;
 
-	const sql = query.modifyDB;
+	const sql = mysqlDBquery.modifyDB;
 
-	const result = await mysqlServerConn.updateSql(sql, [name, src, host, port, db, des, num])
+	const result = await mysqlQueryExecutor.updateSql(sql, [name, src, host, port, db, des, num])
 		.catch(err => { throw err; });
 
 	return callback(result);
 };
 
 
-// // db의 table 목록 조회
-// const readTb = (req, callback) => {
-//
-// 	const database = req.db;
-//
-// 	const sql = `show tables from ${database}`;
-//
-// 	DB.getConnection((DBErr, conn) => {
-//
-// 		if (DBErr) throw DBErr;
-//
-// 		conn.query(sql, (err, rows) => {
-// 			if (err) return err;
-// 			return callback(rows);
-// 		});
-// 		conn.release();
-// 	})
-// };
-
+/**
+ * MYSQL Connection test
+ * @param req db info
+ * @param callback
+ * @returns {Promise<*>}
+ */
 const mysqlConnTest = async (req, callback) => {
 
-	const result = await mysqlServerConn.connTest(req)
+	const result = await mysqlQueryExecutor.connTest(req)
 		.catch(err => { throw err; });
+
+	return callback(result);
+}
+
+
+/**
+ * ORACLE Connection test
+ * @param req db info
+ * @param callback
+ * @returns {Promise<*>}
+ */
+const oracleConnTest = async (req, callback) => {
+
+	const result = await oracleQueryExecutor.connTest(req)
+		.catch(err => { console.log(err); throw err; });
 
 	return callback(result);
 }
@@ -137,3 +140,5 @@ module.exports.insertDBInfo = insertDBInfo;
 module.exports.delDB = delDB;
 module.exports.modDb = modDb;
 module.exports.mysqlConnTest = mysqlConnTest;
+
+module.exports.oracleConnTest = oracleConnTest;

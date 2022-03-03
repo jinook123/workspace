@@ -4,7 +4,7 @@ const config = require('../config/dbConfig')
 const connection = {
 	user: config.oracle.user,
 	password: config.oracle.password,
-	connectString: config.oracle.connectString,
+	connectString: `${config.oracle.host}:${config.oracle.port}/${config.oracle.database}`,
 	poolMax: config.oracle.poolMax,
 }
 

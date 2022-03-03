@@ -25,7 +25,7 @@ const oracle = {
 	user: 'react_test',
 	password: '1234',
 	database: 'XE',
-	connectString: 'localhost:1521/XE',
+	connectString: `${this.host}:${this.port}/${this.database}`,
 	poolMax: 50
 };
 

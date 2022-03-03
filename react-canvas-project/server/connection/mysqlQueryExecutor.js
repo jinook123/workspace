@@ -110,6 +110,7 @@ const updateSql = async (query, param) => {
 	return result;
 }
 
+
 /**
  * DB 연결 테스트
  * @param param 입력한 db 정보

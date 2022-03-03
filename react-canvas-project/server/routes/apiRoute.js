@@ -98,9 +98,39 @@ router.post('/modDB', (req, res) => {
 
 
 /**
- * DB 접속 테스트
+ * MYSQL DB 접속 테스트
  */
 router.post('/connTest', (req, res) => {
+
+	/*
+    const {src} = req;
+
+    if (src.toUpperCase() === 'MYSQL') {      // MYSQL
+        DBService.mysqlConnTest(req.body, result => {
+
+            res.status(200).send(result);
+
+        }).catch(err => {
+
+            res.status(500).send({
+                success: false,
+                message: err,
+            })
+        });
+    } else {        // ORACLE
+        DBService.oracleConnTest(req.body, result => {
+
+            res.status(200).send(result);
+
+        }).catch(err => {
+
+            res.status(500).send({
+                success: false,
+                message: err,
+            })
+        })
+    }
+    */
 
 	DBService.mysqlConnTest(req.body, result => {
 
@@ -116,22 +146,28 @@ router.post('/connTest', (req, res) => {
 });
 
 
-// // table list
-// router.post('/readTb', (req, res) => {
-// 	try {
-// 		DBService.readTb(req.body, result => {
-// 			res.status(200).send(result);
-// 		});
-// 	} catch (err) {
-// 		res.status(500).send({
-// 			success: false,
-// 			message: err
-// 		})
-// 	}
-// });
+/**
+ * ORACLE 접속 테스트
+ */
+router.post('/oraConnTest', (req, res) => {
+
+	DBService.oracleConnTest(req.body, result => {
+
+		res.status(200).send(result);
+
+	}).catch(err => {
+
+		res.status(500).send({
+			success: false,
+			message: err,
+		})
+	})
+
+})
+
 
 /**
- * 전체 json list
+ * 전체 w/f json list
  */
 router.post('/jsonList', (req, res) => {
 
@@ -148,7 +184,9 @@ router.post('/jsonList', (req, res) => {
 	});
 });
 
-// json 저장
+/**
+ * w/f json save
+ */
 router.post('/jsonSave', (req, res) => {
 
 	jsonService.saveUserJson(req.body, result => {
@@ -164,7 +202,10 @@ router.post('/jsonSave', (req, res) => {
 	});
 });
 
-// json 로드
+
+/**
+ * w/f json load
+ */
 router.post('/jsonLoad', (req, res) => {
 
 	jsonService.getUserJson(req.body, result => {
@@ -198,6 +239,22 @@ router.post('/jsonUpdate', (req, res) => {
 	});
 });
 
+/**
+ * w/f delete
+ */
+router.post('/jsonDelete', (req, res) => {
 
+	jsonService.deleteUserJson(req.body, result => {
+
+		res.status(200).send(result);
+
+	}).catch(err => {
+
+		res.status(500).send({
+			success: false,
+			message: err,
+		})
+	})
+})
 
 module.exports = router;
