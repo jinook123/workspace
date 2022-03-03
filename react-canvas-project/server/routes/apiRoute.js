@@ -48,7 +48,9 @@ router.post('/selectOne', (req, res) => {
 	});
 });
 
-// db 정보 추가
+/**
+ * DB 접속 정보 추가
+ */
 router.post('/addDB', (req, res) => {
 
 	DBService.insertDBInfo(req.body, result => {
@@ -64,7 +66,9 @@ router.post('/addDB', (req, res) => {
 	});
 });
 
-// db 정보 제거
+/**
+ * DB 접속 정보 제거
+ */
 router.post('/delDB', (req, res) => {
 
 	DBService.delDB(req.body, result => {
@@ -80,7 +84,9 @@ router.post('/delDB', (req, res) => {
 	});
 });
 
-// db 정보 수정
+/**
+ * DB 접속 정보 수정
+ */
 router.post('/modDB', (req, res) => {
 
 	DBService.modDb(req.body, result => {
