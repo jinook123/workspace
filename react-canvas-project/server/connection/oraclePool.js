@@ -1,3 +1,8 @@
+/**
+ * ORACLE Connection Pool 생성
+ * 서버 실행과 동시에 pool 생성 필요
+ */
+
 const oracledb = require('oracledb');
 const config = require('../config/dbConfig')
 

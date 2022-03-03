@@ -3,7 +3,7 @@
  */
 const mysqlQueryExecutor = require('../connection/mysqlQueryExecutor');
 const oracleQueryExecutor = require("../connection/oracleQueryExecutor");
-const mysqlDBquery = require('../sql/mysqlSql').DBQuery;
+const mysqlDBQuery = require('../sql/mysqlSql').DBQuery;
 
 /**
  * select * from db_list
@@ -12,7 +12,7 @@ const mysqlDBquery = require('../sql/mysqlSql').DBQuery;
  */
 const getDBList = async (callback) => {
 
-	const sql = mysqlDBquery.getDBList;
+	const sql = mysqlDBQuery.getDBList;
 	const result = await mysqlQueryExecutor.selectSql(sql, null)
 		.catch( err => { throw err } );
 
@@ -29,7 +29,7 @@ const getDBList = async (callback) => {
 const getDBByNum = async (req, callback) => {
 
 	const {num} = req;
-	const sql = mysqlDBquery.getDBByNum;
+	const sql = mysqlDBQuery.getDBByNum;
 
 	const result = await mysqlQueryExecutor.selectSql(sql, [num])
 		.catch(err => { throw err });
@@ -53,7 +53,7 @@ const insertDBInfo = async (req, callback) => {
 	const {db} = req;
 	const {des} = req;
 
-	const sql = mysqlDBquery.insertDBInfo;
+	const sql = mysqlDBQuery.insertDBInfo;
 
 	const result = await mysqlQueryExecutor.insertSql(sql, [name, src, host, port, db, des])
 		.catch(err => { throw err });
@@ -71,7 +71,7 @@ const delDB = async (req, callback) => {
 
 	const {num} = req;
 
-	const sql = mysqlDBquery.deleteDBByNum;
+	const sql = mysqlDBQuery.deleteDBByNum;
 
 	const result = await mysqlQueryExecutor.deleteSql(sql, [num])
 		.catch(err => { throw err });
@@ -96,7 +96,7 @@ const modDb = async (req, callback) => {
 	const {db} = req;
 	const {des} = req;
 
-	const sql = mysqlDBquery.modifyDB;
+	const sql = mysqlDBQuery.modifyDB;
 
 	const result = await mysqlQueryExecutor.updateSql(sql, [name, src, host, port, db, des, num])
 		.catch(err => { throw err; });
@@ -113,10 +113,19 @@ const modDb = async (req, callback) => {
  */
 const mysqlConnTest = async (req, callback) => {
 
+	let state;
 	const result = await mysqlQueryExecutor.connTest(req)
+		.then(res => {
+
+			if (res === 'connected') {
+				state = `${req.dbHost}:${req.dbPort}/pr_mngt Connected`;
+			}
+
+		})
 		.catch(err => { throw err; });
 
-	return callback(result);
+	console.log(state);
+	return callback(JSON.stringify(state));
 }
 
 
@@ -128,10 +137,18 @@ const mysqlConnTest = async (req, callback) => {
  */
 const oracleConnTest = async (req, callback) => {
 
+	let state;
 	const result = await oracleQueryExecutor.connTest(req)
-		.catch(err => { console.log(err); throw err; });
+		.then(res => {
 
-	return callback(result);
+			if (res[0][0] === 1) {
+				state = `${req.dbHost}:${req.dbPort}/XE Connected`;
+			}
+
+		})
+		.catch(err => { throw err; });
+
+	return callback(JSON.stringify(state));
 }
 
 module.exports.getDBList = getDBList;

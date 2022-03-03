@@ -25,6 +25,7 @@ Mysql : 8.0.28
 
 
 		-- db list 테이블 생성 및 데이터 입력
+		-- client로부터 dbHost, dbPort, db (dbHost:dbPort/db) 입력받음
 		use pr_mngt;
 		create table db_list (num int auto_increment primary key, name varchar(100), src varchar(15), host varchar(15), port int(5), db varchar(100), des varchar(500));
 		insert into db_list(name, src, host, port, db, des) values 

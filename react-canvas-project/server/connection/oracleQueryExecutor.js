@@ -52,7 +52,7 @@ const connTest = async (req) => {
 		});
 		const result = await connection.execute(`SELECT 1 FROM dual`);
 
-		return(result);
+		return(result.rows);
 
 	} catch (err) {
 		throw err.toString();

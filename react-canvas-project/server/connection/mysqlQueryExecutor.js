@@ -10,13 +10,13 @@ const dbConfig = require('../config/dbConfig');
  */
 const selectSql = async (query, param) => {
 
-	const promise = new Promise(resolve => {
+	const promise = new Promise((resolve, reject) => {
 
 		connection(async conn => {
 
 			await conn.query(query, param, async (err, res) => {
 
-				if (err) throw err;
+				if (err) reject(err);
 				else resolve(res);
 			});
 
@@ -37,13 +37,13 @@ const selectSql = async (query, param) => {
  */
 const insertSql = async (query, param) => {
 
-	const promise = new Promise (resolve => {
+	const promise = new Promise ((resolve, reject) => {
 
 		connection(async conn => {
 
 			await conn.query(query, param, async (err, res) => {
 
-				if (err) throw err;
+				if (err) reject(err);
 				else resolve(res.affectedRows);
 			});
 
@@ -64,13 +64,13 @@ const insertSql = async (query, param) => {
  */
 const deleteSql = async (query, param) => {
 
-	const promise = new Promise(resolve => {
+	const promise = new Promise((resolve, reject) => {
 
 		connection(async conn => {
 
 			await conn.query(query, param, async (err, res) => {
 
-				if (err) throw err;
+				if (err) reject(err);
 				else resolve(res.affectedRows);
 			});
 
@@ -87,18 +87,18 @@ const deleteSql = async (query, param) => {
  *
  * @param query update 쿼리
  * @param param set 값
- * @returns {Promise<unknown>} affectedRows
+ * @returns {Promise<unknown>} changedRows
  */
 const updateSql = async (query, param) => {
 
-	const promise = new Promise(resolve => {
+	const promise = new Promise((resolve, reject) => {
 
 		connection(async conn => {
 
 			await conn.query(query, param, async (err, res) => {
 
-				if (err) throw err;
-				else resolve(res.affectedRows);
+				if (err) reject(err);
+				else resolve(res.changedRows);
 			});
 
 			conn.release();

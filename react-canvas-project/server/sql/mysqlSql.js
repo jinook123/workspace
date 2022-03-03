@@ -9,7 +9,7 @@ const DBQuery = {
 
 const jsonQuery = {
 
-	getJsonList: `select json from json_list`,
+	getJsonList: `select * from json_list`,
 	getUserJsonById: `select json from json_list where id = (?)`,
 	saveUserJson: `insert into json_list(id, name, des, json) values (?,?,?,?)`,
 	updateUserJson: `update json_list set (name, des, json) = (?,?,?) where id=(?)`,
