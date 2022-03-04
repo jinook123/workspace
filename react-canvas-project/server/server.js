@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const indexRoute = require('./routes/indexRoute');
 const apiRoute = require('./routes/apiRoute');
-const componentRoute = require('./routes/componentRoute');
+const nodeRoute = require('./routes/nodeRoute');
+
 
 const app = express();
 const PORT = 3001;
@@ -21,7 +22,7 @@ app.use('/', indexRoute);
 // admin(server) router
 app.use('/api', apiRoute);
 // user(component 등등) router
-app.use('/component', componentRoute);
+app.use('/node', nodeRoute);
 
 // 서버 실행
 app.listen(PORT, () => {

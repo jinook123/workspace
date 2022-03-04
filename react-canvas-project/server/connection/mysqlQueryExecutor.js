@@ -1,4 +1,6 @@
+const mysql = require('mysql');
 const connection = require('./mysqlServerPool');
+const dbConfig = require('../config/dbConfig');
 
 /**
  *
@@ -8,13 +10,13 @@ const connection = require('./mysqlServerPool');
  */
 const selectSql = async (query, param) => {
 
-	const promise = new Promise(resolve => {
+	const promise = new Promise((resolve, reject) => {
 
 		connection(async conn => {
 
 			await conn.query(query, param, async (err, res) => {
 
-				if (err) throw err;
+				if (err) reject(err);
 				else resolve(res);
 			});
 
@@ -35,13 +37,13 @@ const selectSql = async (query, param) => {
  */
 const insertSql = async (query, param) => {
 
-	const promise = new Promise (resolve => {
+	const promise = new Promise ((resolve, reject) => {
 
 		connection(async conn => {
 
 			await conn.query(query, param, async (err, res) => {
 
-				if (err) throw err;
+				if (err) reject(err);
 				else resolve(res.affectedRows);
 			});
 
@@ -62,13 +64,13 @@ const insertSql = async (query, param) => {
  */
 const deleteSql = async (query, param) => {
 
-	const promise = new Promise(resolve => {
+	const promise = new Promise((resolve, reject) => {
 
 		connection(async conn => {
 
 			await conn.query(query, param, async (err, res) => {
 
-				if (err) throw err;
+				if (err) reject(err);
 				else resolve(res.affectedRows);
 			});
 
@@ -85,18 +87,18 @@ const deleteSql = async (query, param) => {
  *
  * @param query update 쿼리
  * @param param set 값
- * @returns {Promise<unknown>} affectedRows
+ * @returns {Promise<unknown>} changedRows
  */
 const updateSql = async (query, param) => {
 
-	const promise = new Promise(resolve => {
+	const promise = new Promise((resolve, reject) => {
 
 		connection(async conn => {
 
 			await conn.query(query, param, async (err, res) => {
 
-				if (err) throw err;
-				else resolve(res.affectedRows);
+				if (err) reject(err);
+				else resolve(res.changedRows);
 			});
 
 			conn.release();
@@ -108,7 +110,40 @@ const updateSql = async (query, param) => {
 	return result;
 }
 
+
+/**
+ * DB 연결 테스트
+ * @param param 입력한 db 정보
+ * @return {Promise<unknown>} connection state
+ */
+const connTest = async (param) => {
+
+	const testConnection = mysql.createConnection({
+		host: param.dbHost,
+		user: dbConfig.server.user,
+		password: dbConfig.server.password,
+		port: param.dbPort,
+		database: 'pr_mngt'
+	});
+
+	// eslint-disable-next-line no-shadow
+	const promise = new Promise((resolve, reject) => {
+
+		testConnection.connect(err => {
+
+			if (err) reject(err);
+			else resolve(testConnection.state);
+		});
+	});
+
+	const result = await promise;
+	await testConnection.destroy();
+
+	return result;
+}
+
 module.exports.selectSql = selectSql;
 module.exports.insertSql = insertSql;
 module.exports.updateSql = updateSql;
 module.exports.deleteSql = deleteSql;
+module.exports.connTest = connTest;

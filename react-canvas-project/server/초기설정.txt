@@ -23,7 +23,9 @@ Mysql : 8.0.28
 			('Bruce Banner', 'Hulk'),
 			('Natalia Romanova', 'Black Widow');
 
+
 		-- db list 테이블 생성 및 데이터 입력
+		-- client로부터 dbHost, dbPort, db (dbHost:dbPort/db) 입력받음
 		use pr_mngt;
 		create table db_list (num int auto_increment primary key, name varchar(100), src varchar(15), host varchar(15), port int(5), db varchar(100), des varchar(500));
 		insert into db_list(name, src, host, port, db, des) values 
@@ -31,9 +33,16 @@ Mysql : 8.0.28
 			('mysql component', 'mysql', 'localhost', '3306', 'react', 'mysql테스트DB'),
 			('mysql server', 'mysql', 'localhost', '3306', 'pr_mngt', 'mysql 서버');
 
-        -- json save 테이블
-        create table json_list (num int auto_increment primary key, savetime datetime default current_timestamp on update current_timestamp, json JSON);
-		alter table json_list add id varchar(20);
+
+        -- json save table (20220225 재생성)
+        create table json_list (num int auto_increment primary key
+                                , id varchar(100)
+                                , name varchar(200)
+                                , des varchar(500)
+                                , createtime datetime default current_timestamp
+                                , updatetime datetime default current_timestamp on update current_timestamp
+                                , json JSON);
+
 			
 orcle : 21c 
 
@@ -54,7 +63,7 @@ orcle : 21c
 server 설명
     config: db 접속 정보 등 설정값 저장
     routes: 라우팅 정보, response, request 처리
-    services: db crud
+    services: 실행
     connection: DB 접속 및 pool 관리
 
     server.js: 서버 실행, 관리 등등
