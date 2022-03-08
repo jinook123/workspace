@@ -27,7 +27,6 @@ class DBMngtBoard extends Component<any> {
 		this.DBHandlers.getDBList();
 	}
 
-
 	DBHandlers = {
 		//DB selectAll
 		getDBList: () => {
