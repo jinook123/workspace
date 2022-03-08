@@ -8,3 +8,4 @@ lib/
 .vscode/
 docs/
 .DS_Store
+/.idea/
