@@ -2,6 +2,7 @@ import metadata from '../../../libs/fontawesome-5.2.0/metadata/icons.json';
 
 import LogicNode from './logic/LogicNode';
 import DataNode from './data/DataNode';
+import TextNode from './data/TextNode';
 
 import { getNode } from '../configuration/NodeConfiguration';
 
@@ -50,6 +51,9 @@ const NODES = {
 			const node = getNode(descriptor.nodeClazz);
 			if(node === 'BarNode'){
 				return new DataNode(option);
+			}
+			if(node === 'TextNode'){
+				return new TextNode(option);
 			}
 		},
 	}

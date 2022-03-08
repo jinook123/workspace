@@ -14,4 +14,5 @@ export { default as CirclePort } from './CirclePort';
 export { default as Cube } from './Cube';
 export { default as Svg } from './Svg';
 export { default as BarComponent } from './Bar';
+export { default as TextComponent } from './TextCustom';
 

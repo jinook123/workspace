@@ -15,6 +15,81 @@ import WorkflowNodeConfigurations from './WorkflowNodeConfigurations';
 import WorkflowTitle from './WorkflowTitle';
 import WorkflowToolbar from './WorkflowToolbar';
 
+const propertiesToInclude = [
+	'id',
+	'name',
+	'locked',
+	'file',
+	'src',
+	'link',
+	'tooltip',
+	'animation',
+	'layout',
+	'workareaWidth',
+	'workareaHeight',
+	'videoLoadType',
+	'autoplay',
+	'shadow',
+	'muted',
+	'loop',
+	'code',
+	'icon',
+	'userProperty',
+	'trigger',
+	'configuration',
+	'superType',
+	'points',
+	'svg',
+	'loadType',
+];
+
+const defaultOption = {
+	stroke: 'rgba(255, 255, 255, 0)',
+	strokeUniform: true,
+	resource: {},
+	link: {
+		enabled: false,
+		type: 'resource',
+		state: 'new',
+		dashboard: {},
+	},
+	tooltip: {
+		enabled: true,
+		type: 'resource',
+		template: '<div>{{message.name}}</div>',
+	},
+	animation: {
+		type: 'none',
+		loop: true,
+		autoplay: true,
+		duration: 1000,
+	},
+	userProperty: {},
+	trigger: {
+		enabled: false,
+		type: 'alarm',
+		script: 'return message.value > 0;',
+		effect: 'style',
+	},
+	property: {
+		baseInfo: {
+			equipmentId: '',
+			equipmentName: ''
+		},
+		dbInfo: {
+			dbHost: '',
+			dbPort: 21,
+			dbId: '',
+			dbPw: '',
+			dbQuery: ''
+		},
+		showProperty:{
+			showDelay: 1000
+		},
+		bConnectDB: false
+	}
+};
+
 interface IState {
 	loading: boolean;
 	zoomRatio: number;
@@ -31,7 +106,7 @@ class WorkflowEditor extends Component<any, IState> {
 		workflow: {},
 		selectedItem: null,
 		descriptors: {},
-		editing: false
+		editing: false,
 	};
 
 	canvasRef: CanvasInstance;
@@ -256,14 +331,36 @@ class WorkflowEditor extends Component<any, IState> {
 			}
 
 			const changedKey = Object.keys(changedValues)[0];
+			const changedValue = changedValues[changedKey];
 			if(changedKey === 'configuration'){
 				if(selectedItem.type === 'EquipmentNode'){
 					if(typeof allValues.configuration.equipmentName !== 'undefined'){
 						this.canvasRef.handler.changeEquipmentName(selectedItem, allValues.configuration.equipmentName);
 					}
 				}
+				//if(selectedItem.type === 'TextNode'){
+				//	if(typeof allValues.configuration.ObjectName !== 'undefined'){
+				//		this.canvasRef.handler.changeTextCustom(selectedItem, allValues.configuration.ObjectName);
+				//	}
+				//}
 			}
-
+			if(selectedItem.type === 'TextNode'){
+				this.canvasRef.handler.toActiveSelection(selectedItem);
+				if (changedKey === 'fontWeight') {
+					console.log(changedKey);
+					this.canvasRef.handler.set(changedKey, changedValue ? 'bold' : 'normal');
+					return;
+				}
+				if (changedKey === 'fontStyle') {
+					this.canvasRef.handler.set(changedKey, changedValue ? 'italic' : 'normal');
+					return;
+				}
+				if (changedKey === 'textAlign') {
+					this.canvasRef.handler.set(changedKey, Object.keys(changedValue)[0]);
+					return;
+				}
+			}
+			this.canvasRef.handler.toGroup(selectedItem);
 			if (changedValues.workflow) {
 				const workflow = Object.assign({}, this.state.workflow, changedValues.workflow);
 				this.setState({

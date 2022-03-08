@@ -2088,6 +2088,38 @@ class Handler implements HandlerOptions {
 			this.timerList.delete(selectedItem.id);
 		}
 	}
+
+	public changeTextCustom = (target?: FabricObject, value?: string) => {
+		// object label change
+		const changeObj = this.canvas.getObjects().filter((obj: any) => {
+			if(target.id === obj.id){
+				if(value === ""){
+					target.label.set({text: "text..."});
+				} else{
+					target.label.set({text: value});
+				}
+			}
+			return true;
+		});
+
+		this.canvas._objects = changeObj;
+		this.canvas.renderAll();
+	};
+
+	public unGroup = (target?: FabricObject) => {
+			target.forEachObject((i:any) => {
+				console.log(i);
+				console.log(i.type);
+
+				if (i.type !== "textbox") {
+					i.removeWithUpdate(i);
+				}
+				if(i.type == "textbox") {
+				this.canvas.add(i);
+				}
+			  });
+		this.canvas.renderAll();
+	};
 }
 
 export default Handler;
