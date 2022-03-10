@@ -2,25 +2,40 @@
  * User(test) /component routing
  */
 const express = require('express');
-const oracledb = require('oracledb');
-const oraclePool = require('../connection/oraclePool');
-const nodeServices = require('../services/nodeServices');
 
 const router = express.Router();
+const nodeServices = require('../services/nodeServices');
 
 /**
- * ORACLE User server All tables list
+ * get table list
+ * @param DB (oracle, mysql)
+ * @param NAME (database name)
  */
-router.post("/tableList", (req, res) => {
+router.post('/tableList', (req, res) => {
 
-	nodeServices.getTableList(result => {
-		res.status(200).send(result);
-	}).catch(err => {
-		res.status(500).send({
-			success: false,
-			message: err,
+	const {db} = req.body;
+
+	if (db.toUpperCase() === 'ORACLE') {
+
+		nodeServices.getOracleTableList(req.body, result => {
+			res.status(200).send(result);
+		}).catch(err => {
+			res.status(500).send({
+				success: false,
+				message: err,
+			})
 		})
-	})
+	} else {
+
+		nodeServices.getMyTableList(req.body, result => {
+			res.status(200).send(result);
+		}).catch(err => {
+			res.status(500).send({
+				success: false,
+				message: err,
+			})
+		})
+	}
 })
 
 /**
@@ -28,14 +43,39 @@ router.post("/tableList", (req, res) => {
  */
 router.post("/colList", (req, res) => {
 
-	nodeServices.getAllTabCol(result => {
-		res.status(200).send(result);
-	}).catch(err => {
-		res.status(500).send({
-			success: false,
-			message: err,
+	const {dbName} = req.body;
+	const {tableName} = req.body;
+
+	if (dbName.toUpperCase() === 'ORACLE') {
+
+		nodeServices.getOracleColList(tableName, result => {
+			res.status(200).send(result);
+		}).catch(err => {
+			res.status(500).send({
+				success: false,
+				message: err,
+			})
 		})
-	})
+	} else {
+
+		nodeServices.getMyColList(req, result => {
+			res.status(200).send(result);
+		}).catch(err => {
+			res.status(500).send({
+				success: false,
+				message: err,
+			})
+		})
+	}
+})
+
+router.post('/result', (req, res) => {
+
+	const {dbName} = req.body;
+	const {tableName} = req.body;
+	const {colName} = req.body;
+
+
 })
 
 module.exports = router;

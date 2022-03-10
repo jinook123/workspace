@@ -4,6 +4,7 @@
 const mysqlQueryExecutor = require('../connection/mysqlQueryExecutor');
 const oracleQueryExecutor = require("../connection/oracleQueryExecutor");
 const mysqlDBQuery = require('../sql/mysqlSql').DBQuery;
+const adminConn = require('../connection/mysqlServerPool');
 
 /**
  * select * from db_list
@@ -13,7 +14,7 @@ const mysqlDBQuery = require('../sql/mysqlSql').DBQuery;
 const getDBList = async (callback) => {
 
 	const sql = mysqlDBQuery.getDBList;
-	const result = await mysqlQueryExecutor.selectSql(sql, null)
+	const result = await mysqlQueryExecutor.selectSql(adminConn, sql, null)
 		.catch( err => { throw err } );
 
 	return callback(result);
@@ -31,7 +32,7 @@ const getDBByNum = async (req, callback) => {
 	const {num} = req;
 	const sql = mysqlDBQuery.getDBByNum;
 
-	const result = await mysqlQueryExecutor.selectSql(sql, [num])
+	const result = await mysqlQueryExecutor.selectSql(adminConn, sql, [num])
 		.catch(err => { throw err });
 
 	return callback(result);
@@ -56,7 +57,7 @@ const insertDBInfo = async (req, callback) => {
 
 	const sql = mysqlDBQuery.insertDBInfo;
 
-	const result = await mysqlQueryExecutor.insertSql(sql, [name, src, host, port, db, des])
+	const result = await mysqlQueryExecutor.insertSql(adminConn, sql, [name, src, host, port, db, des])
 		.catch(err => { throw err });
 
 	return callback(result);
@@ -74,7 +75,7 @@ const delDB = async (req, callback) => {
 
 	const sql = mysqlDBQuery.deleteDBByNum;
 
-	const result = await mysqlQueryExecutor.deleteSql(sql, [num])
+	const result = await mysqlQueryExecutor.deleteSql(adminConn, sql, [num])
 		.catch(err => { throw err });
 
 	return callback(result);
@@ -99,7 +100,7 @@ const modDb = async (req, callback) => {
 
 	const sql = mysqlDBQuery.modifyDB;
 
-	const result = await mysqlQueryExecutor.updateSql(sql, [name, src, host, port, db, des, num])
+	const result = await mysqlQueryExecutor.updateSql(adminConn, sql, [name, src, host, port, db, des, num])
 		.catch(err => { throw err; });
 
 	return callback(result);
@@ -125,7 +126,6 @@ const mysqlConnTest = async (req, callback) => {
 		})
 		.catch(err => { throw err; });
 
-	console.log(state);
 	return callback(JSON.stringify(state));
 }
 

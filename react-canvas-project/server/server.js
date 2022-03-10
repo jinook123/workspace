@@ -4,6 +4,10 @@ const indexRoute = require('./routes/indexRoute');
 const apiRoute = require('./routes/apiRoute');
 const nodeRoute = require('./routes/nodeRoute');
 
+const oraPool = require('./connection/oraclePool');
+const myServerPool = require('./connection/mysqlServerPool');
+const myUserPool = require('./connection/mysqlReactPool');
+
 
 const app = express();
 const PORT = 3001;
