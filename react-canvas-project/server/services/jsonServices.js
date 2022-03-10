@@ -5,6 +5,7 @@
 
 const query = require('../sql/mysqlSql').jsonQuery;
 const mysqlServerConn = require('../connection/mysqlQueryExecutor');
+const adminConn = require('../connection/mysqlServerPool');
 
 
 /**
@@ -22,7 +23,7 @@ const saveUserJson = async (req, callback) => {
 
 	const sql = query.saveUserJson;
 
-	const result = await mysqlServerConn.insertSql(sql, [id, name, des, JSON.stringify(json)])
+	const result = await mysqlServerConn.insertSql(adminConn, sql, [id, name, des, JSON.stringify(json)])
 		.catch(err => { throw err; });
 
 	return  callback(result);
@@ -39,7 +40,7 @@ const getJsonList = async (req, callback) => {
 
 	const sql = query.getJsonList;
 
-	const result = await mysqlServerConn.selectSql(sql, null)
+	const result = await mysqlServerConn.selectSql(adminConn, sql, null)
 		.catch(err => { throw err });
 
 	return callback(result);
@@ -58,7 +59,7 @@ const getUserJson = async (req, callback) => {
 
 	const sql = query.getUserJsonById;
 
-	const result = await mysqlServerConn.selectSql(sql, [id])
+	const result = await mysqlServerConn.selectSql(adminConn, sql, [id])
 		.catch(err => { throw err });
 
 	return callback(result);
@@ -80,7 +81,7 @@ const updateUserJson = async (req, callback) => {
 
 	const sql = query.updateUserJson;
 
-	const result = await mysqlServerConn.updateSql(sql, [id, name, des, json])
+	const result = await mysqlServerConn.updateSql(adminConn, sql, [id, name, des, json])
 		.catch(err => { throw err });
 
 	return callback(result);
@@ -98,7 +99,7 @@ const deleteUserJson = async (req, callback) => {
 
 	const sql = query.deleteUserJson;
 
-	const result = await mysqlServerConn.deleteSql(sql, [id])
+	const result = await mysqlServerConn.deleteSql(adminConn, sql, [id])
 		.catch(err => { throw err });
 
 	return callback(result);
