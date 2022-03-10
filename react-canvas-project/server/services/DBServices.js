@@ -51,6 +51,7 @@ const insertDBInfo = async (req, callback) => {
 	const {host} = req;
 	const {port} = req;
 	const {db} = req;
+
 	const {des} = req;
 
 	const sql = mysqlDBQuery.insertDBInfo;
