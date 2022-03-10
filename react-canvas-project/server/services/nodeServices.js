@@ -9,6 +9,7 @@ const {oracleNodeQuery} = require('../sql/oracleSql');
 const {myNodeQuery} = require('../sql/mysqlSql');
 
 // mysql user server connector
+// 추후 DB 추가에 따른 변경 필요
 const myNodeConn = require('../connection/mysqlReactPool');
 
 // oracle user server pool name
@@ -23,7 +24,7 @@ const nodePoolAlias = require('../config/dbConfig').oracle.poolAlias;           
 const getOracleTableList = async (req, callback) => {
 
 	const sql = oracleNodeQuery.getTableList;
-	const poolAlias = req.name;
+	const poolAlias = req;
 
 	const result = await oracleQueryExecutor.execute(poolAlias, sql, null, callback);
 
@@ -39,10 +40,9 @@ const getOracleTableList = async (req, callback) => {
 const getMyTableList = async (req, callback) => {
 
 	const sql = myNodeQuery.getTableList;
-	// const {dbName} = req;
-	const dbName = 'react';
+	const {db} = req;
 
-	const result = await mysqlQueryExecutor.selectSql(myNodeConn, sql, [dbName]) // table_schema
+	const result = await mysqlQueryExecutor.selectSql(myNodeConn, sql, [db]) // table_schema
 		.catch(err => { throw err; })
 
 	return callback(result);
@@ -52,8 +52,10 @@ const getMyTableList = async (req, callback) => {
 const getOracleColList = async (req, callback) => {
 
 	const sql = oracleNodeQuery.getColList;
+	const poolAlias = req.db;
+	const {tableName} = req;
     
-	const result = await oracleQueryExecutor.execute(myNodeConn, sql, [req], callback);
+	const result = await oracleQueryExecutor.execute(poolAlias, sql, [tableName], callback);
 
 	return callback(result.rows);
 }
@@ -62,12 +64,9 @@ const getOracleColList = async (req, callback) => {
 const getMyColList = async (req, callback) => {
 
 	const sql = myNodeQuery.getColList;
-	// const {dbName} = req;
-	const dbName = 'react';
-	// const {tableName} = req;
-	const tableName = 'COMPONENT_TEST_MY';
+	const param = req;  // db, tableName
 
-	const result = await mysqlQueryExecutor.selectSql(myNodeConn, sql, [dbName, tableName])
+	const result = await mysqlQueryExecutor.selectSql(myNodeConn, sql, param)
 		.catch(err => { throw err; })
 
 	return callback(result);

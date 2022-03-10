@@ -13,11 +13,12 @@ const nodeServices = require('../services/nodeServices');
  */
 router.post('/tableList', (req, res) => {
 
+	const {src} = req.body;
 	const {db} = req.body;
 
-	if (db.toUpperCase() === 'ORACLE') {
+	if (src.toUpperCase() === 'ORACLE') {
 
-		nodeServices.getOracleTableList(req.body, result => {
+		nodeServices.getOracleTableList(db, result => {
 			res.status(200).send(result);
 		}).catch(err => {
 			res.status(500).send({
@@ -27,7 +28,7 @@ router.post('/tableList', (req, res) => {
 		})
 	} else {
 
-		nodeServices.getMyTableList(req.body, result => {
+		nodeServices.getMyTableList(db, result => {
 			res.status(200).send(result);
 		}).catch(err => {
 			res.status(500).send({
@@ -43,12 +44,13 @@ router.post('/tableList', (req, res) => {
  */
 router.post("/colList", (req, res) => {
 
-	const {dbName} = req.body;
+	const {src} = req.body;
+	const {db} = req.body;
 	const {tableName} = req.body;
 
-	if (dbName.toUpperCase() === 'ORACLE') {
+	if (src.toUpperCase() === 'ORACLE') {
 
-		nodeServices.getOracleColList(tableName, result => {
+		nodeServices.getOracleColList([db, tableName], result => {
 			res.status(200).send(result);
 		}).catch(err => {
 			res.status(500).send({
@@ -58,7 +60,7 @@ router.post("/colList", (req, res) => {
 		})
 	} else {
 
-		nodeServices.getMyColList(req, result => {
+		nodeServices.getMyColList([db, tableName], result => {
 			res.status(200).send(result);
 		}).catch(err => {
 			res.status(500).send({
@@ -71,7 +73,7 @@ router.post("/colList", (req, res) => {
 
 router.post('/result', (req, res) => {
 
-	const {dbName} = req.body;
+	const {src} = req.body;
 	const {tableName} = req.body;
 	const {colName} = req.body;
 
