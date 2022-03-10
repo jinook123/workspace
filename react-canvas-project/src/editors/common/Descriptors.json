@@ -1,0 +1,51 @@
+{
+	"LOGIC": [
+		{
+			"name": "Equipment",
+			"description": "Equipment",
+			"type": "LOGIC",
+			"nodeClazz": "EquipmentNode",
+			"configClazz": "EquipmentNodeConfiguration",
+			"defaultConfiguration": {
+				"outputCount": 0,
+				"equipmentId": "",
+				"equipmentName": ""
+			},
+			"inEnabled": true,
+			"outPortType": "EQUIP",
+			"outPorts": [
+				""
+			]
+		}
+	],
+	"DATA": [
+		{
+			"name": "Bar",
+			"description": "Bar",
+			"type": "DATA",
+			"nodeClazz": "BarNode",
+			"configClazz": "BarNodeConfiguration",
+			"defaultConfiguration": {
+				"showDelay": 1000,
+				"dbList": "",
+				"dbTableList": "",
+				"bStart": false 
+			},
+			"inEnabled": true
+		},
+		{
+			"name": "Text",
+			"description": "Text",
+			"type": "DATA",
+			"nodeClazz": "TextNode",
+			"configClazz": "TextNodeConfiguration",
+			"defaultConfiguration": {
+				"showDelay": 1000,
+				"dbList": "",
+				"dbTableList": "",
+				"bStart": false 
+			},
+			"inEnabled": true
+		}
+	]	
+}

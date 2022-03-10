@@ -4,9 +4,9 @@ import React, { Component } from 'react';
 import Canvas, { CanvasInstance } from '../../canvas/Canvas';
 import { CommonButton } from '../../components/common';
 import { Content } from '../../components/layout';
-import { getEllipsis, getNode } from './configuration/NodeConfiguration';
-import Links from './link';
-import Nodes from './node';
+import { getEllipsis, getNode } from '../common/configuration/NodeConfiguration';
+import Links from '../common/link';
+import Nodes from '../common/node';
 import DashBoardTitle from './DashBoardTitle';
 import DashBoardToolbar from './DashBoardToolbar';
 
@@ -35,7 +35,7 @@ class DashBoardEditor extends Component<any, IState> {
 	timerList: Map<String, any> = new Map();
 
 	componentDidMount() {
-		import('./Descriptors.json').then(descriptors => {
+		import('../common/Descriptors.json').then(descriptors => {
 			this.setState(
 				{
 					descriptors,
@@ -50,8 +50,6 @@ class DashBoardEditor extends Component<any, IState> {
 				},
 			);
 		});
-
-		
 	}
 
 	componentWillUnmount() {
@@ -104,11 +102,7 @@ class DashBoardEditor extends Component<any, IState> {
 
 					// timer start
 					this.canvasRef.handler.getObjects().forEach(obj => {
-						if(obj.nodeClazz === 'EquipmentNode'){
-							if(obj.configuration.equipmentId !== '' && obj.configuration.equipmentName !== '' && obj.configuration.dbList !== '' && obj.configuration.dbTableList !== ''){
-								this.handlers.onClick('play', obj);
-							}
-						}
+						this.canvasRef.handler.timerStart(obj, this.canvasRef);
 					});
 				};
 				reader.readAsText(files[0]);
@@ -128,31 +122,11 @@ class DashBoardEditor extends Component<any, IState> {
 		},
 		
 		onClick: (div, selectedItem) => {
-			let currentItem = {...selectedItem};
-
 			if(typeof div !== 'undefined'){
 				if(div === 'play'){
-					selectedItem.configuration.bStart = true;
-
-					if(this.timerList.has(currentItem.configuration.equipmentId) == false){
-						const timer = setInterval(() => {
-							console.log("timerStart");
-		
-							if(this.canvasRef != null && typeof this.canvasRef.canvas !== 'undefined'){
-								this.canvasRef.handler.reloadCanvas(selectedItem);
-							}
-						
-						}, currentItem.configuration.showDelay);
-						
-						this.timerList.set(currentItem.configuration.equipmentId, timer);
-					}
+					this.canvasRef.handler.timerStart(selectedItem, this.canvasRef);
 				} else if(div === 'stop'){
-
-					selectedItem.configuration.bStart = false;
-					if(this.timerList.has(currentItem.configuration.equipmentId) == true){
-						clearInterval(this.timerList.get(currentItem.configuration.equipmentId));
-						this.timerList.delete(currentItem.configuration.equipmentId);
-					}
+					this.canvasRef.handler.timerStop(selectedItem);
 				}
 			}
 		},
@@ -175,7 +149,7 @@ class DashBoardEditor extends Component<any, IState> {
 		this.setState({
 			workflow: result,
 		});
-		// this.canvasRef.handler.clear();
+		this.canvasRef.handler.clear();
 		this.timerList.clear();
 		const nodes = result.nodes.map(node => {
 			return {
@@ -208,11 +182,7 @@ class DashBoardEditor extends Component<any, IState> {
 
 		// timer start
 		this.canvasRef.handler.getObjects().forEach(obj => {
-			if(obj.nodeClazz === 'EquipmentNode'){
-				if(obj.configuration.equipmentId !== '' && obj.configuration.equipmentName !== '' && obj.configuration.dbList !== '' && obj.configuration.dbTableList !== ''){
-					this.handlers.onClick('play', obj);
-				}
-			}
+			this.canvasRef.handler.timerStart(obj, this.canvasRef);
 		});
 	}
 
@@ -221,8 +191,6 @@ class DashBoardEditor extends Component<any, IState> {
 		const { zoomRatio, workflow, selectedItem, descriptors, loading } = this.state;
 		const { onUpload, onClick } = this.handlers;
 		const nodes = Nodes(descriptors);
-
-		
 
 		const action = (
 			<React.Fragment>

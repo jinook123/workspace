@@ -7,10 +7,6 @@ import { LinkObject } from './Link';
 import Port, { PortObject } from './Port';
 
 export const NODE_COLORS = {
-	TRIGGER: {
-		fill: '#48C9B0',
-		border: '#1ABC9C',
-	},
 	LOGIC: {
 		fill: '#AF7AC5',
 		border: '#9B59B6',
@@ -18,20 +14,11 @@ export const NODE_COLORS = {
 	DATA: {
 		fill: '#5DADE2',
 		border: '#3498DB',
-	},
-	ACTION: {
-		fill: '#F5B041',
-		border: 'rgb(243, 156, 18)',
-	},
+	}
 };
 
 export const OUT_PORT_TYPE = {
-	SINGLE: 'SINGLE',
-	STATIC: 'STATIC',
-	DYNAMIC: 'DYNAMIC',
-	BROADCAST: 'BROADCAST',
 	EQUIP: 'EQUIP',
-	NONE: 'NONE',
 };
 
 export const DESCRIPTIONS = {
@@ -60,7 +47,7 @@ export const getEllipsis = (text: string, length: number) => {
 		: text;
 };
 
-export type NodeType = 'TRIGGER' | 'LOGIC' | 'DATA' | 'ACTION';
+export type NodeType = 'LOGIC' | 'DATA';
 
 export interface NodeObject extends FabricObject<fabric.Group> {
 	errorFlag?: fabric.IText;
@@ -204,31 +191,26 @@ const Node = fabric.util.createClass(fabric.Group, {
 		};
 	},
 	createToPort(left: number, top: number) {
-		if (this.descriptor.inEnabled) {
-			this.toPort = new Port({
-				id: 'defaultInPort',
-				type: 'toPort',
-				...this.toPortOption(),
-				left,
-				top,
-			});
+		if (this.descriptor.outPortType === OUT_PORT_TYPE.EQUIP) {
+			if (this.descriptor.inEnabled) {
+				this.toPort = new Port({
+					id: 'defaultInPort',
+					type: 'toPort',
+					...this.toPortOption(),
+					left,
+					top,
+				});
+			}
 		}
 		return this.toPort;
 	},
 	createFromPort(left: number, top: number) {
-		if (this.descriptor.outPortType === OUT_PORT_TYPE.BROADCAST) {
-			this.fromPort = this.broadcastPort({ ...this.fromPortOption(), left, top });
-		} else if (this.descriptor.outPortType === OUT_PORT_TYPE.EQUIP) {
+		if (this.descriptor.outPortType === OUT_PORT_TYPE.EQUIP) {
 			this.fromPort = this.equipPort({ ...this.fromPortOption(), left, top });
-		} else if (this.descriptor.outPortType === OUT_PORT_TYPE.STATIC) {
-			this.fromPort = this.staticPort({ ...this.fromPortOption(), left, top });
-		} else if (this.descriptor.outPortType === OUT_PORT_TYPE.DYNAMIC) {
-			this.fromPort = this.dynamicPort({ ...this.fromPortOption(), left, top });
-		} else if (this.descriptor.outPortType === OUT_PORT_TYPE.NONE) {
-			this.fromPort = [];
-		} else {
-			this.fromPort = this.singlePort({ ...this.fromPortOption(), left, top });
-		}
+		} 
+		// else {
+		// 	this.fromPort = this.singlePort({ ...this.fromPortOption(), left, top });
+		// }
 		return this.fromPort;
 	},
 	singlePort(portOption: any) {

@@ -4,16 +4,91 @@ import React, { Component } from 'react';
 import Canvas, { CanvasInstance } from '../../canvas/Canvas';
 import { CommonButton } from '../../components/common';
 import { Content } from '../../components/layout';
-import { getEllipsis, getNode } from './configuration/NodeConfiguration';
-import { OUT_PORT_TYPE } from './constant/constants';
-import NodeConfigurationError from './error/NodeConfigurationError';
-import Links from './link';
-import Nodes from './node';
+import { getEllipsis, getNode } from '../common/configuration/NodeConfiguration';
+import { OUT_PORT_TYPE } from '../common/constant/constants';
+import NodeConfigurationError from '../common/error/NodeConfigurationError';
+import Links from '../common/link';
+import Nodes from '../common/node';
 import WorkflowConfigurations from './WorkflowConfigurations';
 import WorkflowItems from './WorkflowItems';
 import WorkflowNodeConfigurations from './WorkflowNodeConfigurations';
 import WorkflowTitle from './WorkflowTitle';
 import WorkflowToolbar from './WorkflowToolbar';
+
+const propertiesToInclude = [
+	'id',
+	'name',
+	'locked',
+	'file',
+	'src',
+	'link',
+	'tooltip',
+	'animation',
+	'layout',
+	'workareaWidth',
+	'workareaHeight',
+	'videoLoadType',
+	'autoplay',
+	'shadow',
+	'muted',
+	'loop',
+	'code',
+	'icon',
+	'userProperty',
+	'trigger',
+	'configuration',
+	'superType',
+	'points',
+	'svg',
+	'loadType',
+];
+
+const defaultOption = {
+	stroke: 'rgba(255, 255, 255, 0)',
+	strokeUniform: true,
+	resource: {},
+	link: {
+		enabled: false,
+		type: 'resource',
+		state: 'new',
+		dashboard: {},
+	},
+	tooltip: {
+		enabled: true,
+		type: 'resource',
+		template: '<div>{{message.name}}</div>',
+	},
+	animation: {
+		type: 'none',
+		loop: true,
+		autoplay: true,
+		duration: 1000,
+	},
+	userProperty: {},
+	trigger: {
+		enabled: false,
+		type: 'alarm',
+		script: 'return message.value > 0;',
+		effect: 'style',
+	},
+	property: {
+		baseInfo: {
+			equipmentId: '',
+			equipmentName: ''
+		},
+		dbInfo: {
+			dbHost: '',
+			dbPort: 21,
+			dbId: '',
+			dbPw: '',
+			dbQuery: ''
+		},
+		showProperty:{
+			showDelay: 1000
+		},
+		bConnectDB: false
+	}
+};
 
 interface IState {
 	loading: boolean;
@@ -31,17 +106,15 @@ class WorkflowEditor extends Component<any, IState> {
 		workflow: {},
 		selectedItem: null,
 		descriptors: {},
-		editing: false
+		editing: false,
 	};
 
 	canvasRef: CanvasInstance;
 	nodeConfigurationRef: any;
 	container: any;
 
-	timerList: Map<String, any> = new Map();
-
 	componentDidMount() {
-		import('./Descriptors.json').then(descriptors => {
+		import('../common/Descriptors.json').then(descriptors => {
 			this.setState(
 				{
 					descriptors,
@@ -54,10 +127,7 @@ class WorkflowEditor extends Component<any, IState> {
 	}
 
 	componentWillUnmount() {
-		// timer end
-		this.timerList.forEach(obj => {
-			clearInterval(obj);
-		});
+	
 	}
 
 	canvasHandlers = {
@@ -77,15 +147,15 @@ class WorkflowEditor extends Component<any, IState> {
 			}
 		},
 		onSelect: target => {
-			this.nodeConfigurationRef.props.form.validateFields(err => {
-				if (this.state.selectedItem) {
-					if (err || (this.state.selectedItem.errors && this.state.selectedItem.errors.length)) {
-						this.state.selectedItem.setErrors(true);
-					} else {
-						this.state.selectedItem.setErrors(false);
-					}
-				}
-			});
+			// this.nodeConfigurationRef.props.form.validateFields(err => {
+			// 	if (this.state.selectedItem) {
+			// 		if (err || (this.state.selectedItem.errors && this.state.selectedItem.errors.length)) {
+			// 			this.state.selectedItem.setErrors(true);
+			// 		} else {
+			// 			this.state.selectedItem.setErrors(false);
+			// 		}
+			// 	}
+			// });
 			if (
 				target &&
 				target.id &&
@@ -131,7 +201,6 @@ class WorkflowEditor extends Component<any, IState> {
 						workflow: result,
 					});
 					this.canvasRef.handler.clear();
-					this.timerList.clear();
 					const nodes = result.nodes.map(node => {
 						return {
 							...node,
@@ -163,11 +232,7 @@ class WorkflowEditor extends Component<any, IState> {
 
 					// timer start
 					this.canvasRef.handler.getObjects().forEach(obj => {
-						if(obj.nodeClazz === 'EquipmentNode'){
-							if(obj.configuration.equipmentId !== '' && obj.configuration.equipmentName !== '' && obj.configuration.dbList !== '' && obj.configuration.dbTableList !== ''){
-								this.handlers.onClick('play', obj);
-							}
-						}
+						this.canvasRef.handler.timerStart(obj, this.canvasRef);
 					});
 				};
 				reader.readAsText(files[0]);
@@ -206,7 +271,7 @@ class WorkflowEditor extends Component<any, IState> {
 			const links = [];
 			try {
 				this.canvasRef.handler.exportJSON().forEach(obj => {
-					if (obj.superType === 'node') {
+					if (obj.superType === 'node' || obj.superType === 'Bar') {
 						if (obj.errors) {
 							throw new NodeConfigurationError(
 								i18n.t('workflow.validate-fields-error'),
@@ -266,13 +331,36 @@ class WorkflowEditor extends Component<any, IState> {
 			}
 
 			const changedKey = Object.keys(changedValues)[0];
+			const changedValue = changedValues[changedKey];
 			if(changedKey === 'configuration'){
-				if(selectedItem.type === 'EquipmentNode' && selectedItem.configuration.bStart === true){
-					this.props.alertBox('warning', 'Must Stop Component');
-					return false;
+				if(selectedItem.type === 'EquipmentNode'){
+					if(typeof allValues.configuration.equipmentName !== 'undefined'){
+						this.canvasRef.handler.changeEquipmentName(selectedItem, allValues.configuration.equipmentName);
+					}
+				}
+				//if(selectedItem.type === 'TextNode'){
+				//	if(typeof allValues.configuration.ObjectName !== 'undefined'){
+				//		this.canvasRef.handler.changeTextCustom(selectedItem, allValues.configuration.ObjectName);
+				//	}
+				//}
+			}
+			if(selectedItem.type === 'TextNode'){
+				this.canvasRef.handler.toActiveSelection(selectedItem);
+				if (changedKey === 'fontWeight') {
+					console.log(changedKey);
+					this.canvasRef.handler.set(changedKey, changedValue ? 'bold' : 'normal');
+					return;
+				}
+				if (changedKey === 'fontStyle') {
+					this.canvasRef.handler.set(changedKey, changedValue ? 'italic' : 'normal');
+					return;
+				}
+				if (changedKey === 'textAlign') {
+					this.canvasRef.handler.set(changedKey, Object.keys(changedValue)[0]);
+					return;
 				}
 			}
-
+			this.canvasRef.handler.toGroup(selectedItem);
 			if (changedValues.workflow) {
 				const workflow = Object.assign({}, this.state.workflow, changedValues.workflow);
 				this.setState({
@@ -300,46 +388,25 @@ class WorkflowEditor extends Component<any, IState> {
 				// selectedItem.label.set({
 				// 	text: getEllipsis(allValues.name, 18),
 				// });
-				if (selectedItem.descriptor.outPortType === OUT_PORT_TYPE.DYNAMIC) {
-					this.canvasRef.handler.portHandler.recreate(selectedItem);
+				if(typeof selectedItem.descriptor !== 'undefined'){
+					if (typeof selectedItem.descriptor.outPortType !== 'undefined' && selectedItem.descriptor.outPortType === OUT_PORT_TYPE.DYNAMIC) {
+						this.canvasRef.handler.portHandler.recreate(selectedItem);
+					}
 				}
 			}
 		},
 		onClick: (div, selectedItem) => {
-			let currentItem = {...selectedItem};
-
 			if(typeof div !== 'undefined'){
 				if(div === 'play'){
-					selectedItem.configuration.bStart = true;
-
-					if(this.timerList.has(currentItem.configuration.equipmentId) == false){
-						const timer = setInterval(() => {
-							console.log("timerStart");
-		
-							if(this.canvasRef != null && typeof this.canvasRef.canvas !== 'undefined'){
-								this.canvasRef.handler.reloadCanvas(selectedItem);
-							}
-						
-						}, currentItem.configuration.showDelay);
-						
-						this.timerList.set(currentItem.configuration.equipmentId, timer);
-					}
+					this.canvasRef.handler.timerStart(selectedItem, this.canvasRef);
 				} else if(div === 'stop'){
-
-					selectedItem.configuration.bStart = false;
-					if(this.timerList.has(currentItem.configuration.equipmentId) == true){
-						clearInterval(this.timerList.get(currentItem.configuration.equipmentId));
-						this.timerList.delete(currentItem.configuration.equipmentId);
-					}
+					this.canvasRef.handler.timerStop(selectedItem);
 				}
 				this.canvasHandlers.onSelect(selectedItem);
 			}
 		},
 		onSaveJson: () => {
 			const workflow = this.handlers.exportJsonCode() as any;
-
-			console.log("onSaveJson");
-			console.log(workflow);
 
 			fetch("http://localhost:3001/api/jsonSave", {
 				method : "post", 
