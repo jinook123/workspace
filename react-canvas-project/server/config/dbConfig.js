@@ -26,7 +26,8 @@ const oracle = {
 	password: '1234',
 	database: 'XE',
 	// connectString: `${this.host}:${this.port}/${this.database}`,    // connection 소스에서 재처리
-	poolMax: 50
+	poolMax: 50,
+	poolAlias: 'XE'
 };
 
 module.exports.react = react;

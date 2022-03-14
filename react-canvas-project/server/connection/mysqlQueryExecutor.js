@@ -1,14 +1,14 @@
 const mysql = require('mysql');
-const connection = require('./mysqlServerPool');
 const dbConfig = require('../config/dbConfig');
 
 /**
  *
+ * @param connection DB Connection from pool
  * @param query select 쿼리
  * @param param where 조건
  * @returns {Promise<unknown>} select 결과
  */
-const selectSql = async (query, param) => {
+const selectSql = async (connection, query, param) => {
 
 	const promise = new Promise((resolve, reject) => {
 
@@ -29,13 +29,15 @@ const selectSql = async (query, param) => {
 	return result;
 }
 
+
 /**
  *
+ * @param connection DB Connection from pool
  * @param query insert 쿼리
  * @param param values
  * @returns {Promise<unknown>} affectedRows
  */
-const insertSql = async (query, param) => {
+const insertSql = async (connection, query, param) => {
 
 	const promise = new Promise ((resolve, reject) => {
 
@@ -58,11 +60,12 @@ const insertSql = async (query, param) => {
 
 /**
  *
+ * @param connection DB Connection from pool
  * @param query delete 쿼리
  * @param param where 조건
  * @returns {Promise<unknown>} affectedRows
  */
-const deleteSql = async (query, param) => {
+const deleteSql = async (connection, query, param) => {
 
 	const promise = new Promise((resolve, reject) => {
 
@@ -85,11 +88,12 @@ const deleteSql = async (query, param) => {
 
 /**
  *
+ * @param connection DB Connection from pool
  * @param query update 쿼리
  * @param param set 값
  * @returns {Promise<unknown>} changedRows
  */
-const updateSql = async (query, param) => {
+const updateSql = async (connection, query, param) => {
 
 	const promise = new Promise((resolve, reject) => {
 
