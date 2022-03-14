@@ -14,6 +14,8 @@ import WorkflowItems from './WorkflowItems';
 import WorkflowNodeConfigurations from './WorkflowNodeConfigurations';
 import WorkflowTitle from './WorkflowTitle';
 import WorkflowToolbar from './WorkflowToolbar';
+import WorkflowHeaderToolbar from './WorkflowHeaderToolbar';
+
 
 const propertiesToInclude = [
 	'id',
@@ -147,15 +149,6 @@ class WorkflowEditor extends Component<any, IState> {
 			}
 		},
 		onSelect: target => {
-			// this.nodeConfigurationRef.props.form.validateFields(err => {
-			// 	if (this.state.selectedItem) {
-			// 		if (err || (this.state.selectedItem.errors && this.state.selectedItem.errors.length)) {
-			// 			this.state.selectedItem.setErrors(true);
-			// 		} else {
-			// 			this.state.selectedItem.setErrors(false);
-			// 		}
-			// 	}
-			// });
 			if (
 				target &&
 				target.id &&
@@ -505,55 +498,64 @@ class WorkflowEditor extends Component<any, IState> {
 		const content = (
 			<div className="rde-editor">
 				<WorkflowItems canvasRef={this.canvasRef} descriptors={descriptors} />
-				<div
-					ref={c => {
-						this.container = c;
-					}}
-					className="rde-editor-canvas"
-				>
-					<Canvas
-						ref={c => {
-							this.canvasRef = c;
-						}}
-						className="rde-canvas"
-						fabricObjects={{ ...nodes, ...Links }}
-						workareaOption={{
-							width: 0,
-							height: 0,
-						}}
-						gridOption={{ enabled: true, grid: 20, snapToGrid: true }}
-						activeSelectionOption={{
-							hasControls: false,
-							hasBorders: false,
-							perPixelTargetFind: true,
-						}}
-						minZoom={50}
-						maxZoom={150}
-						onZoom={onZoom}
-						onSelect={onSelect}
-						onAdd={onAdd}
-						onRemove={onRemove}
-						onModified={onModified}
-						keyEvent={{ move: false, transaction: true, clipboard: true }}
-					/>
-					<div className="rde-editor-properties" style={{ display: selectedItem ? 'block' : 'none' }}>
-						<WorkflowNodeConfigurations
-							wrappedComponentRef={c => {
-								this.nodeConfigurationRef = c;
-							}}
-							selectedItem={selectedItem}
-							workflow={workflow}
+				<div className="rde-editor-canvas-container">
+					<div className="rde-editor-header-toolbar">
+						<WorkflowHeaderToolbar
 							canvasRef={this.canvasRef}
-							descriptors={descriptors}
-							dbList={dbList}
-							dbTableList={dbTableList}
-							alertBox={alertBox}
-							onChange={onChange}
-							onClick={onClick}
+							selectedItem={selectedItem}
+							onSelect={onSelect}
 						/>
 					</div>
-					<div className="rde-editor-toolbar">
-						<WorkflowToolbar canvasRef={this.canvasRef} zoomRatio={zoomRatio} />
+					<div
+						ref={c => {
+							this.container = c;
+						}}
+						className="rde-editor-canvas"
+					>
+						<Canvas
+							ref={c => {
+								this.canvasRef = c;
+							}}
+							className="rde-canvas"
+							fabricObjects={{ ...nodes, ...Links }}
+							workareaOption={{
+								width: 0,
+								height: 0,
+							}}
+							gridOption={{ enabled: true, grid: 20, snapToGrid: true }}
+							activeSelectionOption={{
+								hasControls: false,
+								hasBorders: false,
+								perPixelTargetFind: true,
+							}}
+							minZoom={50}
+							maxZoom={150}
+							onZoom={onZoom}
+							onSelect={onSelect}
+							onAdd={onAdd}
+							onRemove={onRemove}
+							onModified={onModified}
+							keyEvent={{ move: false, transaction: true, clipboard: true }}
+						/>
+						<div className="rde-editor-properties" style={{ display: selectedItem ? 'block' : 'none' }}>
+							<WorkflowNodeConfigurations
+								wrappedComponentRef={c => {
+									this.nodeConfigurationRef = c;
+								}}
+								selectedItem={selectedItem}
+								workflow={workflow}
+								canvasRef={this.canvasRef}
+								descriptors={descriptors}
+								dbList={dbList}
+								dbTableList={dbTableList}
+								alertBox={alertBox}
+								onChange={onChange}
+								onClick={onClick}
+							/>
+						</div>
+						<div className="rde-editor-toolbar">
+							<WorkflowToolbar canvasRef={this.canvasRef} zoomRatio={zoomRatio} />
+						</div>
 					</div>
 				</div>
 				<WorkflowConfigurations

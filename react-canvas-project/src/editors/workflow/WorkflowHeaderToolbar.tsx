@@ -6,6 +6,7 @@ import { Flex } from '../../components/flex';
 import { CommonButton } from '../../components/common';
 import Icon from '../../components/icon/Icon';
 import { FormComponentProps } from 'antd/lib/form';
+import { Form } from 'antd';
 
 interface IProps extends FormComponentProps {
 	canvasRef?: any,
@@ -189,4 +190,10 @@ class WorkflowHeaderToolbar extends Component<IProps> {
 	}
 }
 
-export default WorkflowHeaderToolbar;
+
+export default Form.create<IProps>({
+	onValuesChange: (props: IProps) => {
+		const { onSelect, selectedItem } = props;
+		onSelect(selectedItem);
+	},
+})(WorkflowHeaderToolbar);
