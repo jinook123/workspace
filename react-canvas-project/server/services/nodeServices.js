@@ -4,38 +4,77 @@
  */
 const oracledb = require('oracledb');
 const oracleQueryExecutor = require('../connection/oracleQueryExecutor');
-const query = require('../sql/oracleSql').nodeQuery;
+const mysqlQueryExecutor = require('../connection/mysqlQueryExecutor');
+const {oracleNodeQuery} = require('../sql/oracleSql');
+const {myNodeQuery} = require('../sql/mysqlSql');
+
+// mysql user server connector
+// 추후 DB 추가에 따른 변경 필요
+const myNodeConn = require('../connection/mysqlReactPool');
+
+// oracle user server pool name
+const nodePoolAlias = require('../config/dbConfig').oracle.poolAlias;           // oracle pool name
 
 /**
- * ORACLE user server table list
- * select TABLE_NAME from USER_TABLES
+ * SELECT table_name FROM user_tables
+ * @param req null
+ * @param callback
+ * @returns {Promise<*>} table list
+ */
+const getOracleTableList = async (req, callback) => {
+
+	const sql = oracleNodeQuery.getTableList;
+	const poolAlias = req;
+
+	const result = await oracleQueryExecutor.execute(poolAlias, sql, null, callback);
+
+	return callback(result.rows);
+}
+
+/**
+ *
+ * @param req
  * @param callback
  * @returns {Promise<*>}
  */
-const getTableList = async callback => {
+const getMyTableList = async (req, callback) => {
 
-	const sql = query.DBQuery.getTableList;
+	const sql = myNodeQuery.getTableList;
+	const {db} = req;
 
-	const result = await oracleQueryExecutor.execute(sql, callback);
+	const result = await mysqlQueryExecutor.selectSql(myNodeConn, sql, [db]) // table_schema
+		.catch(err => { throw err; })
 
 	return callback(result);
 }
 
-/**
- * ORACLE user server Get all tables, columns
- * SELECT table_name, column_name FROM user_tab_columns
- * @param callback
- * @returns {Promise<void>}
- */
-const getAllTabCol = async callback => {
 
-	const sql = query.getAllTabCol;
+const getOracleColList = async (req, callback) => {
+
+	const sql = oracleNodeQuery.getColList;
+	const poolAlias = req.db;
+	const {tableName} = req;
     
-	const result = await oracleQueryExecutor.execute(sql, callback);
+	const result = await oracleQueryExecutor.execute(poolAlias, sql, [tableName], callback);
+
+	return callback(result.rows);
+}
+
+
+const getMyColList = async (req, callback) => {
+
+	const sql = myNodeQuery.getColList;
+	const param = req;  // db, tableName
+
+	const result = await mysqlQueryExecutor.selectSql(myNodeConn, sql, param)
+		.catch(err => { throw err; })
 
 	return callback(result);
 }
 
 
-module.exports.getTableList = getTableList;
-module.exports.getAllTabCol = getAllTabCol;
+
+module.exports.getOracleTableList = getOracleTableList;
+module.exports.getMyTableList = getMyTableList;
+module.exports.getOracleColList = getOracleColList;
+module.exports.getMyColList = getMyColList;

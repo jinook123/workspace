@@ -23,5 +23,3 @@ const getConnection = callback => {
 }
 
 module.exports = getConnection;
-
-

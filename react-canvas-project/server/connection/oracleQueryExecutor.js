@@ -5,18 +5,26 @@ const config = require('../config/dbConfig');
 
 /**
  * ORACLE SQL QUERY EXECUTOR
+ * @param poolAlias database name (connection pool name)
  * @param query sql query
+ * @param data values
  * @param callback
  * @returns {Promise<*>} rows
  */
-const execute = async (query, callback) => {
+const execute = async (poolAlias, query, data, callback) => {
 
 	let connection;
 
 	try {
 
-		connection = await oracledb.getConnection()
-		const result = await connection.execute(query);
+		connection = await oracledb.getConnection(poolAlias)
+
+		let result;
+
+		if (data)
+		    result = await connection.execute(query, data);
+		else
+			result = await connection.execute(query);
 
 		return callback(result.rows);
 
