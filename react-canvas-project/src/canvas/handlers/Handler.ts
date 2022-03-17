@@ -2089,35 +2089,83 @@ class Handler implements HandlerOptions {
 		}
 	}
 
-	public changeTextCustom = (target?: FabricObject, value?: string) => {
-		// object label change
+	public changeTextlabel = (target?: FabricObject, value?: any) => {
+		// Text label change
 		const changeObj = this.canvas.getObjects().filter((obj: any) => {
 			if(target.id === obj.id){
 				if(value === ""){
-					target.label.set({text: "text..."});
-				} else{
+					target.label.set({text: ""});
+				} else {
 					target.label.set({text: value});
 				}
 			}
 			return true;
 		});
-
 		this.canvas._objects = changeObj;
 		this.canvas.renderAll();
 	};
-
-	public unGroup = (target?: FabricObject) => {
-			target.forEachObject((i:any) => {
-				console.log(i);
-				console.log(i.type);
-
-				if (i.type !== "textbox") {
-					i.removeWithUpdate(i);
+	
+	public changeTextProperty = (target?: FabricObject, changedKey?: string, changedValue?: any, allValues?: any) => {
+		// Text object change
+		const changeObj = this.canvas.getObjects().filter((obj: any) => {
+			if(target.id === obj.id){
+				if (changedKey === 'fontWeight') {
+					target.label.set({fontWeight: changedValue ? 'bold' : 'normal'});
 				}
-				if(i.type == "textbox") {
-				this.canvas.add(i);
+				if (changedKey === 'fontStyle') {
+					target.label.set({fontStyle: changedValue ? 'italic' : 'normal'});
 				}
-			  });
+				if (changedKey === 'fontFamily') {
+					target.label.set({fontFamily: changedValue});
+				}
+				if (changedKey === 'fontSize') {
+					target.label.set({fontSize: changedValue});
+				}
+				if (changedKey === 'linethrough') {
+					target.label.set({linethrough: changedValue});
+				}
+				if (changedKey === 'underline') {
+					target.label.set({underline: changedValue});
+				}
+				if (changedKey === 'lineHeight') {
+					target.label.set({lineHeight: changedValue});
+				}
+				if (changedKey === 'charSpacing') {
+					target.label.set({charSpacing: changedValue});
+				}
+				if (changedKey === 'textAlign') {
+					target.label.set({textAlign: Object.keys(changedValue)[0]});
+				}				
+				if (changedKey === 'fill') {
+					target.label.set({fill: changedValue});
+				}
+				if (changedKey === 'stroke') {
+					target.label.set({stroke: changedValue});
+				}
+				if (changedKey === 'strokeWidth') {
+					target.label.set({strokeWidth: changedValue});
+				}			
+				if (changedKey === 'shadow') {
+					if (allValues.shadow.enabled) {
+						if ('blur' in allValues.shadow) {
+							this.setShadow(allValues.shadow);
+						} else {
+							this.setShadow({
+								blur: 15,
+								offsetX: 10,
+								offsetY: 10,
+								enabled: true,
+							});
+						}
+					} else {
+						this.setShadow(null);
+					}
+				}
+			}
+			return true;
+		});		
+		
+		this.canvas._objects = changeObj;
 		this.canvas.renderAll();
 	};
 }

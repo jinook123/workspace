@@ -145,6 +145,10 @@ class WorkflowEditor extends Component<any, IState> {
 				this.canvasRef.handler.select(target);
 				this.canvasRef.handler.nodeHandler.highlightingNode(target);
 			}
+			if (target.superType === 'DataComp') {
+				this.canvasRef.handler.select(target);
+				this.canvasRef.handler.nodeHandler.highlightingNode(target);
+			}			
 		},
 		onSelect: target => {
 			// this.nodeConfigurationRef.props.form.validateFields(err => {
@@ -338,29 +342,15 @@ class WorkflowEditor extends Component<any, IState> {
 						this.canvasRef.handler.changeEquipmentName(selectedItem, allValues.configuration.equipmentName);
 					}
 				}
-				//if(selectedItem.type === 'TextNode'){
-				//	if(typeof allValues.configuration.ObjectName !== 'undefined'){
-				//		this.canvasRef.handler.changeTextCustom(selectedItem, allValues.configuration.ObjectName);
-				//	}
-				//}
+				if(selectedItem.type === 'TextNode'){
+					if(typeof allValues.configuration.ObjectName !== 'undefined'){
+						this.canvasRef.handler.changeTextlabel(selectedItem, allValues.configuration.ObjectName);
+					}
+				}
 			}
 			if(selectedItem.type === 'TextNode'){
-				this.canvasRef.handler.toActiveSelection(selectedItem);
-				if (changedKey === 'fontWeight') {
-					console.log(changedKey);
-					this.canvasRef.handler.set(changedKey, changedValue ? 'bold' : 'normal');
-					return;
-				}
-				if (changedKey === 'fontStyle') {
-					this.canvasRef.handler.set(changedKey, changedValue ? 'italic' : 'normal');
-					return;
-				}
-				if (changedKey === 'textAlign') {
-					this.canvasRef.handler.set(changedKey, Object.keys(changedValue)[0]);
-					return;
-				}
+				this.canvasRef.handler.changeTextProperty(selectedItem, changedKey, changedValue, allValues);
 			}
-			this.canvasRef.handler.toGroup(selectedItem);
 			if (changedValues.workflow) {
 				const workflow = Object.assign({}, this.state.workflow, changedValues.workflow);
 				this.setState({
