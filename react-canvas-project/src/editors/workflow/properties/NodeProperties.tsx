@@ -1,0 +1,84 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { Form, Collapse, List } from 'antd';
+
+import PropertyDefinition from './PropertyDefinition';
+import Scrollbar from '../../../components/common/Scrollbar';
+import { Flex } from '../../../components/flex';
+import { CanvasInstance } from '../../../canvas/Canvas';
+import { FormComponentProps } from 'antd/lib/form';
+
+const { Panel } = Collapse;
+
+interface IProps extends FormComponentProps {
+	canvasRef?: CanvasInstance;
+	selectedItem?: any;
+	onChange?: any;
+}
+
+class NodeProperties extends Component<IProps> {
+	static propTypes = {
+		canvasRef: PropTypes.any,
+		selectedItem: PropTypes.object,
+		onChange: PropTypes.func,
+	};
+
+	UNSAFE_componentWillReceiveProps(nextProps) {
+		if (this.props.selectedItem && nextProps.selectedItem) {
+			if (this.props.selectedItem.id !== nextProps.selectedItem.id) {
+				nextProps.form.resetFields();
+			}
+		}
+	}
+
+	render() {
+		const { canvasRef, selectedItem, form } = this.props;
+		const showArrow = false;
+		return (
+			<Scrollbar>
+				<Form layout="horizontal" colon={false}>
+					<Collapse bordered={false}>
+						{selectedItem && PropertyDefinition[selectedItem.type] ? (
+							Object.keys(PropertyDefinition[selectedItem.type]).map(key => {
+								return (
+									<Panel
+										key={key}
+										header={PropertyDefinition[selectedItem.type][key].title}
+										showArrow={showArrow}
+									>
+										{PropertyDefinition[selectedItem.type][key].component.render(
+											canvasRef,
+											form,
+											selectedItem,
+										)}
+									</Panel>
+								);
+							})
+						) : (
+							<Flex
+								justifyContent="center"
+								alignItems="center"
+								style={{
+									width: '100%',
+									height: '100%',
+									color: 'rgba(0, 0, 0, 0.45)',
+									fontSize: 16,
+									padding: 16,
+								}}
+							>
+								<List renderItem={''}/>
+							</Flex>
+						)}
+					</Collapse>
+				</Form>
+			</Scrollbar>
+		);
+	}
+}
+
+export default Form.create<IProps>({
+	onValuesChange: (props: IProps, changedValues, allValues) => {
+		const { onChange, selectedItem } = props;
+		onChange(selectedItem, changedValues, allValues);
+	},
+})(NodeProperties);

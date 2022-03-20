@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Form, Divider, Input } from 'antd';
+import { Form, Divider, Input, Tabs } from 'antd';
 import i18n from 'i18next';
 import NodeDescriptor from '../common/configuration/NodeDescriptor';
 import NodeAction from '../common/configuration/NodeAction';
@@ -9,6 +9,9 @@ import Canvas, { CanvasInstance } from '../../canvas/Canvas';
 import { Scrollbar } from '../../components/common';
 import { Flex } from '../../components/flex';
 import { FormComponentProps } from 'antd/lib/form';
+import NodeProperties from './properties/NodeProperties';
+import Icon from '../../components/icon/Icon';
+import classnames from 'classnames';
 
 interface IProps extends FormComponentProps {
 	canvasRef?: CanvasInstance;
@@ -31,7 +34,7 @@ class WorkflowNodeConfigurations extends Component<IProps> {
 		onChange: PropTypes.func,
 		dbList: PropTypes.any,
 		dbTableList: PropTypes.any,
-		alertBox: PropTypes.func
+		alertBox: PropTypes.func,
 	};
 
 	UNSAFE_componentWillReceiveProps(nextProps) {
@@ -42,8 +45,30 @@ class WorkflowNodeConfigurations extends Component<IProps> {
 		}
 	}
 
+	state = {
+		collapse: false,
+		activeKey: 'info',
+	};
+
+	handlers = {
+		onCollapse: () => {
+			this.setState({
+				collapse: !this.state.collapse,
+			});
+		},
+		onChange: activeKey => {
+			this.setState({
+				activeKey,
+			});
+		},
+	};
+
 	render() {
-		const { canvasRef, workflow, selectedItem, form, onClick, dbList, dbTableList, alertBox } = this.props;
+		const { canvasRef, workflow, selectedItem, form, onClick, onChange, dbList, dbTableList, alertBox } = this.props;
+		const { collapse, activeKey } = this.state;
+		const className = classnames('rde-editor-configurations', {
+			minimize: collapse,
+		});
 		return (
 			<Scrollbar>
 				<Form layout="horizontal">
@@ -67,6 +92,8 @@ class WorkflowNodeConfigurations extends Component<IProps> {
 						</React.Fragment>
 					) : null}
 				</Form>
+				<Divider>{i18n.t('workflow.text-configuration')}</Divider>
+				<NodeProperties onChange={onChange} selectedItem={selectedItem} canvasRef={canvasRef} />
 			</Scrollbar>
 		);
 	}

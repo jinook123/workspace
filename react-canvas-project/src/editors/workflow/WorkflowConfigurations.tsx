@@ -3,15 +3,10 @@ import PropTypes from 'prop-types';
 import { Tabs } from 'antd';
 import classnames from 'classnames';
 import WorkflowInfo from './WorkflowInfo';
-import WorkflowGlobalParameters from './WorkflowGlobalParameters';
 import { FabricObject } from '../../canvas';
 import Canvas, { CanvasInstance } from '../../canvas/Canvas';
 import { CommonButton } from '../../components/common';
 import Icon from '../../components/icon/Icon';
-
-import NodeProperties from '../imagemap/properties/NodeProperties';
-import MapProperties from '../imagemap/properties/MapProperties';
-
 interface IProps {
 	canvasRef?: CanvasInstance;
 	selectedItem?: FabricObject;
@@ -70,15 +65,6 @@ class WorkflowConfigurations extends Component<IProps> {
 					<Tabs.TabPane tab={<Icon name="cog" />} key="info">
 						<WorkflowInfo workflow={workflow} onChange={onChange} />
 					</Tabs.TabPane>
-					<Tabs.TabPane tab={<Icon name="globe" />} key="variables">
-						<WorkflowGlobalParameters workflow={workflow} onChange={onChange} />
-					</Tabs.TabPane>
-					{selectedItem ? (
-						<Tabs.TabPane tab={<Icon name="cogs" />} key="node">
-							<NodeProperties onChange={onChange} selectedItem={selectedItem} canvasRef={canvasRef} />
-						</Tabs.TabPane>
-					) : null
-					}
 				</Tabs>
 			</div>
 		);

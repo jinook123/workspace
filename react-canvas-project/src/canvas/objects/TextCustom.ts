@@ -29,9 +29,10 @@ const TextComponent = fabric.util.createClass(fabric.Group,{
 	superType: 'DataComp',
     initialize(options: any) {
 		options = options || {};
-		let initText = 'Type Here';
+		//let initText = 'Type Here';
+		console.log('TextCustom Initialize...');
 		this.label = new fabric.Textbox('', {
-			width: 60,
+			width: 150,
 			height : 35,
 			fontFamily: 'Times New Roman',
 			fontSize: 32,
@@ -84,7 +85,6 @@ const TextComponent = fabric.util.createClass(fabric.Group,{
 		this.callSuper('_render', ctx);
 	},	
 });
-
 // @ts-ignore
 window.fabric.TextCustom = TextComponent;
 
