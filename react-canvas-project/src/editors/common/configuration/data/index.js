@@ -1,7 +1,9 @@
 import BarNodeConfiguration from './BarNodeConfiguration';
 import TextNodeConfiguration from './TextNodeConfiguration';
+import ChartNodeConfiguration from './ChartNodeConfiguration';
 
 export default {
 	BarNode: BarNodeConfiguration,
-	TextNode: TextNodeConfiguration
+	TextNode: TextNodeConfiguration,
+	ChartNode: ChartNodeConfiguration,
 };

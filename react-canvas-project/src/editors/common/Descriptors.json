@@ -46,6 +46,20 @@
 				"bStart": false 
 			},
 			"inEnabled": true
-		}
+		},
+        {
+            "name": "Chart",
+            "description": "Chart",
+            "type": "DATA",
+            "nodeClazz": "ChartNode",
+            "configClazz": "ChartNodeConfiguration",
+            "defaultConfiguration": {
+                "showDelay": 1000,
+                "dbList": "",
+                "dbTableList": "",
+                "bStart": false
+            },
+            "inEnabled": true
+        }
 	]	
 }
